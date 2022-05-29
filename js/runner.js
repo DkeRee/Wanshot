@@ -46,7 +46,7 @@
 		//UPDATE OBJECTS//
 		for (var i = 0; i < STAGE_CACHE.shells.length; i++) {
 			const shell = STAGE_CACHE.shells[i];
-			
+
 			if (shell.explode) {
 				//update shells shot for tanks
 				if (shell.tankID == PLAYER_ID) {

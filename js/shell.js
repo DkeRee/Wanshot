@@ -27,7 +27,7 @@ class HitParticle {
 
 		//update opacity and speed
 		this.opacity -= 0.08;
-		this.speed -= 0.1;
+		this.speed -= 0.05;
 
 		//check for deletion
 		if (this.opacity <= 0) {
@@ -114,6 +114,7 @@ class Shell {
 		this.angle = angle;
 		this.speed = bulletType;
 		this.tankID = tankID;
+		this.id = Math.floor(Math.random() * 100000);
 		this.ricochet = 0;
 
 		this.makeHitParticles();
@@ -123,6 +124,27 @@ class Shell {
 		//MAKE 50 HIT PARTICLES
 		for (var i = 0; i < 50; i++) {
 			this.hitParticles.push(new HitParticle(this.x, this.y));
+		}
+	}
+
+	//COLLISION CHECKS
+	shellWithShell() {
+		for (var i = 0; i < STAGE_CACHE.shells.length; i++) {
+			const otherShell = STAGE_CACHE.shells[i];
+
+			if (this.x + this.width >= otherShell.x &&
+				this.x <= otherShell.x + otherShell.width &&
+				this.y + this.height >= otherShell.y &&
+				this.y <= otherShell.y + otherShell.height && this.id !== otherShell.id) {
+				//SHELL COLLIDED WITH OTHER SHELL
+
+				this.makeHitParticles();
+				otherShell.makeHitParticles();
+
+				this.explode = true;
+				otherShell.explode = true;
+
+			}
 		}
 	}
 
@@ -179,7 +201,7 @@ class Shell {
 
 		//TOP AND BOTTOM WALL
 		if (this.y - this.height / 2 <= 0 || this.y + this.height / 2 >= CANVAS_HEIGHT) {
-			this.angle = 2* Math.PI - this.angle;
+			this.angle = 2 * Math.PI - this.angle;
 			this.y += this.speed * Math.sin(this.angle);
 
 			this.makeHitParticles();
@@ -192,6 +214,8 @@ class Shell {
 			this.makeHitParticles();
 			this.explode = true;
 		}
+
+		this.shellWithShell();
 	}
 
 	render() {
