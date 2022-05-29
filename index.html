@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>Wankle</title>
+		<link href = "style.css" rel = "stylesheet" type = "text/css">
+		<link rel="preconnect" href="https://fonts.gstatic.com">
+		<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300&display=swap" rel="stylesheet">
+		<script src = "https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+	</head>
+	<body>
+		<div id = "game-container">
+			<canvas id = "game"></canvas>
+		</div>
+
+		<!--JS SCRIPTS-->
+		<script>
+			//UNBIND CONTEXT MENU//
+			$("html").bind('contextmenu', () => {
+				return false;
+			});
+
+			//GLOBAL CANVAS CONSTANTS//
+			const html = document.querySelector("html");
+			const canvas = document.getElementById("game");
+			const ctx = canvas.getContext("2d");
+
+			const CANVAS_WIDTH = 800;
+			const CANVAS_HEIGHT = 550;
+
+			//INIT CANVAS/
+			canvas.width = CANVAS_WIDTH;
+			canvas.height = CANVAS_HEIGHT;
+
+			//CURRENT STAGE
+			var STAGE_CACHE;
+			var CURR_LEVEL;
+
+			var MOUSE_POS = {
+				x: NaN,
+				y: NaN
+			};
+			const PLAYER_ID = Math.floor(Math.random() * 100000);
+
+			function updateMousePos(clientX, clientY) {
+				const rect = canvas.getBoundingClientRect();
+				MOUSE_POS = {
+					x: clientX - rect.left,
+					y: clientY - rect.top
+				}
+			}
+
+			//credit to https://stackoverflow.com/questions/21646738/convert-hex-to-rgba
+			function hexToRgbA(hex, opacity){
+    			var c;
+    			if(/^#([A-Fa-f0-9]{3}){1,2}$/.test(hex)){
+        			c= hex.substring(1).split('');
+        			if(c.length== 3){
+            			c= [c[0], c[0], c[1], c[1], c[2], c[2]];
+        			}
+        			c= '0x'+c.join('');
+        			return 'rgba('+[(c>>16)&255, (c>>8)&255, c&255].join(',')+',' + opacity + ')';
+    			}
+   		 		throw new Error(`Bad Hex: ${hex}`);
+			}
+		</script>
+		<script src = "js/shell.js"></script>
+		<script src = "js/tank.js"></script>
+		<script src = "js/tankTypes.js"></script>
+		<script src = "js/level.js"></script>
+		<script src = "js/levelCloner.js"></script>
+		<script src = "js/runner.js"></script>
+	</body>
+</html>
