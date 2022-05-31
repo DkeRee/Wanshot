@@ -149,7 +149,8 @@ class Tank {
 
 	shoot(targetCoords, shellType, tankID) {
 		const angle = Math.atan2(targetCoords.y - this.y, targetCoords.x - this.x);
-		STAGE_CACHE.shells.push(new Shell(this.x + (this.speed * 20 * Math.cos(angle)), this.y + (this.speed * 20 * Math.sin(angle)), shellType, angle, tankID));
+		const initialBoost = 40;
+		STAGE_CACHE.shells.push(new Shell(this.x + (initialBoost * Math.cos(angle)), this.y + (initialBoost * Math.sin(angle)), shellType, angle, tankID));
 	}
 
 	trackUpdate() {

@@ -210,6 +210,9 @@ class Shell {
 
 			//COLLISIONS
 
+			this.shellWithShell();
+			this.shellWithPlayer();
+
 			//LEFT AND RIGHT WALL
 			if (this.x - this.width / 2 <= 0 || this.x + this.width / 2 >= CANVAS_WIDTH) {
 				this.angle = Math.PI - this.angle;
@@ -227,9 +230,6 @@ class Shell {
 				this.makeHitParticles();
 				this.ricochet++;
 			}
-
-			this.shellWithShell();
-			this.shellWithPlayer();
 
 			//MARK SHELL TO DELETE
 			if (this.speed == NORMAL_SHELL && this.ricochet >= 2) {
