@@ -14,7 +14,7 @@ function startLogoUpdate() {
 }
 
 function startLogoRender() {
-	ctx.font = "100px monospace";
+	ctx.font = "100px UniSansHeavy";
 
 	ctx.fillStyle = hexToRgbA("#ffff80", startLogoOpacity);
 	

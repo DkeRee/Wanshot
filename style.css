@@ -2,6 +2,11 @@ body {
 	background-color: #D8B077;
 }
 
+@font-face {
+	font-family: "UniSansHeavy";
+	src: url("fonts/uni-sans.heavy-caps.otf") format("opentype");
+}
+
 #game-container {
 	position: absolute;
 	display: flex;
