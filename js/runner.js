@@ -2,12 +2,12 @@
 	//essential globals, constants, delta time info//
 	const FPS_INTERVAL = 1000/60;
 	var globalThen = Date.now();
-	const BACKGROUND_COLOR = "#C2995D";
 
 	//GLOBAL GAME TIMERS//
 	var trackUpdate = 0;
 
 	//init game
+	const BACKGROUND_COLOR = "#C2995D";
 	CURR_LEVEL = 0;
 	STAGE_CACHE = levelCloner(CURR_LEVEL);
 
@@ -29,39 +29,51 @@
 	//RUNNER CENTER//
 
 	function globalUpdate() {
-		//TRACK MANAGEMENT//
-		trackUpdate++;
-
-		//REMOVE TRACKS IF TOO MANY TO AVOID CLUTTER//
-		if (STAGE_CACHE.tracks.length > 1000) {
-			STAGE_CACHE.tracks.shift();
+		if (INTERMISSION) {
+			intermissionUpdate();
 		}
 
-		if (trackUpdate > 6) {
-			//ADD TRACK FOR EVERY TANK
-			STAGE_CACHE.player.trackUpdate();
-			trackUpdate = 0;
-		}
+		//set a bit of wait time before beginning the next round or repeating the same round after rendering mission (make sure level doesn't update during intermission)
+		if (maskFadeIn) {
+			//TRACK MANAGEMENT//
+			trackUpdate++;
 
-		//UPDATE OBJECTS//
-		for (var i = 0; i < STAGE_CACHE.shells.length; i++) {
-			const shell = STAGE_CACHE.shells[i];
-
-			if (shell.explode) {
-				//update shells shot for tanks
-				if (shell.tankID == PLAYER_ID) {
-					STAGE_CACHE.player.shellShot--;
-				}
-
-				//DELETE SHELL
-				STAGE_CACHE.shells.splice(i, 1);
-				continue;
+			//REMOVE TRACKS IF TOO MANY TO AVOID CLUTTER//
+			if (STAGE_CACHE.tracks.length > 1000) {
+				STAGE_CACHE.tracks.shift();
 			}
 
-			shell.update();
-		}
+			if (trackUpdate > 6) {
+				//ADD TRACK FOR EVERY TANK
+				STAGE_CACHE.player.trackUpdate();
+				trackUpdate = 0;
+			}
 
-		STAGE_CACHE.player.update();
+			//UPDATE OBJECTS//
+			for (var i = 0; i < STAGE_CACHE.shells.length; i++) {
+				const shell = STAGE_CACHE.shells[i];
+
+				if (shell.explode) {
+					//update shells shot for tanks
+					if (shell.tankID == PLAYER_ID) {
+						STAGE_CACHE.player.shellShot--;
+					}
+
+					//DELETE SHELL
+					STAGE_CACHE.shells.splice(i, 1);
+					continue;
+				}
+
+				shell.update();
+			}
+
+			STAGE_CACHE.player.update();
+
+			//update start logo
+			if (startLogoShow) {
+				startLogoUpdate();
+			}
+		}
 	}
 
 	function globalRender() {
@@ -78,11 +90,25 @@
 			STAGE_CACHE.tracks[i].render();
 		}
 
+		for (var i = 0; i < STAGE_CACHE.graves.length; i++) {
+			STAGE_CACHE.graves[i].render();
+		}
+
 		for (var i = 0; i < STAGE_CACHE.shells.length; i++) {
 			STAGE_CACHE.shells[i].render();
 		}
 
 		STAGE_CACHE.player.render();
+
+		//render intermission
+		if (INTERMISSION) {
+			intermissionRender();
+		}
+
+		//render start logo
+		if (startLogoShow) {
+			startLogoRender();
+		}
 	}
 
 	//KEYBOARD & MOUSE EVENTS//

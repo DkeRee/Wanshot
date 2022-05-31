@@ -1,7 +1,8 @@
 //TANK TYPES
 class Player {
-	constructor(x, y, bodyAngle, turretAngle) {
-		this.tank = new Tank(x, y, bodyAngle, turretAngle, "#224ACF", "#0101BA", 1.7);
+	constructor(x, y, angle, turretAngle) {
+		this.tank = new Tank(x, y, angle, turretAngle, "#224ACF", "#0101BA", 1.7);
+		this.dead = false;
 		this.tankID = PLAYER_ID;
 
 		//makes tank "shock" aka pause for a split second due to recoil from shot
@@ -26,16 +27,16 @@ class Player {
 		this.shellDelay++;
 
 		//update movement
-		const xInc = this.tank.speed * Math.cos(this.tank.bodyAngle);
-		const yInc = this.tank.speed * Math.sin(this.tank.bodyAngle);
+		const xInc = this.tank.speed * Math.cos(this.tank.angle);
+		const yInc = this.tank.speed * Math.sin(this.tank.angle);
 
 		const leftSide = this.tank.x - this.tank.width / 2;
 		const rightSide = this.tank.x + this.tank.width / 2;
 		const bottomSide = this.tank.y + this.tank.height / 2;
 		const topSide = this.tank.y - this.tank.height / 2;
 
-		//if tank is NOT SHELLSHOCKED
-		if (this.shellShock > 0) {
+		//if tank is NOT SHELLSHOCKED and isn't dead
+		if (this.shellShock > 0 && !this.dead) {
 			//up
 			if (this.keys[87] || this.keys[38]) {
 				//IF NOT CROSSING OVER LEFT OR RIGHT SIDE AKA WITHIN BOUNDS
@@ -63,19 +64,24 @@ class Player {
 
 			//right rotation
 			if (this.keys[65] || this.keys[37]) {
-				this.tank.bodyAngle -= 0.05;
+				this.tank.angle -= 0.05;
 			}
 
 			//left rotation
 			if (this.keys[68] || this.keys[39]) {
-				this.tank.bodyAngle += 0.05;
+				this.tank.angle += 0.05;
 			}
 		}
 	}
+	
+	explode() {
+		this.dead = true;
+		this.tank.explodeTank();
+	}
 
 	shoot() {
-		//delay shell fire rate && cap shell amount
-		if (this.shellDelay > 7 && this.shellShot < 5) {
+		//delay shell fire rate && cap shell amount && isn't dead
+		if (this.shellDelay > 7 && this.shellShot < 5 && !this.dead) {
 			this.shellShock = -5;
 			this.shellShot++;
 			this.shellDelay = 0;
@@ -85,10 +91,12 @@ class Player {
 	}
 
 	trackUpdate() {
-		this.tank.trackUpdate();
+		if (!this.dead) {
+			this.tank.trackUpdate();			
+		}
 	}
 
 	render() {
-		this.tank.render();
+		this.tank.render(this.dead);
 	}
 }
