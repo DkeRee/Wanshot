@@ -6,24 +6,13 @@
 		<link rel="preconnect" href="https://fonts.gstatic.com">
 		<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300&display=swap" rel="stylesheet">
 		<script src = "https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-		<script src = "js/sat.js"></script>
-	</head>
-	<body>
-		<div id = "game-container">
-			<canvas id = "game"></canvas>
-		</div>
-
-		<!--JS SCRIPTS-->
 		<script>
+			//EXTRA SCRIPTS//
+
 			//UNBIND CONTEXT MENU//
 			$("html").bind('contextmenu', () => {
 				return false;
 			});
-
-			//GLOBAL CANVAS CONSTANTS//
-			const html = document.querySelector("html");
-			const canvas = document.getElementById("game");
-			const ctx = canvas.getContext("2d");
 
 			//credit to https://stackoverflow.com/questions/21646738/convert-hex-to-rgba
 			function hexToRgbA(hex, opacity){
@@ -38,6 +27,20 @@
     			}
    		 		throw new Error(`Bad Hex: ${hex}`);
 			}
+		</script>
+		<script src = "js/sat.js"></script>
+	</head>
+	<body>
+		<div id = "game-container">
+			<canvas id = "game"></canvas>
+		</div>
+
+		<!--JS SCRIPTS-->
+		<script>
+			//GLOBAL CANVAS CONSTANTS//
+			const html = document.querySelector("html");
+			const canvas = document.getElementById("game");
+			const ctx = canvas.getContext("2d");
 		</script>
 		<script src = "js/loadingArt.js"></script>
 		<script src = "js/globals.js"></script>
