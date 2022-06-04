@@ -38,11 +38,6 @@
 			//TRACK MANAGEMENT//
 			trackUpdate++;
 
-			//REMOVE TRACKS IF TOO MANY TO AVOID CLUTTER//
-			if (STAGE_CACHE.tracks.length > 1000) {
-				STAGE_CACHE.tracks.shift();
-			}
-
 			if (trackUpdate > 6) {
 				//ADD TRACK FOR EVERY TANK
 				STAGE_CACHE.player.trackUpdate();
@@ -50,6 +45,18 @@
 			}
 
 			//UPDATE OBJECTS//
+			for (var i = 0; i < STAGE_CACHE.tracks.length; i++) {
+				const track = STAGE_CACHE.tracks[i];
+
+				if (track.explode) {
+					//DELETE TRACK
+					STAGE_CACHE.tracks.splice(i, 1);
+					continue
+				}
+
+				track.update();
+			}
+
 			for (var i = 0; i < STAGE_CACHE.shells.length; i++) {
 				const shell = STAGE_CACHE.shells[i];
 

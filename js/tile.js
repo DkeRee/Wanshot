@@ -1,7 +1,7 @@
 class Block {
 	constructor(x, y) {
-		this.width = 50;
-		this.height = 50;
+		this.width = TILE_WIDTH;
+		this.height = TILE_HEIGHT;
 		this.angle = 0;
 		this.x = x;
 		this.y = y;

@@ -72,6 +72,34 @@ class Polygon {
 	}
 }
 
+function mean(polygon) {
+	var xSum = 0;
+	var ySum = 0;
+
+	for (var i = 0; i < polygon.vertices.length; i++) {
+		xSum += polygon.vertices[i].x;
+		ySum += polygon.vertices[i].y;
+	}
+
+	return new xy(xSum / polygon.vertices.length, ySum / polygon.vertices.length);
+}
+
+function dotProduct(pointA, pointB) {
+	return pointA.x * pointB.x + pointA.y * pointB.y; 
+}
+
+function vectorLength(vector) {
+	return Math.sqrt(Math.pow(vector.x, 2) + Math.pow(vector.y, 2));
+}
+
+function normalizeVector(vector) {
+	const invLen = 1 / vectorLength(vector);
+	vector.x *= invLen;
+	vector.y *= invLen;
+
+	return vector;
+}
+
 function SAT(rectOne, rectTwo) {
 	const polygonOne = new Polygon(rectOne);
 	const polygonTwo = new Polygon(rectTwo);
@@ -92,6 +120,14 @@ function SAT(rectOne, rectTwo) {
 	if all test cases passes, then they are touching
 	*/
 
+	//variables for collision resolution
+
+	//perp line of the shortest current vector/depth of collision
+	var normal = null;
+
+	//shortest vector/depth of collision
+	var depth = Infinity;
+
 	for (var i = 0; i < perpendicularEdges.length; i++) {
 		const perpLine = perpendicularEdges[i];
 		var dot = 0;
@@ -102,7 +138,7 @@ function SAT(rectOne, rectTwo) {
 
 		//calculate dot product of verticies with each perpendicular edge
 		for (var j = 0; j < polygonOne.vertices.length; j++) {
-			dot = polygonOne.vertices[j].x * perpLine.x + polygonOne.vertices[j].y * perpLine.y;
+			dot = dotProduct(polygonOne.vertices[j], perpLine);
 		
 			if (amax == null || dot > amax) {
 				amax = dot;
@@ -113,7 +149,7 @@ function SAT(rectOne, rectTwo) {
 		}
 
 		for (var j = 0; j < polygonTwo.vertices.length; j++) {
-			dot = polygonTwo.vertices[j].x * perpLine.x + polygonTwo.vertices[j].y * perpLine.y;
+			dot = dotProduct(polygonTwo.vertices[j], perpLine)
 
 			if (bmax == null || dot > bmax) {
 				bmax = dot;
@@ -125,10 +161,43 @@ function SAT(rectOne, rectTwo) {
 
 		//check if the polygons are touching from the ultimate dot products
 		if ((amin < bmax && amin > bmin) || (bmin < amax && bmin > amin)) {
+			//find the shortest vector of collision
+			const axisDepth = Math.min(bmax - amin, amax - bmin);
+
+			if (axisDepth < depth) {
+				depth = axisDepth;
+				normal = perpLine;
+			}
+
 			continue;
 		} else {
-			return false;
+			return {
+				collision: false,
+				depth: null,
+				normal: null
+			};
 		}
 	}
-	return true;
+	
+	depth /= vectorLength(normal);
+	normal = normalizeVector(normal);
+
+	//calculate centers of polygons to ensure our normal is pointing same direction
+	const centerOne = mean(polygonOne);
+	const centerTwo = mean(polygonTwo);
+
+	//vector from center of polygon one to two
+	const vectorDirection = new xy(centerOne.x - centerTwo.x, centerOne.y - centerTwo.y);
+
+	//normal is unfourtunately facing opposite direction, reverse
+	if (dotProduct(vectorDirection, normal) < 0) {
+		normal.x *= -1;
+		normal.y *= -1;
+	}
+
+	return {
+		collision: true,
+		depth: depth,	
+		normal: normal
+	}
 }

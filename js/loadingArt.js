@@ -19,6 +19,7 @@ class ArtTank {
 
 		ctx.save();
 
+		//translates to center x and y
 		ctx.translate(this.x, this.y);
 		ctx.rotate(this.angle);
 

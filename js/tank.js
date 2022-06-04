@@ -62,7 +62,8 @@ class Track {
 		//body
 		this.width = TRACK_WIDTH;
 		this.height = TRACK_HEIGHT;
-		this.color = "grey";
+		this.opacity = 0.5;
+		this.color = "#7B3F00";
 
 		//track info
 		this.x = x;
@@ -70,17 +71,27 @@ class Track {
 		this.centerX = this.x + this.width / 2;
 		this.centerY = this.y + this.height / 2;
 		this.angle = angle;
+		this.explode = false;
+	}
+
+	update() {
+		//update opacity, mark for deletion
+		this.opacity -= 0.0008;
+
+		if (this.opacity <= 0) {
+			this.explode = true;
+		}
 	}
 
 	render() {
-		ctx.shadowBlur = 5;
-		ctx.shadowColor = this.color;
+		ctx.shadowBlur = 3;
+		ctx.shadowColor = hexToRgbA(this.color, this.opacity);
 		ctx.save();
 
 		ctx.translate(this.centerX, this.centerY);
 		ctx.rotate(this.angle);
 
-		ctx.fillStyle = this.color;
+		ctx.fillStyle = hexToRgbA(this.color, this.opacity);
 
 		//LEFT WHEEL TRACK
 		ctx.fillRect(this.width / -2, (this.height / -2) - this.height / 2, this.width, this.height);
@@ -163,34 +174,42 @@ class Tank {
 		this.sideColor = sideColor;
 	}
 
+	//tank death
 	explodeTank() {
 		this.tankExplosion = true;
 	}
 
+	//shooting
 	shoot(targetCoords, shellType, tankID) {
 		const angle = Math.atan2(targetCoords.y - this.centerY, targetCoords.x - this.centerX);
 		const initialBoost = 40;
 		STAGE_CACHE.shells.push(new Shell(this.centerX - SHELL_WIDTH / 2 + (initialBoost * Math.cos(angle)), this.centerY - SHELL_HEIGHT / 2 + (initialBoost * Math.sin(angle)), shellType, angle, tankID));
 	}
 
+	//update track marks
 	trackUpdate() {
 		STAGE_CACHE.tracks.push(new Track(this.centerX - TRACK_WIDTH / 2, this.centerY - TRACK_HEIGHT / 2, this.angle));
 	}
 
+	//COLLISIONS
 	tankWithTile() {
 		for (var i = 0; i < STAGE_CACHE.tiles.length; i++) {
 			const tile = STAGE_CACHE.tiles[i];
+			const SATCollision = SAT(this, tile);
 
-			if (SAT(this, tile)) {
-				console.log("hi")
+			if (SATCollision.collision) {
+				this.x += SATCollision.normal.x * SATCollision.depth / 2;
+				this.y += SATCollision.normal.y * SATCollision.depth / 2;
 			}
 		}
 	}
 
 	updateBody(targetCoords) {
+		//update center
 		this.centerX = this.x + this.width / 2;
 		this.centerY = this.y + this.height / 2;
 
+		//update collisions
 		this.tankWithTile();
 
 		//update tank explosion particles

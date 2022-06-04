@@ -141,11 +141,50 @@ class Shell {
 	}
 
 	//COLLISION CHECKS
+	bounceX() {
+		this.angle = Math.PI - this.angle;
+		this.x += this.speed * Math.cos(this.angle);
+				
+		this.makeHitParticles();
+	}
+
+	bounceY() {
+		this.angle = 2 * Math.PI - this.angle;
+		this.y += this.speed * Math.sin(this.angle);
+
+		this.makeHitParticles();
+	}
+
+	shellWithTile() {
+		for (var i = 0; i < STAGE_CACHE.tiles.length; i++) {
+			const tile = STAGE_CACHE.tiles[i];
+			
+			//special thanks to Shakkar23 for this method!
+
+			//initial collision detection
+			if (SAT(this, tile).collision) {
+				//left or right collision
+				if ((this.x + this.width >= tile.x) || (this.x <= tile.x + tile.width)) {
+					this.bounceX();
+				}
+
+				//top or bottom collision
+				if (SAT(this, tile).collision) {
+					//reset angle to pre bounceX collision for a y ricochet
+					this.angle = Math.PI - this.angle;
+					this.bounceY();
+				}
+
+				this.ricochet++;
+			}
+		}
+	}
+
 	shellWithShell() {
 		for (var i = 0; i < STAGE_CACHE.shells.length; i++) {
 			const otherShell = STAGE_CACHE.shells[i];
 
-			if (SAT(this, otherShell) && this.id !== otherShell.id) {
+			if (SAT(this, otherShell).collision && this.id !== otherShell.id) {
 				//SHELL COLLIDED WITH OTHER SHELL
 
 				//explode this shell
@@ -163,7 +202,7 @@ class Shell {
 	shellWithPlayer() {
 		const player = STAGE_CACHE.player;
 
-		if (SAT(this, player.tank) && !player.dead) {
+		if (SAT(this, player.tank).collision && !player.dead) {
 			//SHELL COLLIDED WITH PLAYER AND PLAYER IS NOT DEAD
 
 			//explode this shell
@@ -228,22 +267,17 @@ class Shell {
 
 			this.shellWithShell();
 			this.shellWithPlayer();
+			this.shellWithTile();
 
 			//LEFT AND RIGHT WALL
 			if (this.x - this.width / 2 <= 0 || this.x + this.width / 2 >= CANVAS_WIDTH) {
-				this.angle = Math.PI - this.angle;
-				this.x += this.speed * Math.cos(this.angle);			
-				
-				this.makeHitParticles();
+				this.bounceX();
 				this.ricochet++;
 			}
 
 			//TOP AND BOTTOM WALL
 			if (this.y - this.height / 2 <= 0 || this.y + this.height / 2 >= CANVAS_HEIGHT) {
-				this.angle = 2 * Math.PI - this.angle;
-				this.y += this.speed * Math.sin(this.angle);
-
-				this.makeHitParticles();
+				this.bounceY();
 				this.ricochet++;
 			}
 

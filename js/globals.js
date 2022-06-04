@@ -28,7 +28,7 @@ function updateMousePos(clientX, clientY) {
 	}
 }
 
-//GAME OBJECT CONSTANTS//
+//GAME OBJECT CONSTANTS FOR FINE TUNING PLACEMENTS//
 const TANK_PARTICLE_SIDE = 20;
 
 const TRACK_WIDTH = 4;
@@ -46,3 +46,6 @@ const TRAIL_PARTICLE_RADIUS = 5;
 
 const SHELL_WIDTH = 10;
 const SHELL_HEIGHT = 7;
+
+const TILE_WIDTH = 50;
+const TILE_HEIGHT = 50;
