@@ -35,6 +35,8 @@ class TankParticle {
 
 	render() {
 		//RENDER PARTICLE
+		ctx.shadowBlur = 5;
+		ctx.shadowColor = this.color;
 		ctx.save();
 
 		ctx.translate(this.x, this.y);
@@ -45,6 +47,7 @@ class TankParticle {
 		ctx.fillRect(this.side / -2, this.side / -2, this.side, this.side);
 
 		ctx.restore();
+		ctx.shadowBlur = 0;
 	}
 }
 
@@ -63,6 +66,8 @@ class Track {
 	}
 
 	render() {
+		ctx.shadowBlur = 5;
+		ctx.shadowColor = this.color;
 		ctx.save();
 
 		ctx.translate(this.x, this.y);
@@ -76,6 +81,7 @@ class Track {
 		ctx.fillRect(this.width / -2, (this.height / 2) + this.height / 1.5, this.width, this.height);
 
 		ctx.restore();
+		ctx.shadowBlur = 0;
 	}
 }
 
@@ -93,6 +99,8 @@ class Grave {
 	}
 
 	render() {
+		ctx.shadowBlur = 5;
+		ctx.shadowColor = this.color;
 		ctx.fillStyle = this.color;
 
 		//right tilted mark
@@ -114,6 +122,7 @@ class Grave {
 		ctx.fillRect(this.width / -2, this.height / -2, this.width, this.height);
 
 		ctx.restore();
+		ctx.shadowBlur = 0;
 	}
 }
 
@@ -201,6 +210,8 @@ class Tank {
 	render(isDead) {
 		//RENDER THIS IF TANK IS STILL ALIVE//
 		if (!isDead) {
+			ctx.shadowBlur = 3;
+			ctx.shadowBlur = this.color;
 			ctx.save();
 
 			ctx.translate(this.x, this.y);
@@ -241,6 +252,7 @@ class Tank {
 			ctx.fillRect(this.turretNozzleWidth / 2, this.turretNozzleHeight / -2, this.turretNozzleWidth, this.turretNozzleHeight);
 
 			ctx.restore();
+			ctx.shadowBlur = 0;
 		}
 
 		//RENDER THIS IF TANK IS STILL ALIVE OR DEAD//

@@ -1,6 +1,6 @@
 (function() {
 	//essential globals, constants, delta time info//
-	const FPS_INTERVAL = 1000/60;
+	const FPS_INTERVAL = 1000/100;
 	var globalThen = Date.now();
 
 	//GLOBAL GAME TIMERS//
@@ -18,7 +18,7 @@
 		//DELTA TIME//
 		if (elapsed > FPS_INTERVAL) {
 			globalUpdate();
-			then = now - (elapsed % FPS_INTERVAL);
+			globalThen = now - (elapsed % FPS_INTERVAL);
 		}
 		globalRender();
 
@@ -96,6 +96,10 @@
 
 		for (var i = 0; i < STAGE_CACHE.shells.length; i++) {
 			STAGE_CACHE.shells[i].render();
+		}
+
+		for (var i = 0; i < STAGE_CACHE.tiles.length; i++) {
+			STAGE_CACHE.tiles[i].render();
 		}
 
 		STAGE_CACHE.player.render();

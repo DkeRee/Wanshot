@@ -37,6 +37,8 @@ class HitParticle {
 
 	render() {
 		//RENDER PARTICLE
+		ctx.shadowBlur = 5;
+		ctx.shadowColor = this.color;
 		ctx.save();
 
 		ctx.translate(this.x, this.y);
@@ -47,6 +49,7 @@ class HitParticle {
 		ctx.fillRect(this.side / -2, this.side / -2, this.side, this.side);
 
 		ctx.restore();
+		ctx.shadowBlur = 0;
 	}
 }
 
@@ -86,10 +89,13 @@ class TrailParticle {
 
 	render() {
 		//RENDER PARTICLE
+		ctx.shadowBlur = 5;
+		ctx.shadowColor = this.color;
 		ctx.fillStyle = hexToRgbA(this.color, this.opacity);
 		ctx.beginPath();
 		ctx.arc(this.x, this.y, this.radius, 0, 2 * Math.PI, false);
 		ctx.fill();
+		ctx.shadowBlur = 0;
 	}
 }
 
@@ -247,6 +253,8 @@ class Shell {
 		}
 
 		//RENDER SHELL
+		ctx.shadowBlur = 3;
+		ctx.shadowColor = "black";
 		ctx.save();
 
 		ctx.translate(this.x, this.y);
@@ -261,5 +269,6 @@ class Shell {
 		for (var i = 0; i < this.hitParticles.length; i++) {
 			this.hitParticles[i].render();
 		}
+		ctx.shadowBlur = 0;
 	}
 }

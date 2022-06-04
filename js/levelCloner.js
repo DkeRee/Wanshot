@@ -1,8 +1,11 @@
 function levelCloner(CURR_LEVEL) {
 	const LEVEL_CACHE = {
+		player: null,
 		shells: [],
 		graves: [],
-		tracks: []
+		tracks: [],
+		tiles: [],
+		enemies: []
 	};
 	const LOCATED_LEVEL = LEVEL[CURR_LEVEL];
 
@@ -11,6 +14,12 @@ function levelCloner(CURR_LEVEL) {
 			case "player":
 				const player = LOCATED_LEVEL[asset];
 				LEVEL_CACHE.player = new Player(player.tank.x, player.tank.y, player.tank.angle, player.tank.turretAngle);
+				break;
+			case "tiles":
+				const tiles = LOCATED_LEVEL[asset];
+				for (var i = 0; i < tiles.length; i++) {
+					LEVEL_CACHE.tiles.push(tiles[i]);
+				} 
 				break;
 			case "enemies":
 				//will add enemy tank handler later on
