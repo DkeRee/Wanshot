@@ -1,11 +1,13 @@
 class TankParticle {
 	constructor(x, y, tankColor) {
 		//particle body (IT IS A SQUARE)
-		this.side = 20;
+		this.side = TANK_PARTICLE_SIDE;
 
 		//particle info
 		this.x = x;
 		this.y = y;
+		this.centerX = this.x + this.side / 2;
+		this.centerY = this.y + this.side / 2;
 		this.angle = (Math.floor(Math.random() * 360)) * Math.PI / 180;
 		this.opacity = 1;
 		this.speed = 10;
@@ -23,6 +25,9 @@ class TankParticle {
 		this.x += this.speed * Math.cos(this.angle);
 		this.y += this.speed * Math.sin(this.angle);
 
+		this.centerX = this.x + this.side / 2;
+		this.centerY = this.y + this.side / 2;
+
 		//update opacity and speed
 		this.opacity -= 0.05;
 		this.speed -= 0.3;
@@ -39,7 +44,7 @@ class TankParticle {
 		ctx.shadowColor = this.color;
 		ctx.save();
 
-		ctx.translate(this.x, this.y);
+		ctx.translate(this.centerX, this.centerY);
 		ctx.rotate(this.angle);
 
 		//color in rgba to support opacity
@@ -55,13 +60,15 @@ class TankParticle {
 class Track {
 	constructor(x, y, angle) {
 		//body
-		this.width = 4;
-		this.height = 7;
+		this.width = TRACK_WIDTH;
+		this.height = TRACK_HEIGHT;
 		this.color = "grey";
 
 		//track info
 		this.x = x;
 		this.y = y;
+		this.centerX = this.x + this.width / 2;
+		this.centerY = this.y + this.height / 2;
 		this.angle = angle;
 	}
 
@@ -70,7 +77,7 @@ class Track {
 		ctx.shadowColor = this.color;
 		ctx.save();
 
-		ctx.translate(this.x, this.y);
+		ctx.translate(this.centerX, this.centerY);
 		ctx.rotate(this.angle);
 
 		ctx.fillStyle = this.color;
@@ -89,12 +96,14 @@ class Track {
 class Grave {
 	constructor(x, y, color) {
 		//body
-		this.width = 10;
-		this.height = 30;
+		this.width = GRAVE_WIDTH;
+		this.height = GRAVE_HEIGHT;
 
 		//grave info
 		this.x = x;
 		this.y = y;
+		this.centerX = this.x + this.width / 2;
+		this.centerY = this.y + this.height / 2;
 		this.color = color;
 	}
 
@@ -106,7 +115,7 @@ class Grave {
 		//right tilted mark
 		ctx.save();
 
-		ctx.translate(this.x, this.y);
+		ctx.translate(this.centerX, this.centerY);
 		ctx.rotate(-45 * Math.PI / 180);
 
 		ctx.fillRect(this.width / -2, this.height / -2, this.width, this.height);
@@ -116,7 +125,7 @@ class Grave {
 		//left tilted mark
 		ctx.save();
 
-		ctx.translate(this.x, this.y);
+		ctx.translate(this.centerX, this.centerY);
 		ctx.rotate(45 * Math.PI / 180);
 
 		ctx.fillRect(this.width / -2, this.height / -2, this.width, this.height);
@@ -130,8 +139,8 @@ class Grave {
 class Tank {
 	constructor(x, y, angle, turretAngle, color, sideColor, speed) {
 		//body
-		this.width = 45;
-		this.height = 35;
+		this.width = TANK_WIDTH;
+		this.height = TANK_HEIGHT;
 		this.turretBaseSide = 20;
 		this.turretNozzleWidth = 20;
 		this.turretNozzleHeight = 10;
@@ -143,8 +152,10 @@ class Tank {
 		this.explosionParticles = [];
 
 		//tank info
-		this.x = x;
+		this.x = x
 		this.y = y;
+		this.centerX = this.x + this.width / 2;
+		this.centerY = this.y + this.height / 2;
 		this.speed = speed;
 		this.angle = angle;
 		this.turretAngle = turretAngle;
@@ -157,16 +168,31 @@ class Tank {
 	}
 
 	shoot(targetCoords, shellType, tankID) {
-		const angle = Math.atan2(targetCoords.y - this.y, targetCoords.x - this.x);
+		const angle = Math.atan2(targetCoords.y - this.centerY, targetCoords.x - this.centerX);
 		const initialBoost = 40;
-		STAGE_CACHE.shells.push(new Shell(this.x + (initialBoost * Math.cos(angle)), this.y + (initialBoost * Math.sin(angle)), shellType, angle, tankID));
+		STAGE_CACHE.shells.push(new Shell(this.centerX - SHELL_WIDTH / 2 + (initialBoost * Math.cos(angle)), this.centerY - SHELL_HEIGHT / 2 + (initialBoost * Math.sin(angle)), shellType, angle, tankID));
 	}
 
 	trackUpdate() {
-		STAGE_CACHE.tracks.push(new Track(this.x, this.y, this.angle));
+		STAGE_CACHE.tracks.push(new Track(this.centerX - TRACK_WIDTH / 2, this.centerY - TRACK_HEIGHT / 2, this.angle));
+	}
+
+	tankWithTile() {
+		for (var i = 0; i < STAGE_CACHE.tiles.length; i++) {
+			const tile = STAGE_CACHE.tiles[i];
+
+			if (SAT(this, tile)) {
+				console.log("hi")
+			}
+		}
 	}
 
 	updateBody(targetCoords) {
+		this.centerX = this.x + this.width / 2;
+		this.centerY = this.y + this.height / 2;
+
+		this.tankWithTile();
+
 		//update tank explosion particles
 		if (this.tankExplosion) {
 
@@ -176,7 +202,7 @@ class Tank {
 			if (this.explosionParticleDelay > 0) {
 				//push new ring of 50 particles
 				for (var i = 0; i < 50; i++) {
-					this.explosionParticles.push(new TankParticle(this.x, this.y, this.color));	
+					this.explosionParticles.push(new TankParticle(this.centerX - TANK_PARTICLE_SIDE / 2, this.centerY - TANK_PARTICLE_SIDE / 2, this.color));	
 				}
 				this.explosionRingCount++;
 				this.explosionParticleDelay = 0;
@@ -204,7 +230,7 @@ class Tank {
 		}
 
 		//update turret angle
-		this.turretAngle = Math.atan2(targetCoords.y - this.y, targetCoords.x - this.x);
+		this.turretAngle = Math.atan2(targetCoords.y - this.centerY, targetCoords.x - this.centerX);
 	}
 
 	render(isDead) {
@@ -214,7 +240,7 @@ class Tank {
 			ctx.shadowBlur = this.color;
 			ctx.save();
 
-			ctx.translate(this.x, this.y);
+			ctx.translate(this.centerX, this.centerY);
 			ctx.rotate(this.angle);
 
 			//DRAW TANK BASE//		
@@ -237,7 +263,7 @@ class Tank {
 			ctx.save();
 
 			//DRAW TURRET//
-			ctx.translate(this.x, this.y);
+			ctx.translate(this.centerX, this.centerY);
 			ctx.rotate(this.turretAngle);
 			ctx.lineWidth = 5;
 			ctx.fillStyle = this.color;

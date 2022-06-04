@@ -27,3 +27,22 @@ function updateMousePos(clientX, clientY) {
 		y: clientY - rect.top
 	}
 }
+
+//GAME OBJECT CONSTANTS//
+const TANK_PARTICLE_SIDE = 20;
+
+const TRACK_WIDTH = 4;
+const TRACK_HEIGHT = 7;
+
+const GRAVE_WIDTH = 10;
+const GRAVE_HEIGHT = 30;
+
+const TANK_WIDTH = 45;
+const TANK_HEIGHT = 35;
+
+const HIT_PARTICLE_SIDE = 7;
+
+const TRAIL_PARTICLE_RADIUS = 5;
+
+const SHELL_WIDTH = 10;
+const SHELL_HEIGHT = 7;

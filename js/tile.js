@@ -1,6 +1,8 @@
 class Block {
 	constructor(x, y) {
-		this.side = 50;
+		this.width = 50;
+		this.height = 50;
+		this.angle = 0;
 		this.x = x;
 		this.y = y;
 		this.color = "#9C7C4B";
@@ -11,7 +13,7 @@ class Block {
 		ctx.shadowBlur = 5;
 		ctx.shadowColor = "black";
 		ctx.fillStyle = this.color;
-		ctx.fillRect(this.x, this.y, this.side, this.side);
+		ctx.fillRect(this.x, this.y, this.width, this.height);
 		ctx.shadowBlur = 0;
 	}
 }

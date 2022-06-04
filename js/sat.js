@@ -34,8 +34,8 @@ class Polygon {
 		this.vertices = [];
 		this.edges = [];
 
-		this.x = polygon.x - (polygon.width / 2);
-		this.y = polygon.y - (polygon.height / 2);
+		this.x = polygon.x;
+		this.y = polygon.y;
 		this.width = polygon.width;
 		this.height = polygon.height;
 		this.rotation = polygon.angle;

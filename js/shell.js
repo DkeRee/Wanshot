@@ -3,11 +3,13 @@ const NORMAL_SHELL = 4;
 class HitParticle {
 	constructor(x, y) {
 		//particle body (IT IS A SQUARE)
-		this.side = 7;
+		this.side = HIT_PARTICLE_SIDE;
 
 		//particle info
 		this.x = x;
 		this.y = y;
+		this.centerX = this.x + this.side / 2;
+		this.centerY = this.y + this.side / 2;
 		this.angle = (Math.floor(Math.random() * 360)) * Math.PI / 180;
 		this.opacity = 1;
 		this.speed = 7;
@@ -25,6 +27,9 @@ class HitParticle {
 		this.x += this.speed * Math.cos(this.angle);
 		this.y += this.speed * Math.sin(this.angle);
 
+		this.centerX = this.x + this.side / 2;
+		this.centerY = this.y + this.side / 2;
+
 		//update opacity and speed
 		this.opacity -= 0.08;
 		this.speed -= 0.05;
@@ -41,7 +46,7 @@ class HitParticle {
 		ctx.shadowColor = this.color;
 		ctx.save();
 
-		ctx.translate(this.x, this.y);
+		ctx.translate(this.centerX, this.centerY);
 		ctx.rotate(this.angle);
 
 		//color in rgba to support opacity
@@ -56,7 +61,7 @@ class HitParticle {
 class TrailParticle {
 	constructor(x, y) {
 		//particle body (IT IS A CIRCLE)
-		this.radius = 5;
+		this.radius = TRAIL_PARTICLE_RADIUS;
 
 		//particle info
 		this.x = x;
@@ -102,8 +107,8 @@ class TrailParticle {
 class Shell {
 	constructor(x, y, bulletType, angle, tankID) {
 		//body
-		this.width = 10;
-		this.height = 7;
+		this.width = SHELL_WIDTH;
+		this.height = SHELL_HEIGHT;
 		this.color = "#D3D3D3";
 		this.explode = false;
 
@@ -117,6 +122,8 @@ class Shell {
 		//bullet info
 		this.x = x;
 		this.y = y;
+		this.centerX = this.x + this.width / 2;
+		this.centerY = this.y + this.height / 2;
 		this.angle = angle;
 		this.speed = bulletType;
 		this.tankID = tankID;
@@ -129,7 +136,7 @@ class Shell {
 	makeHitParticles() {
 		//MAKE 50 HIT PARTICLES
 		for (var i = 0; i < 50; i++) {
-			this.hitParticles.push(new HitParticle(this.x, this.y));
+			this.hitParticles.push(new HitParticle(this.centerX - HIT_PARTICLE_SIDE / 2, this.centerY - HIT_PARTICLE_SIDE / 2));
 		}
 	}
 
@@ -170,11 +177,14 @@ class Shell {
 			INTERMISSION = true;
 
 			//add tank grave
-			STAGE_CACHE.graves.push(new Grave(player.tank.x, player.tank.y, player.tank.color));
+			STAGE_CACHE.graves.push(new Grave(player.tank.centerX - GRAVE_WIDTH / 2, player.tank.centerY - GRAVE_HEIGHT / 2, player.tank.color));
 		}
 	}
 
 	update() {
+		this.centerX = this.x + this.width / 2;
+		this.centerY = this.y + this.height / 2;
+
 		//UPDATE PARTICLES IF PLAYER IS NOT DEAD
 		if (!STAGE_CACHE.player.dead) {
 			//HIT PARTICLES
@@ -208,7 +218,7 @@ class Shell {
 
 			if (this.trailParticleDelay > 5) {
 				this.trailParticleDelay = 0;
-				this.trailParticles.push(new TrailParticle(this.x, this.y));
+				this.trailParticles.push(new TrailParticle(this.centerX - TRAIL_PARTICLE_RADIUS / 2, this.centerY - TRAIL_PARTICLE_RADIUS / 2));
 			}
 
 			this.x += this.speed * Math.cos(this.angle);
@@ -257,7 +267,7 @@ class Shell {
 		ctx.shadowColor = "black";
 		ctx.save();
 
-		ctx.translate(this.x, this.y);
+		ctx.translate(this.centerX, this.centerY);
 		ctx.rotate(this.angle);
 
 		ctx.fillStyle = this.color;

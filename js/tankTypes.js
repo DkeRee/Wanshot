@@ -30,10 +30,10 @@ class Player {
 		const xInc = this.tank.speed * Math.cos(this.tank.angle);
 		const yInc = this.tank.speed * Math.sin(this.tank.angle);
 
-		const leftSide = this.tank.x - this.tank.width / 2;
-		const rightSide = this.tank.x + this.tank.width / 2;
-		const bottomSide = this.tank.y + this.tank.height / 2;
-		const topSide = this.tank.y - this.tank.height / 2;
+		const leftSide = this.tank.x;
+		const rightSide = this.tank.x + this.tank.width;
+		const bottomSide = this.tank.y + this.tank.height;
+		const topSide = this.tank.y;
 
 		//if tank is NOT SHELLSHOCKED and isn't dead
 		if (this.shellShock > 0 && !this.dead) {
