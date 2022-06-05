@@ -152,8 +152,8 @@ class Tank {
 		//body
 		this.width = TANK_WIDTH;
 		this.height = TANK_HEIGHT;
-		this.turretBaseSide = 20;
-		this.turretNozzleWidth = 20;
+		this.turretBaseSide = 19;
+		this.turretNozzleWidth = 21;
 		this.turretNozzleHeight = 10;
 
 		//particles done this way to delay particle a bit
@@ -256,7 +256,9 @@ class Tank {
 		//RENDER THIS IF TANK IS STILL ALIVE//
 		if (!isDead) {
 			ctx.shadowBlur = 3;
-			ctx.shadowBlur = this.color;
+			ctx.shadowColor = this.color;
+
+			//draw tank
 			ctx.save();
 
 			ctx.translate(this.centerX, this.centerY);
@@ -305,6 +307,20 @@ class Tank {
 		//RENDER TANK EXPLOSION PARTICLES
 		for (var i = 0; i < this.explosionParticles.length; i++) {
 			this.explosionParticles[i].render();
+		}
+	}
+
+	renderShadow(isDead) {
+		if (!isDead) {
+			ctx.save();
+
+			ctx.translate(this.centerX - 5, this.centerY + 5);
+			ctx.rotate(this.angle);
+
+			ctx.fillStyle = SHADOW;
+			ctx.fillRect(this.width / -2, this.height / -2, this.width, this.height);
+
+			ctx.restore();
 		}
 	}
 }

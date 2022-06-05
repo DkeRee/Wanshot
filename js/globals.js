@@ -1,5 +1,5 @@
-const CANVAS_WIDTH = 800;
-const CANVAS_HEIGHT = 550;
+const CANVAS_WIDTH = 910;
+const CANVAS_HEIGHT = 700;
 
 //INIT CANVAS/
 canvas.width = CANVAS_WIDTH;
@@ -37,8 +37,8 @@ const TRACK_HEIGHT = 7;
 const GRAVE_WIDTH = 10;
 const GRAVE_HEIGHT = 30;
 
-const TANK_WIDTH = 45;
-const TANK_HEIGHT = 35;
+const TANK_WIDTH = 43;
+const TANK_HEIGHT = 33;
 
 const HIT_PARTICLE_SIDE = 7;
 
@@ -47,5 +47,7 @@ const TRAIL_PARTICLE_RADIUS = 5;
 const SHELL_WIDTH = 10;
 const SHELL_HEIGHT = 7;
 
-const TILE_WIDTH = 50;
-const TILE_HEIGHT = 50;
+const TILE_WIDTH = 35;
+const TILE_HEIGHT = 35;
+
+const SHADOW = "rgba(0, 0, 0, 0.3)";

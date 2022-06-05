@@ -7,7 +7,8 @@
 	var trackUpdate = 0;
 
 	//init game
-	const BACKGROUND_COLOR = "#C2995D";
+	const BACKGROUND_COLOR_STRONG = "#C2995D";
+	const BACKGROUND_COLOR_WEAK = "#FFDFA8";
 	CURR_LEVEL = 0;
 	STAGE_CACHE = levelCloner(CURR_LEVEL);
 
@@ -88,9 +89,25 @@
 		
 		ctx.clearRect(0, 0, canvas.width, canvas.height);
 
+		//background gradient
+		var grd = ctx.createRadialGradient(canvas.width / 2, canvas.height / 2, CANVAS_WIDTH / 2.1, canvas.width / 2, canvas.height / 2, CANVAS_WIDTH);
+		grd.addColorStop(0, BACKGROUND_COLOR_STRONG);
+		grd.addColorStop(1, BACKGROUND_COLOR_WEAK);
+
 		//RENDER BACKGROUND//
-		ctx.fillStyle = BACKGROUND_COLOR;
+		ctx.fillStyle = grd;
 		ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+		//RENDER OBJECT SHADOWS//
+		for (var i = 0; i < STAGE_CACHE.tiles.length; i++) {
+			STAGE_CACHE.tiles[i].renderShadow();
+		}
+
+		for (var i = 0; i < STAGE_CACHE.shells.length; i++) {
+			STAGE_CACHE.shells[i].renderShadow();
+		}
+
+		STAGE_CACHE.player.renderShadow();
 
 		//RENDER OBJECTS//
 		for (var i = 0; i < STAGE_CACHE.tracks.length; i++) {
@@ -101,12 +118,12 @@
 			STAGE_CACHE.graves[i].render();
 		}
 
-		for (var i = 0; i < STAGE_CACHE.shells.length; i++) {
-			STAGE_CACHE.shells[i].render();
-		}
-
 		for (var i = 0; i < STAGE_CACHE.tiles.length; i++) {
 			STAGE_CACHE.tiles[i].render();
+		}
+
+		for (var i = 0; i < STAGE_CACHE.shells.length; i++) {
+			STAGE_CACHE.shells[i].render();
 		}
 
 		STAGE_CACHE.player.render();

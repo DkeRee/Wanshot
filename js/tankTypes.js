@@ -99,4 +99,8 @@ class Player {
 	render() {
 		this.tank.render(this.dead);
 	}
+
+	renderShadow() {
+		this.tank.renderShadow(this.dead);
+	}
 }

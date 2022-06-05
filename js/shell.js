@@ -315,4 +315,16 @@ class Shell {
 		}
 		ctx.shadowBlur = 0;
 	}
+
+	renderShadow() {
+		ctx.save();
+
+		ctx.translate(this.centerX - 5, this.centerY + 5);
+		ctx.rotate(this.angle);
+
+		ctx.fillStyle = SHADOW;
+		ctx.fillRect(this.width / -2, this.height / -2, this.width, this.height);
+
+		ctx.restore();
+	}
 }

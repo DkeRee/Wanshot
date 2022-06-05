@@ -9,8 +9,8 @@
 
 	const BACKGROUND_COLOR = "#C2995D";
 
-	const CANVAS_WIDTH = 800;
-	const CANVAS_HEIGHT = 550;
+	const CANVAS_WIDTH = 910;
+	const CANVAS_HEIGHT = 700;
 
 	//DELTA TIME
 	const FPS_INTERVAL = 1000/100;
@@ -26,7 +26,7 @@
 	canvas.width = CANVAS_WIDTH;
 	canvas.height = CANVAS_HEIGHT;
 
-	const boxSize = 50;
+	const boxSize = 35;
 	const AREA = (CANVAS_WIDTH / boxSize) * (CANVAS_HEIGHT / boxSize);
 	const grid = [];
 
@@ -100,7 +100,7 @@
 	for (var i = 0; i < AREA; i++) {
 		grid.push(new Box(x, y));
 
-		if (x + boxSize == 800) {
+		if (x + boxSize == CANVAS_WIDTH) {
 			x = 0;
 			y += boxSize;
 		} else {
@@ -155,7 +155,7 @@
 		var blockExport = "tiles: [";
 
 		for (blockID in exportedBlocks) {
-			blockExport += exportedBlocks[blockID]
+			blockExport += exportedBlocks[blockID];
 
 			if (Number(blockID) !== exportedBlocks.length - 1) {
 				blockExport += ", ";
