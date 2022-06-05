@@ -99,6 +99,8 @@
 		ctx.fillRect(0, 0, canvas.width, canvas.height);
 
 		//RENDER OBJECT SHADOWS//
+		STAGE_CACHE.player.renderShadow();
+		
 		for (var i = 0; i < STAGE_CACHE.tiles.length; i++) {
 			STAGE_CACHE.tiles[i].renderShadow();
 		}
@@ -106,8 +108,6 @@
 		for (var i = 0; i < STAGE_CACHE.shells.length; i++) {
 			STAGE_CACHE.shells[i].renderShadow();
 		}
-
-		STAGE_CACHE.player.renderShadow();
 
 		//RENDER OBJECTS//
 		for (var i = 0; i < STAGE_CACHE.tracks.length; i++) {
@@ -118,6 +118,8 @@
 			STAGE_CACHE.graves[i].render();
 		}
 
+		STAGE_CACHE.player.render();
+
 		for (var i = 0; i < STAGE_CACHE.tiles.length; i++) {
 			STAGE_CACHE.tiles[i].render();
 		}
@@ -125,8 +127,6 @@
 		for (var i = 0; i < STAGE_CACHE.shells.length; i++) {
 			STAGE_CACHE.shells[i].render();
 		}
-
-		STAGE_CACHE.player.render();
 
 		//render intermission
 		if (INTERMISSION) {

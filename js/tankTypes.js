@@ -1,7 +1,7 @@
 //TANK TYPES
 class Player {
 	constructor(x, y, angle, turretAngle) {
-		this.tank = new Tank(x, y, angle, turretAngle, "#224ACF", "#0101BA", 1.7);
+		this.tank = new Tank(x, y, angle, turretAngle, "#224ACF", "#1E42B8", "#0101BA", 1.7);
 		this.dead = false;
 		this.tankID = PLAYER_ID;
 

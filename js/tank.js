@@ -148,7 +148,7 @@ class Grave {
 
 //TANK CONSTRUCTOR
 class Tank {
-	constructor(x, y, angle, turretAngle, color, sideColor, speed) {
+	constructor(x, y, angle, turretAngle, color, turretColor, sideColor, speed) {
 		//body
 		this.width = TANK_WIDTH;
 		this.height = TANK_HEIGHT;
@@ -171,6 +171,7 @@ class Tank {
 		this.angle = angle;
 		this.turretAngle = turretAngle;
 		this.color = color;
+		this.turretColor = turretColor;
 		this.sideColor = sideColor;
 	}
 
@@ -287,14 +288,18 @@ class Tank {
 			ctx.translate(this.centerX, this.centerY);
 			ctx.rotate(this.turretAngle);
 			ctx.lineWidth = 5;
-			ctx.fillStyle = this.color;
 			ctx.strokeStyle = "black";
 
+			ctx.shadowBlur = 20;
+			ctx.shadowColor = this.color;
+
 			//turret base
+			ctx.fillStyle = this.turretColor;
 			ctx.strokeRect(this.turretBaseSide / -2, this.turretBaseSide / -2, this.turretBaseSide, this.turretBaseSide);
 			ctx.fillRect(this.turretBaseSide / -2, this.turretBaseSide / -2, this.turretBaseSide, this.turretBaseSide);
 
 			//turret nozzle
+			ctx.fillStyle = this.turretColor;
 			ctx.strokeRect(this.turretNozzleWidth / 2, this.turretNozzleHeight / -2, this.turretNozzleWidth, this.turretNozzleHeight);
 			ctx.fillRect(this.turretNozzleWidth / 2, this.turretNozzleHeight / -2, this.turretNozzleWidth, this.turretNozzleHeight);
 
