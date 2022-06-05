@@ -257,7 +257,7 @@ class Shell {
 
 			if (this.trailParticleDelay > 5) {
 				this.trailParticleDelay = 0;
-				this.trailParticles.push(new TrailParticle(this.centerX - TRAIL_PARTICLE_RADIUS / 2, this.centerY - TRAIL_PARTICLE_RADIUS / 2));
+				this.trailParticles.push(new TrailParticle(this.centerX, this.centerY));
 			}
 
 			this.x += this.speed * Math.cos(this.angle);
