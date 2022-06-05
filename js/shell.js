@@ -130,6 +130,9 @@ class Shell {
 		this.id = Math.floor(Math.random() * 100000);
 		this.ricochet = 0;
 
+		//added peace mode for proper wall collision deaths
+		this.peace = true;
+
 		this.makeHitParticles();
 	}
 
@@ -143,14 +146,14 @@ class Shell {
 	//COLLISION CHECKS
 	bounceX() {
 		this.angle = Math.PI - this.angle;
-		this.x += this.speed * Math.cos(this.angle);
+		this.x += this.speed * 2 * Math.cos(this.angle);
 				
 		this.makeHitParticles();
 	}
 
 	bounceY() {
 		this.angle = 2 * Math.PI - this.angle;
-		this.y += this.speed * Math.sin(this.angle);
+		this.y += this.speed * 2 * Math.sin(this.angle);
 
 		this.makeHitParticles();
 	}
@@ -163,6 +166,11 @@ class Shell {
 
 			//initial collision detection
 			if (SAT(this, tile).collision) {
+				//if peace mode is on and it hit tile, removal peace mode
+				if (this.peace) {
+					this.peace = false;
+				}
+
 				//left or right collision
 				if ((this.x + this.width >= tile.x) || (this.x <= tile.x + tile.width)) {
 					this.bounceX();
@@ -201,9 +209,17 @@ class Shell {
 
 	shellWithPlayer() {
 		const player = STAGE_CACHE.player;
+		const SATCollision = SAT(this, player.tank);
 
-		if (SAT(this, player.tank).collision && !player.dead) {
-			//SHELL COLLIDED WITH PLAYER AND PLAYER IS NOT DEAD
+		//wait for bullet to leave contact of tank then remove peace mode
+		if (this.peace) {
+			if (!SATCollision.collision) {
+				this.peace = false;
+			}
+		}
+
+		if (SATCollision.collision && !player.dead && !this.peace) {
+			//SHELL COLLIDED WITH PLAYER AND PLAYER IS NOT DEAD && SHELL IS NOT IN PEACE MODE
 
 			//explode this shell
 			this.makeHitParticles();
@@ -221,9 +237,6 @@ class Shell {
 	}
 
 	update() {
-		this.centerX = this.x + this.width / 2;
-		this.centerY = this.y + this.height / 2;
-
 		//UPDATE PARTICLES IF PLAYER IS NOT DEAD
 		if (!STAGE_CACHE.player.dead) {
 			//HIT PARTICLES
@@ -263,6 +276,9 @@ class Shell {
 			this.x += this.speed * Math.cos(this.angle);
 			this.y += this.speed * Math.sin(this.angle);
 
+			this.centerX = this.x + this.width / 2;
+			this.centerY = this.y + this.height / 2;
+
 			//COLLISIONS
 
 			this.shellWithShell();
@@ -272,12 +288,14 @@ class Shell {
 			//LEFT AND RIGHT WALL
 			if (this.x - this.width / 2 <= 0 || this.x + this.width / 2 >= CANVAS_WIDTH) {
 				this.bounceX();
+				this.peace = false;
 				this.ricochet++;
 			}
 
 			//TOP AND BOTTOM WALL
 			if (this.y - this.height / 2 <= 0 || this.y + this.height / 2 >= CANVAS_HEIGHT) {
 				this.bounceY();
+				this.peace = false;
 				this.ricochet++;
 			}
 
