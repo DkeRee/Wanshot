@@ -5,7 +5,7 @@ function levelCloner(CURR_LEVEL) {
 		graves: [],
 		tracks: [],
 		tiles: [],
-		enemies: []
+		mines: []
 	};
 	const LOCATED_LEVEL = LEVEL[CURR_LEVEL];
 

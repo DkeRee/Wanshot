@@ -13,7 +13,7 @@ class TankParticle {
 		this.speed = 10;
 		this.explode = false;
 
-		//RED, ORANGE, GREY
+		//RED, ORANGE, GREY, TANK COLOR
 		this.possibleColors = ["#ED4245", "#FFA500", "#808080", tankColor];
 		this.color = this.possibleColors[Math.floor(Math.random() * this.possibleColors.length)];
 	}
@@ -185,6 +185,11 @@ class Tank {
 		const angle = Math.atan2(targetCoords.y - this.centerY, targetCoords.x - this.centerX);
 		const initialBoost = 20;
 		STAGE_CACHE.shells.push(new Shell(this.centerX - SHELL_WIDTH / 2 + (initialBoost * Math.cos(angle)), this.centerY - SHELL_HEIGHT / 2 + (initialBoost * Math.sin(angle)), shellType, angle, tankID));
+	}
+
+	//lay mine
+	layMine(tankID) {
+		STAGE_CACHE.mines.push(new Mine(this.centerX, this.centerY, tankID));
 	}
 
 	//update track marks

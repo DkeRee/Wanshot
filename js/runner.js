@@ -58,6 +58,23 @@
 				track.update();
 			}
 
+			for (var i = 0; i < STAGE_CACHE.mines.length; i++) {
+				const mine = STAGE_CACHE.mines[i];
+
+				if (mine.explode) {
+					//update mine layed for tanks
+					if (mine.tankID == PLAYER_ID) {
+						STAGE_CACHE.player.mineLayed--;
+					}
+
+					//DELETE MINE
+					STAGE_CACHE.mines.splice(i, 1);
+					continue;
+				}
+
+				mine.update();
+			}
+
 			for (var i = 0; i < STAGE_CACHE.shells.length; i++) {
 				const shell = STAGE_CACHE.shells[i];
 
@@ -102,6 +119,10 @@
 		for (var i = 0; i < STAGE_CACHE.shells.length; i++) {
 			STAGE_CACHE.shells[i].renderShadow();
 		}
+
+		for (var i = 0; i < STAGE_CACHE.mines.length; i++) {
+			STAGE_CACHE.mines[i].renderShadow();
+		}
 		
 		STAGE_CACHE.player.renderShadow();
 
@@ -120,6 +141,10 @@
 
 		for (var i = 0; i < STAGE_CACHE.shells.length; i++) {
 			STAGE_CACHE.shells[i].render();
+		}
+
+		for (var i = 0; i < STAGE_CACHE.mines.length; i++) {
+			STAGE_CACHE.mines[i].render();
 		}
 
 		STAGE_CACHE.player.render();
