@@ -106,60 +106,63 @@ class Mine {
 	}
 
 	update() {
-		//update countdown
-		this.countdown -= 1;
+		//update if player isn't dead
+		if (!STAGE_CACHE.player.dead) {
+			//update countdown
+			this.countdown -= 1;
 
-		//update mine explosion particles
-		for (var i = 0; i < this.mineParticles.length; i++) {
-			const mineParticle = this.mineParticles[i];
+			//update mine explosion particles
+			for (var i = 0; i < this.mineParticles.length; i++) {
+				const mineParticle = this.mineParticles[i];
 
-			//DELETE PARTICLE
-			if (mineParticle.explode) {
-				this.mineParticles.splice(i, 1);
-				continue;
-			}
-
-			mineParticle.update();
-		}
-
-		//if mine is within 100 milliseconds of exploding start flashing
-		if (this.countdown <= 100) {
-			this.colorCountdown -= 1;
-
-			if (this.colorCountdown <= 0) {
-				//a little delay for flashing
-				this.colorCountdown = 5;
-
-				if (this.currentColor == this.color) {
-					this.currentColor = this.flashingColor;
-				} else {
-					this.currentColor = this.color;
+				//DELETE PARTICLE
+				if (mineParticle.explode) {
+					this.mineParticles.splice(i, 1);
+					continue;
 				}
+
+				mineParticle.update();
 			}
-		}
 
-		if (this.exploding) {
-			//mine is in the process of exploding
-			this.fuse -= 1;
+			//if mine is within 100 milliseconds of exploding start flashing
+			if (this.countdown <= 100) {
+				this.colorCountdown -= 1;
 
-			this.particleDelay++;
+				if (this.colorCountdown <= 0) {
+					//a little delay for flashing
+					this.colorCountdown = 5;
 
-			if (this.particleDelay > 1 && this.fuse > 20) {
-				this.particleDelay = 0;
-
-				//create 50 mine explosion particles
-				for (var i = 0; i < 50; i++) {
-					this.mineParticles.push(new MineParticle(this.x - MINE_PARTICLE_SIDE / 2, this.y - MINE_PARTICLE_SIDE / 2));
+					if (this.currentColor == this.color) {
+						this.currentColor = this.flashingColor;
+					} else {
+						this.currentColor = this.color;
+					}
 				}
 			}
 
-			if (this.fuse <= 0) {
-				//explosion has runout and no more particles, delete mine
-				this.explode = true;
+			if (this.exploding) {
+				//mine is in the process of exploding
+				this.fuse -= 1;
+
+				this.particleDelay++;
+
+				if (this.particleDelay > 1 && this.fuse > 20) {
+					this.particleDelay = 0;
+
+					//create 50 mine explosion particles
+					for (var i = 0; i < 50; i++) {
+						this.mineParticles.push(new MineParticle(this.x - MINE_PARTICLE_SIDE / 2, this.y - MINE_PARTICLE_SIDE / 2));
+					}
+				}
+
+				if (this.fuse <= 0) {
+					//explosion has runout and no more particles, delete mine
+					this.explode = true;
+				}
+			} else if (this.countdown <= 0) {
+				//execute explosion, countdown has ended
+				this.exploding = true;
 			}
-		} else if (this.countdown <= 0) {
-			//execute explosion, countdown has ended
-			this.exploding = true;
 		}
 	}
 
