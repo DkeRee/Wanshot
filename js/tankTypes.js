@@ -92,8 +92,15 @@ class Player {
 	}
 	
 	explode() {
+		//die
 		this.dead = true;
 		this.tank.explodeTank();
+
+		//start intermission
+		INTERMISSION = true;
+
+		//add grave
+		STAGE_CACHE.graves.push(new Grave(this.tank.centerX - GRAVE_WIDTH / 2, this.tank.centerY - GRAVE_HEIGHT / 2, this.tank.color));
 	}
 
 	shoot() {

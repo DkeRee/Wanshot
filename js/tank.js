@@ -201,7 +201,7 @@ class Tank {
 	tankWithTile() {
 		for (var i = 0; i < STAGE_CACHE.tiles.length; i++) {
 			const tile = STAGE_CACHE.tiles[i];
-			const SATCollision = SAT(this, tile);
+			const SATCollision = SAT_POLYGON(this, tile);
 
 			if (SATCollision.collision) {
 				this.x += SATCollision.normal.x * SATCollision.depth / 2;

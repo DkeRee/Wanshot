@@ -67,7 +67,7 @@ class Mine {
 	constructor(x, y, tankID) {
 		//mine body
 		this.radius = MINE_RADIUS;
-		this.explosionRadius = MINE_EXPLOSION_RADIUS;
+		this.explosionRadius = 0;
 
 		//tankID
 		this.tankID = tankID;
@@ -90,7 +90,7 @@ class Mine {
 		this.particleDelay = 0;
 
 		//countdown for mine to explode
-		this.countdown = 200;
+		this.countdown = 800;
 
 		//color countdown
 		this.colorCountdown = 5;
@@ -103,6 +103,50 @@ class Mine {
 
 		//this mine has finished exploding, delete
 		this.explode = false;
+	}
+
+	quickExplode() {
+		this.countdown = 0;
+		this.exploding = true;
+	}
+
+	mineWithPlayer() {
+		const player = STAGE_CACHE.player;
+
+		if (SAT_POLYGON_CIRCLE(player.tank, {
+			x: this.x,
+			y: this.y,
+			radius: this.explosionRadius
+		}) && !player.dead) {
+			//MINE EXPLODED NEAR PLAYER && PLAYER ISNT DEAD
+
+			//exploed player tank
+			player.explode();
+		}
+	}
+
+	mineWithMine() {
+		if (this.exploding) {
+			for (var i = 0; i < STAGE_CACHE.mines.length; i++) {
+				const thisMine = {
+					x: this.x,
+					y: this.y,
+					radius: this.explosionRadius
+				};
+
+				const mineB = STAGE_CACHE.mines[i];
+				const otherMine = {
+					x: mineB.x,
+					y: mineB.y,
+					radius: mineB.radius
+				};
+
+				if (CIRCLE_WITH_CIRCLE(thisMine, otherMine) && !otherMine.exploding) {
+					//MINE HAS COLLIDED WITH OTHER MINE RADIUS && OTHER MINE IS NOT IN THE MIDDLE OF EXPLODING
+					mineB.quickExplode();
+				}
+			}
+		}
 	}
 
 	update() {
@@ -146,11 +190,19 @@ class Mine {
 
 				this.particleDelay++;
 
+				//COLLISIONS
+				this.mineWithPlayer();
+				this.mineWithMine();
+
 				if (this.particleDelay > 1 && this.fuse > 20) {
 					this.particleDelay = 0;
 
-					//create 50 mine explosion particles
-					for (var i = 0; i < 50; i++) {
+					if (this.explosionRadius < MINE_EXPLOSION_RADIUS) {
+						this.explosionRadius += 20;
+					}
+
+					//create 30 mine explosion particles
+					for (var i = 0; i < 30; i++) {
 						this.mineParticles.push(new MineParticle(this.x - MINE_PARTICLE_SIDE / 2, this.y - MINE_PARTICLE_SIDE / 2));
 					}
 				}
@@ -173,7 +225,7 @@ class Mine {
 		}
 
 		if (!this.exploding) {
-			ctx.shadowBlur = 5;
+			ctx.shadowBlur = 10;
 			ctx.shadowColor = this.currentColor;
 			ctx.fillStyle = this.currentColor;
 			ctx.beginPath();

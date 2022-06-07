@@ -72,6 +72,14 @@ class Polygon {
 	}
 }
 
+class Circle {
+	constructor(circle) {
+		this.x = circle.x;
+		this.y = circle.y;
+		this.radius = circle.radius;
+	}
+}
+
 function mean(polygon) {
 	var xSum = 0;
 	var ySum = 0;
@@ -88,24 +96,96 @@ function dotProduct(pointA, pointB) {
 	return pointA.x * pointB.x + pointA.y * pointB.y; 
 }
 
-function vectorLength(vector) {
+function getMagnitude(vector) {
 	return Math.sqrt(Math.pow(vector.x, 2) + Math.pow(vector.y, 2));
 }
 
 function normalizeVector(vector) {
-	const invLen = 1 / vectorLength(vector);
+	const invLen = 1 / getMagnitude(vector);
 	vector.x *= invLen;
 	vector.y *= invLen;
 
 	return vector;
 }
 
-function SAT(rectOne, rectTwo) {
-	const polygonOne = new Polygon(rectOne);
-	const polygonTwo = new Polygon(rectTwo);
+function CIRCLE_WITH_CIRCLE(circleA, circleB) {
+	const radiusDistance = circleA.radius + circleB.radius;
+	const distanceX = circleA.x - circleB.x;
+	const distanceY = circleA.y - circleB.y;
+	const distance = Math.sqrt(Math.pow(distanceX, 2) + Math.pow(distanceY, 2));
+
+	if (distance < radiusDistance) {
+		return true;
+	}
+	return false;
+}
+
+//polygon to circle collision
+function SAT_POLYGON_CIRCLE(poly, circ) {
+	const polygon = new Polygon(poly);
+	const circle = new Circle(circ);
 
 	//set up perpendicular edges
-	var perpendicularEdges = [];
+	const perpendicularEdges = [];
+	for (var i = 0; i < polygon.edges.length; i++) {
+		const perpendicularLine = new xy(-polygon.edges[i].y, polygon.edges[i].x);
+		perpendicularEdges.push(normalizeVector(perpendicularLine));
+	}
+
+	//project shapes
+	for (var i = 0; i < perpendicularEdges.length; i++) {
+		const perpLine = perpendicularEdges[i];
+		var amin = null;
+		var amax = null;
+		var bmin = null;
+		var bmax = null;
+
+		//project polygon
+		for (var j = 0; j < polygon.vertices.length; j++) {
+			var dot = dotProduct(polygon.vertices[j], perpLine);
+		
+			if (amax == null || dot > amax) {
+				amax = dot;
+			}
+			if (amin == null || dot < amin) {
+				amin = dot;
+			}
+		}
+
+		//project circle
+		const dir = normalizeVector(perpLine);
+		const edgeX = dir.x * circle.radius;
+		const edgeY = dir.y * circle.radius;
+
+		const p1 = new xy(circle.x + edgeX, circle.y + edgeY);
+		const p2 = new xy(circle.x - edgeX, circle.y - edgeY);
+
+		bmin = dotProduct(p1, perpLine);
+		bmax = dotProduct(p2, perpLine);
+
+		//swap min and max values if min is greater than max (we guessed wrong)
+		if (bmin > bmax) {
+			const t = bmin;
+			bmin = bmax;
+			bmax = t;
+		}
+
+		//check if the shapes are touching from the ultimate dot products
+		if (amin >= bmax || bmin >= amax) {
+			return false;
+		}
+	}
+
+	return true;
+}
+
+//polygon to polygon collision
+function SAT_POLYGON(polygonA, polygonB) {
+	const polygonOne = new Polygon(polygonA);
+	const polygonTwo = new Polygon(polygonB);
+
+	//set up perpendicular edges
+	const perpendicularEdges = [];
 	for (var i = 0; i < polygonOne.edges.length; i++) {
 		const perpendicularLine = new xy(-polygonOne.edges[i].y, polygonOne.edges[i].x);
 		perpendicularEdges.push(perpendicularLine);
@@ -128,17 +208,17 @@ function SAT(rectOne, rectTwo) {
 	//shortest vector/depth of collision
 	var depth = Infinity;
 
+	//project vertices
 	for (var i = 0; i < perpendicularEdges.length; i++) {
 		const perpLine = perpendicularEdges[i];
-		var dot = 0;
 		var amin = null;
 		var amax = null;
 		var bmin = null;
 		var bmax = null;
 
-		//calculate dot product of verticies with each perpendicular edge
+		//calculate dot product of verticies with each perpendicular edge AKA project vertices
 		for (var j = 0; j < polygonOne.vertices.length; j++) {
-			dot = dotProduct(polygonOne.vertices[j], perpLine);
+			var dot = dotProduct(polygonOne.vertices[j], perpLine);
 		
 			if (amax == null || dot > amax) {
 				amax = dot;
@@ -149,7 +229,7 @@ function SAT(rectOne, rectTwo) {
 		}
 
 		for (var j = 0; j < polygonTwo.vertices.length; j++) {
-			dot = dotProduct(polygonTwo.vertices[j], perpLine)
+			var dot = dotProduct(polygonTwo.vertices[j], perpLine)
 
 			if (bmax == null || dot > bmax) {
 				bmax = dot;
@@ -179,7 +259,7 @@ function SAT(rectOne, rectTwo) {
 		}
 	}
 	
-	depth /= vectorLength(normal);
+	depth /= getMagnitude(normal);
 	normal = normalizeVector(normal);
 
 	//calculate centers of polygons to ensure our normal is pointing same direction

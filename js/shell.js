@@ -130,6 +130,9 @@ class Shell {
 		this.id = Math.floor(Math.random() * 100000);
 		this.ricochet = 0;
 
+		//bullet will now fade away because of max collision
+		this.diminish = false;
+
 		//added peace mode for proper wall collision deaths
 		this.peace = true;
 
@@ -158,6 +161,25 @@ class Shell {
 		this.makeHitParticles();
 	}
 
+	shellWithMine() {
+		for (var i = 0; i < STAGE_CACHE.mines.length; i++) {
+			const mine = STAGE_CACHE.mines[i];
+
+			if (SAT_POLYGON_CIRCLE(this, {
+				x: mine.x,
+				y: mine.y,
+				radius: mine.radius
+			}) && !mine.exploding) {
+				//explode this shell
+				this.makeHitParticles();
+				this.diminish = true;
+
+				//explode mine
+				mine.quickExplode();
+			}
+		}
+	}
+
 	shellWithTile() {
 		for (var i = 0; i < STAGE_CACHE.tiles.length; i++) {
 			const tile = STAGE_CACHE.tiles[i];
@@ -165,7 +187,7 @@ class Shell {
 			//special thanks to Shakkar23 for this method!
 
 			//initial collision detection
-			if (SAT(this, tile).collision) {
+			if (SAT_POLYGON(this, tile).collision) {
 				//if peace mode is on and it hit tile, removal peace mode
 				if (this.peace) {
 					this.peace = false;
@@ -177,7 +199,7 @@ class Shell {
 				}
 
 				//top or bottom collision
-				if (SAT(this, tile).collision) {
+				if (SAT_POLYGON(this, tile).collision) {
 					//reset angle to pre bounceX collision for a y ricochet
 					this.angle = Math.PI - this.angle;
 					this.bounceY();
@@ -192,7 +214,7 @@ class Shell {
 		for (var i = 0; i < STAGE_CACHE.shells.length; i++) {
 			const otherShell = STAGE_CACHE.shells[i];
 
-			if (SAT(this, otherShell).collision && this.id !== otherShell.id) {
+			if (SAT_POLYGON(this, otherShell).collision && this.id !== otherShell.id && !otherShell.diminish) {
 				//SHELL COLLIDED WITH OTHER SHELL
 
 				//explode this shell
@@ -200,16 +222,15 @@ class Shell {
 				otherShell.makeHitParticles();
 
 				//explode other shell
-				this.explode = true;
-				otherShell.explode = true;
-
+				this.diminish = true;
+				otherShell.diminish = true;
 			}
 		}
 	}
 
 	shellWithPlayer() {
 		const player = STAGE_CACHE.player;
-		const SATCollision = SAT(this, player.tank);
+		const SATCollision = SAT_POLYGON(this, player.tank);
 
 		//wait for bullet to leave contact of tank then remove peace mode
 		if (this.peace) {
@@ -219,20 +240,14 @@ class Shell {
 		}
 
 		if (SATCollision.collision && !player.dead && !this.peace) {
-			//SHELL COLLIDED WITH PLAYER AND PLAYER IS NOT DEAD && SHELL IS NOT IN PEACE MODE
+			//SHELL COLLIDED WITH PLAYER && PLAYER IS NOT DEAD && SHELL IS NOT IN PEACE MODE
 
 			//explode this shell
 			this.makeHitParticles();
-			this.explode = true;
+			this.diminish = true;
 
 			//explode player tank
 			player.explode();
-
-			//start intermission
-			INTERMISSION = true;
-
-			//add tank grave
-			STAGE_CACHE.graves.push(new Grave(player.tank.centerX - GRAVE_WIDTH / 2, player.tank.centerY - GRAVE_HEIGHT / 2, player.tank.color));
 		}
 	}
 
@@ -273,76 +288,91 @@ class Shell {
 				this.trailParticles.push(new TrailParticle(this.centerX, this.centerY));
 			}
 
-			this.x += this.speed * Math.cos(this.angle);
-			this.y += this.speed * Math.sin(this.angle);
+			//update coordinate of shell and collisions if not diminishing
+			if (!this.diminish) {
+				//UPDATE COORDINATES
+				this.x += this.speed * Math.cos(this.angle);
+				this.y += this.speed * Math.sin(this.angle);
 
-			this.centerX = this.x + this.width / 2;
-			this.centerY = this.y + this.height / 2;
+				this.centerX = this.x + this.width / 2;
+				this.centerY = this.y + this.height / 2;
 
-			//COLLISIONS
+				//COLLISIONS
+				this.shellWithShell();
+				this.shellWithMine();
+				this.shellWithPlayer();
+				this.shellWithTile();
 
-			this.shellWithShell();
-			this.shellWithPlayer();
-			this.shellWithTile();
+				//LEFT AND RIGHT WALL
+				if (this.x - this.width / 2 <= 0 || this.x + this.width / 2 >= CANVAS_WIDTH) {
+					this.bounceX();
+					this.peace = false;
+					this.ricochet++;
+				}
 
-			//LEFT AND RIGHT WALL
-			if (this.x - this.width / 2 <= 0 || this.x + this.width / 2 >= CANVAS_WIDTH) {
-				this.bounceX();
-				this.peace = false;
-				this.ricochet++;
+				//TOP AND BOTTOM WALL
+				if (this.y - this.height / 2 <= 0 || this.y + this.height / 2 >= CANVAS_HEIGHT) {
+					this.bounceY();
+					this.peace = false;
+					this.ricochet++;
+				}
+
+				//MARK SHELL TO DELETE
+				if (this.speed == NORMAL_SHELL && this.ricochet >= 2) {
+
+					this.makeHitParticles();
+					this.diminish = true;
+				}
 			}
 
-			//TOP AND BOTTOM WALL
-			if (this.y - this.height / 2 <= 0 || this.y + this.height / 2 >= CANVAS_HEIGHT) {
-				this.bounceY();
-				this.peace = false;
-				this.ricochet++;
-			}
-
-			//MARK SHELL TO DELETE
-			if (this.speed == NORMAL_SHELL && this.ricochet >= 2) {
-
-				this.makeHitParticles();
+			//if diminishing, let last of particles to render and fade before deleting
+			if (this.diminish && this.hitParticles.length == 0) {
+				//DELETE
 				this.explode = true;
 			}
 		}
 	}
 
 	render() {
-		//RENDER TRAIL PARTICLE
-		for (var i = 0; i < this.trailParticles.length; i++) {
-			this.trailParticles[i].render();
+		if (!this.diminish) {
+			//RENDER TRAIL PARTICLE
+			for (var i = 0; i < this.trailParticles.length; i++) {
+				this.trailParticles[i].render();
+			}
+
+			//RENDER SHELL
+			ctx.shadowBlur = 3;
+			ctx.shadowColor = "black";
+			ctx.save();
+
+			ctx.translate(this.centerX, this.centerY);
+			ctx.rotate(this.angle);
+
+			ctx.fillStyle = this.color;
+			ctx.fillRect(this.width / -2, this.height / -2, this.width, this.height);
+
+			ctx.restore();
+
+			ctx.shadowBlur = 0;
 		}
-
-		//RENDER SHELL
-		ctx.shadowBlur = 3;
-		ctx.shadowColor = "black";
-		ctx.save();
-
-		ctx.translate(this.centerX, this.centerY);
-		ctx.rotate(this.angle);
-
-		ctx.fillStyle = this.color;
-		ctx.fillRect(this.width / -2, this.height / -2, this.width, this.height);
-
-		ctx.restore();
 
 		//RENDER HIT PARTICLE
 		for (var i = 0; i < this.hitParticles.length; i++) {
 			this.hitParticles[i].render();
 		}
-		ctx.shadowBlur = 0;
 	}
 
 	renderShadow() {
-		ctx.save();
+		if (!this.diminish) {
+			ctx.save();
 
-		ctx.translate(this.centerX - 5, this.centerY + 5);
-		ctx.rotate(this.angle);
+			ctx.translate(this.centerX - 5, this.centerY + 5);
+			ctx.rotate(this.angle);
 
-		ctx.fillStyle = SHADOW;
-		ctx.fillRect(this.width / -2, this.height / -2, this.width, this.height);
+			ctx.fillStyle = SHADOW;
+			ctx.fillRect(this.width / -2, this.height / -2, this.width, this.height);
 
-		ctx.restore();
+			ctx.restore();
+		}
 	}
 }
