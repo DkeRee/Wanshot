@@ -202,6 +202,7 @@ class Shell {
 				if (SAT_POLYGON(this, tile).collision) {
 					//reset angle to pre bounceX collision for a y ricochet
 					this.angle = Math.PI - this.angle;
+					this.x -= this.speed * 2 * Math.cos(this.angle);
 					this.bounceY();
 				}
 
@@ -243,7 +244,6 @@ class Shell {
 			//SHELL COLLIDED WITH PLAYER && PLAYER IS NOT DEAD && SHELL IS NOT IN PEACE MODE
 
 			//explode this shell
-			this.makeHitParticles();
 			this.diminish = true;
 
 			//explode player tank

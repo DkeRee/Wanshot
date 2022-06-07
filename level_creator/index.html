@@ -6,12 +6,55 @@
 		<link rel="preconnect" href="https://fonts.gstatic.com">
 		<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300&display=swap" rel="stylesheet">
 		<script src = "https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-		<script src = "fileSaver.js"></script>
+		<script src = "js/fileSaver.js"></script>
+		<script>
+			$("html").bind('contextmenu', () => {
+				return false;
+			});
+
+			//credit to https://stackoverflow.com/questions/21646738/convert-hex-to-rgba
+			function hexToRgbA(hex, opacity){
+    			var c;
+    			if(/^#([A-Fa-f0-9]{3}){1,2}$/.test(hex)){
+        			c= hex.substring(1).split('');
+        			if(c.length== 3){
+            			c= [c[0], c[0], c[1], c[1], c[2], c[2]];
+        			}
+        			c= '0x'+c.join('');
+        			return 'rgba('+[(c>>16)&255, (c>>8)&255, c&255].join(',')+',' + opacity + ')';
+    			}
+   		 		throw new Error(`Bad Hex: ${hex}`);
+			}
+		</script>
 	</head>
 	<body>
 		<div id = "container">
 			<canvas id = "canvas"></canvas>
 		</div>
-		<script src = "level_creator.js" ></script>
+		<script>
+			//GLOBAL CANVAS CONSTANTS//
+			const canvas = document.getElementById("canvas");
+			const ctx = canvas.getContext("2d");
+		
+			//MOUSE COORDS
+			var mouse = {
+				x: 0,
+				y: 0
+			}
+
+			const SHADOW = "rgba(0, 0, 0, 0.3)";
+
+			const boxSize = 35;
+			const exportedBlocks = [];
+			var holding = false;
+
+			//ASSETS//
+			const BLOCK = 0;
+
+			var currAsset = BLOCK;
+		</script>
+		<script src = "js/assets.js"></script>
+		<script src = "js/box.js"></script>
+		<script src = "js/level_creator.js" ></script>
 	</body>
 </html>

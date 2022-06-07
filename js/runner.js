@@ -1,6 +1,6 @@
 (function() {
 	//essential globals, constants, delta time info//
-	const FPS_INTERVAL = 1000/100;
+	const FPS_INTERVAL = 1000/200;
 	var globalThen = Date.now();
 
 	//GLOBAL GAME TIMERS//
