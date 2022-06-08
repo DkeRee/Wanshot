@@ -19,19 +19,23 @@ class BlockParticle {
 	}
 
 	update() {
-		//GOAL: Make particles of different size spew out in random directions, slowing to a halt and laying there
-		this.speed /= 2;
-		this.opacity -= 0.01;
+		//if player ISNT dead, update particles
+		if (!STAGE_CACHE.player.dead) {
+			//GOAL: Make particles of different size spew out in random directions, slowing to a halt and laying there
 
-		//update position
-		this.x += this.speed * Math.cos(this.angle);
-		this.y += this.speed * Math.sin(this.angle);
+			this.speed /= 2;
+			this.opacity -= 0.01;
 
-		this.centerX = this.x + this.side / 2;
-		this.centerY = this.y + this.side / 2;
+			//update position
+			this.x += this.speed * Math.cos(this.angle);
+			this.y += this.speed * Math.sin(this.angle);
 
-		if (this.opacity <= 0) {
-			this.explode = true;
+			this.centerX = this.x + this.side / 2;
+			this.centerY = this.y + this.side / 2;
+
+			if (this.opacity <= 0) {
+				this.explode = true;
+			}
 		}
 	}
 
