@@ -1,9 +1,17 @@
+//block renders
 class Splotch {
-	constructor(x, y, side) {
+	constructor(x, y, side, kind) {
 		this.side = side;
 		this.x = x;
 		this.y = y;
-		this.color = "#C2995D";
+
+		if (kind == REGULAR_BLOCK) {
+			//light orange-brown
+			this.color = "#C2995D";
+		} else {
+			//very light red
+			this.color = "#FF8A73";
+		}
 	}
 
 	render(opacity) {
@@ -16,7 +24,7 @@ class Splotch {
 }
 
 class Block {
-	constructor(x, y, opacity) {
+	constructor(x, y, opacity, kind) {
 		//block decor
 		this.splotches = [];
 
@@ -25,11 +33,16 @@ class Block {
 		this.x = x;
 		this.y = y;
 		this.opacity = opacity;
-		this.color = "#967748";
 
-		//randomly generate 6 splotches
+		if (kind == REGULAR_BLOCK) {
+			this.color = "#967748";
+		} else {
+			this.color = "#B54B44";
+		}
+
+		//randomly generate 2 splotches
 		for (var i = 0; i < 2; i++) {
-			this.splotches.push(new Splotch(this.x + Math.floor(Math.random() * this.width / 1.4), this.y + Math.floor(Math.random() * this.height / 1.4), Math.floor(Math.random() * this.width / 3) + 2));
+			this.splotches.push(new Splotch(this.x + Math.floor(Math.random() * this.width / 1.4), this.y + Math.floor(Math.random() * this.height / 1.4), Math.floor(Math.random() * this.width / 3) + 2, kind));
 		}
 	}
 

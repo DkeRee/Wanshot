@@ -125,7 +125,30 @@ class Mine {
 		}
 	}
 
+	mineWithLooseTile() {
+		for (var i = 0; i < STAGE_CACHE.tiles.length; i++) {
+			const tile = STAGE_CACHE.tiles[i];
+
+			//if it is a loose block, break it
+			if (SAT_POLYGON_CIRCLE(tile, {
+				x: this.x,
+				y: this.y,
+				radius: this.explosionRadius
+			}) && tile.kind == LOOSE_BLOCK) {
+				//make 15 tile particles
+				for (var i = 0; i < 15; i++) {
+					STAGE_CACHE.tileParticles.push(new BlockParticle(tile.centerX - TILE_PARTICLE_SIDE / 2, tile.centerY - TILE_PARTICLE_SIDE / 2));
+				}
+				tile.explode = true;
+
+				//do not delete more than one block at a tick
+				break;
+			}
+		}
+	}
+
 	mineWithMine() {
+		//if this mine is exploding
 		if (this.exploding) {
 			for (var i = 0; i < STAGE_CACHE.mines.length; i++) {
 				const thisMine = {
@@ -192,6 +215,7 @@ class Mine {
 
 				//COLLISIONS
 				this.mineWithPlayer();
+				this.mineWithLooseTile();
 				this.mineWithMine();
 
 				if (this.particleDelay > 1 && this.fuse > 20) {

@@ -53,5 +53,9 @@ const SHELL_HEIGHT = 7;
 
 const TILE_WIDTH = 35;
 const TILE_HEIGHT = 35;
+const TILE_PARTICLE_SIDE = 20;
+
+const REGULAR_BLOCK = 1;
+const LOOSE_BLOCK = 2;
 
 const SHADOW = "rgba(0, 0, 0, 0.3)";

@@ -11,6 +11,7 @@ class Box {
 		this.content = null;
 
 		this.id = Math.floor(Math.random() * 100000);
+		this.blockType = null;
 	}
 
 	update() {
@@ -20,8 +21,13 @@ class Box {
 			if (!this.hovered && !this.marked) {
 				//decide what content it is
 				switch (currAsset) {
-					case BLOCK:
-						this.content = new Block(this.x, this.y, 0.5);
+					case REGULAR_BLOCK:
+						this.blockType = REGULAR_BLOCK;
+						this.content = new Block(this.x, this.y, 0.5, REGULAR_BLOCK);
+						break;
+					case LOOSE_BLOCK:
+						this.blockType = LOOSE_BLOCK;
+						this.content = new Block(this.x, this.y, 0.5, LOOSE_BLOCK);
 						break;
 				}
 			}
@@ -38,9 +44,12 @@ class Box {
 
 						var exportString;
 
-						switch (this.id) {
-							case BLOCK:
-								exportString = `new Block(${this.x}, ${this.y})`;
+						switch (this.blockType) {
+							case REGULAR_BLOCK:
+								exportString = `new Block(${this.x}, ${this.y}, ${REGULAR_BLOCK})`;
+								break;
+							case LOOSE_BLOCK:
+								exportString = `new Block(${this.x}, ${this.y}, ${LOOSE_BLOCK})`;
 								break;
 						}
 
@@ -48,6 +57,7 @@ class Box {
 					} else {
 						//unplace tile
 						this.marked = false;
+						this.blockType = null;
 						this.content.opacity = 0.5;
 						delete exportedBlocks[this.id];
 					}

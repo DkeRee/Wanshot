@@ -58,6 +58,29 @@
 				track.update();
 			}
 
+			//update individual block particles for performance sake
+			for (var i = 0; i < STAGE_CACHE.tileParticles.length; i++) {
+				const tileParticle = STAGE_CACHE.tileParticles[i];
+
+				if (tileParticle.explode) {
+					//DELETE PARTICLE
+					STAGE_CACHE.tileParticles.splice(i, 1);
+					continue;
+				}
+
+				tileParticle.update();
+			}
+
+			//no need to update blocks. for loop is here to keep track of tile deletion
+			for (var i = 0; i < STAGE_CACHE.tiles.length; i++) {
+				const tile = STAGE_CACHE.tiles[i];
+
+				if (tile.explode) {
+					//DELETE PARTICLE
+					STAGE_CACHE.tiles.splice(i, 1);
+				}
+			}
+
 			for (var i = 0; i < STAGE_CACHE.mines.length; i++) {
 				const mine = STAGE_CACHE.mines[i];
 
@@ -137,6 +160,11 @@
 
 		for (var i = 0; i < STAGE_CACHE.graves.length; i++) {
 			STAGE_CACHE.graves[i].render();
+		}
+
+		//render individual block particles for performance sake
+		for (var i = 0; i < STAGE_CACHE.tileParticles.length; i++) {
+			STAGE_CACHE.tileParticles[i].render();
 		}
 
 		for (var i = 0; i < STAGE_CACHE.shells.length; i++) {

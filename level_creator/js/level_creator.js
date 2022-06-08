@@ -78,7 +78,7 @@
 		}
 	}
 
-	function exportBlocks() {
+	function exportAssets() {
 		var blockExport = "tiles: [";
 
 		for (blockID in exportedBlocks) {
@@ -111,9 +111,21 @@
 		holding = false;
 	});
 
+	//temporary keybinds before I add UI
 	window.addEventListener("keydown", e => {
 		if (e.keyCode == 13) {
-			exportBlocks();
+			exportAssets();
+		}
+	});
+
+	window.addEventListener("keydown", e => {
+		switch (e.keyCode) {
+			case 49:
+				currAsset = REGULAR_BLOCK;
+				break;
+			case 50:
+				currAsset = LOOSE_BLOCK;
+				break;
 		}
 	});
 })();

@@ -149,14 +149,14 @@ class Shell {
 	//COLLISION CHECKS
 	bounceX() {
 		this.angle = Math.PI - this.angle;
-		this.x += this.speed * 2 * Math.cos(this.angle);
+		this.x += this.speed * Math.cos(this.angle);
 				
 		this.makeHitParticles();
 	}
 
 	bounceY() {
 		this.angle = 2 * Math.PI - this.angle;
-		this.y += this.speed * 2 * Math.sin(this.angle);
+		this.y += this.speed * Math.sin(this.angle);
 
 		this.makeHitParticles();
 	}
@@ -202,11 +202,13 @@ class Shell {
 				if (SAT_POLYGON(this, tile).collision) {
 					//reset angle to pre bounceX collision for a y ricochet
 					this.angle = Math.PI - this.angle;
-					this.x -= this.speed * 2 * Math.cos(this.angle);
 					this.bounceY();
 				}
 
 				this.ricochet++;
+
+				//once a shell hits a tile on one hit, wait till next tick before checking collision again or double collisions could happen
+				break;
 			}
 		}
 	}
