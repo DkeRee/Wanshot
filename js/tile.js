@@ -86,6 +86,7 @@ class Block {
 		//block decor
 		this.splotches = [];
 
+		this.id = Math.floor(Math.random() * 100000);
 		this.width = TILE_WIDTH;
 		this.height = TILE_HEIGHT;
 		this.angle = 0;

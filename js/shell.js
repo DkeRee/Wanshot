@@ -130,6 +130,9 @@ class Shell {
 		this.id = Math.floor(Math.random() * 100000);
 		this.ricochet = 0;
 
+		//keep track of what block this shell has last collided with to avoid double collisions
+		this.collidedBlockID = null;
+
 		//bullet will now fade away because of max collision
 		this.diminish = false;
 
@@ -188,6 +191,13 @@ class Shell {
 
 			//initial collision detection
 			if (SAT_POLYGON(this, tile).collision) {
+				if (this.collidedBlockID == tile.id) {
+					this.angle = Math.PI - this.angle;
+					this.bounceY();
+					break;
+				}
+
+				this.collidedBlockID = tile.id;
 				//if peace mode is on and it hit tile, removal peace mode
 				if (this.peace) {
 					this.peace = false;
