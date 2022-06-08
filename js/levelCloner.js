@@ -5,6 +5,7 @@ function levelCloner(CURR_LEVEL) {
 		graves: [],
 		tracks: [],
 		tiles: [],
+		pits: [],
 		tileParticles: [],
 		mines: []
 	};
@@ -19,9 +20,14 @@ function levelCloner(CURR_LEVEL) {
 			case "tiles":
 				const tiles = LOCATED_LEVEL[asset];
 				for (var i = 0; i < tiles.length; i++) {
-					LEVEL_CACHE.tiles.push(tiles[i]);
+					LEVEL_CACHE.tiles.push(new Block(tiles[i].x, tiles[i].y, tiles[i].kind));
 				} 
 				break;
+			case "pits":
+				const pits = LOCATED_LEVEL[asset];
+				for (var i = 0; i < pits.length; i++) {
+					LEVEL_CACHE.pits.push(new Pit(pits[i].x, pits[i].y));
+				}
 			case "enemies":
 				//will add enemy tank handler later on
 				LEVEL_CACHE.enemies = [];

@@ -124,3 +124,39 @@ class Block {
 		ctx.fillRect(this.x - 5, this.y + 5, this.width, this.height);
 	}
 }
+
+class Pit {
+	constructor(x, y) {
+		//square hitbox
+		this.width = TILE_WIDTH;
+		this.height = TILE_HEIGHT;
+		this.angle = 0;
+		this.x = x;
+		this.y = y;
+
+		//circle structure
+		this.centerX = this.x + this.width / 2;
+		this.centerY = this.y + this.height / 2;
+		this.radius = this.width / 2.5;
+		this.color = "#2E2E2E";
+	}
+
+	render() {
+		//render pit
+		ctx.shadowBlur = 5;
+		ctx.shadowColor = this.color;
+		ctx.fillStyle = this.color;
+		ctx.beginPath();
+		ctx.arc(this.centerX, this.centerY, this.radius, 0, 2 * Math.PI, false);
+		ctx.fill();
+		ctx.shadowBlur = 0;
+	}
+
+	renderShadow() {
+		//render shadow
+		ctx.fillStyle = SHADOW;
+		ctx.beginPath();
+		ctx.arc(this.centerX - 5, this.centerY + 5, this.radius, 0, 2 * Math.PI, false);
+		ctx.fill();
+	}
+}

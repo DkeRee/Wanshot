@@ -1,5 +1,5 @@
 class Box {
-	constructor(x, y, boxSize) {
+	constructor(x, y, boxSize, index) {
 		this.side = boxSize;
 		this.hovered = false;
 		this.marked = false;
@@ -10,7 +10,7 @@ class Box {
 		//block content
 		this.content = null;
 
-		this.id = Math.floor(Math.random() * 100000);
+		this.id = index;
 		this.blockType = null;
 	}
 
@@ -28,6 +28,10 @@ class Box {
 					case LOOSE_BLOCK:
 						this.blockType = LOOSE_BLOCK;
 						this.content = new Block(this.x, this.y, 0.5, LOOSE_BLOCK);
+						break;
+					case PIT:
+						this.blockType = PIT;
+						this.content = new Pit(this.x, this.y, 0.5);
 						break;
 				}
 			}
@@ -47,19 +51,34 @@ class Box {
 						switch (this.blockType) {
 							case REGULAR_BLOCK:
 								exportString = `new Block(${this.x}, ${this.y}, ${REGULAR_BLOCK})`;
+								exportedBlocks[this.id] = exportString;
 								break;
 							case LOOSE_BLOCK:
 								exportString = `new Block(${this.x}, ${this.y}, ${LOOSE_BLOCK})`;
+								exportedBlocks[this.id] = exportString;
+								break;
+							case PIT:
+								exportString = `new Pit(${this.x}, ${this.y})`;
+								exportedPits[this.id] = exportString;
+								break;
+						}
+					} else {
+						switch (this.blockType) {
+							case REGULAR_BLOCK:
+								delete exportedBlocks[this.id];
+								break;
+							case LOOSE_BLOCK:
+								delete exportedBlocks[this.id];
+								break;
+							case PIT:
+								delete exportedPits[this.id];
 								break;
 						}
 
-						exportedBlocks[this.id] = exportString;
-					} else {
 						//unplace tile
 						this.marked = false;
 						this.blockType = null;
 						this.content.opacity = 0.5;
-						delete exportedBlocks[this.id];
 					}
 				}
 

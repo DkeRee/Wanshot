@@ -139,6 +139,10 @@
 		ctx.fillRect(0, 0, canvas.width, canvas.height);
 
 		//RENDER OBJECT SHADOWS//
+		for (var i = 0; i < STAGE_CACHE.pits.length; i++) {
+			STAGE_CACHE.pits[i].renderShadow();
+		}
+
 		for (var i = 0; i < STAGE_CACHE.shells.length; i++) {
 			STAGE_CACHE.shells[i].renderShadow();
 		}
@@ -163,6 +167,10 @@
 		}
 
 		//render individual block particles for performance sake
+		for (var i = 0; i < STAGE_CACHE.pits.length; i++) {
+			STAGE_CACHE.pits[i].render();
+		}
+		
 		for (var i = 0; i < STAGE_CACHE.tileParticles.length; i++) {
 			STAGE_CACHE.tileParticles[i].render();
 		}

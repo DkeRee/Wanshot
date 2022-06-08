@@ -13,7 +13,9 @@
 	canvas.width = CANVAS_WIDTH;
 	canvas.height = CANVAS_HEIGHT;
 
-	const AREA = (CANVAS_WIDTH / boxSize) * (CANVAS_HEIGHT / boxSize);
+	const gridWidth = CANVAS_WIDTH / boxSize;
+	const gridHeight = CANVAS_HEIGHT / boxSize;
+	const AREA = gridWidth * gridHeight;
 	const grid = [];
 
 	//init grid
@@ -21,7 +23,15 @@
 	var y = 0;
 
 	for (var i = 0; i < AREA; i++) {
-		grid.push(new Box(x, y, boxSize));
+		grid.push(new Box(x, y, boxSize, i));
+
+		//if this box is on the side, automatically make it into a solid block
+		if (x == 0 || x == CANVAS_WIDTH - boxSize || y == 0 || y == CANVAS_HEIGHT - boxSize) {
+			const box = grid[i];
+			box.marked = true;
+			box.content = new Block(box.x, box.y, 1, REGULAR_BLOCK);
+			exportedBlocks[box.id] = `new Block(${box.x}, ${box.y}, ${REGULAR_BLOCK})`;
+		}
 
 		if (x + boxSize == CANVAS_WIDTH) {
 			x = 0;
@@ -79,9 +89,18 @@
 	}
 
 	function exportAssets() {
+		var levelExport = "0: {";
+
+		//set up exports
+		//temp hardcode
+		var playerExport = "player: new Player(100, 100, 0, 0),";
+
+		//temp hardcode
+		var enemyExport = "enemies: [],";
+
 		var blockExport = "tiles: [";
 
-		for (blockID in exportedBlocks) {
+		for (var blockID in exportedBlocks) {
 			blockExport += exportedBlocks[blockID];
 
 			if (Number(blockID) !== exportedBlocks.length - 1) {
@@ -89,9 +108,29 @@
 			}
 		}
 
-		blockExport += "]";
+		blockExport += "],";
 
-		var blob = new Blob([blockExport],
+		var pitExport = "pits: [";
+
+		for (var pitID in exportedPits) {
+			pitExport += exportedPits[pitID];
+
+			if (Number(pitID) !== exportedPits.length - 1) {
+				pitExport += ", ";
+			}
+		}
+
+		pitExport += "],";
+
+		//append them to level export
+		levelExport += playerExport;
+		levelExport += enemyExport;
+		levelExport += blockExport;
+		levelExport += pitExport;
+
+		levelExport += "},";
+
+		var blob = new Blob([levelExport],
 			{type: "text/plain;charset=utf-8"});
 		saveAs(blob, "level.txt");
 	}
@@ -125,6 +164,9 @@
 				break;
 			case 50:
 				currAsset = LOOSE_BLOCK;
+				break;
+			case 51:
+				currAsset = PIT;
 				break;
 		}
 	});

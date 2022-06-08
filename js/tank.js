@@ -210,6 +210,18 @@ class Tank {
 		}
 	}
 
+	tankWithPit() {
+		for (var i = 0; i < STAGE_CACHE.pits.length; i++) {
+			const pit = STAGE_CACHE.pits[i];
+			const SATCollision = SAT_POLYGON(this, pit);
+
+			if (SATCollision.collision) {
+				this.x += SATCollision.normal.x * SATCollision.depth / 2;
+				this.y += SATCollision.normal.y * SATCollision.depth / 2;
+			}
+		}
+	}
+
 	updateBody(targetCoords) {
 		//update center
 		this.centerX = this.x + this.width / 2;
@@ -217,6 +229,7 @@ class Tank {
 
 		//update collisions
 		this.tankWithTile();
+		this.tankWithPit();
 
 		//update tank explosion particles
 		if (this.tankExplosion) {

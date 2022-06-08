@@ -59,10 +59,34 @@ class Block {
 			this.splotches[i].render(this.opacity);
 		}
 	}
+}
 
-	renderShadow() {
-		//render shadow
-		ctx.fillStyle = SHADOW;
-		ctx.fillRect(this.x - 5, this.y + 5, this.width, this.height);
+//pit renders
+class Pit {
+	constructor(x, y, opacity) {
+		//square hitbox
+		this.width = boxSize;
+		this.height = boxSize;
+		this.angle = 0;
+		this.x = x;
+		this.y = y;
+
+		//circle structure
+		this.centerX = this.x + this.width / 2;
+		this.centerY = this.y + this.height / 2;
+		this.radius = this.width / 2.5;
+		this.opacity = opacity;
+		this.color = "#2E2E2E";
+	}
+
+	render() {
+		//render pit
+		ctx.shadowBlur = 5;
+		ctx.shadowColor = hexToRgbA(this.color, this.opacity);
+		ctx.fillStyle = hexToRgbA(this.color, this.opacity);
+		ctx.beginPath();
+		ctx.arc(this.centerX, this.centerY, this.radius, 0, 2 * Math.PI, false);
+		ctx.fill();
+		ctx.shadowBlur = 0;
 	}
 }
