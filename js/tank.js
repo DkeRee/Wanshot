@@ -10,7 +10,7 @@ class TankParticle {
 		this.centerY = this.y + this.side / 2;
 		this.angle = (Math.floor(Math.random() * 360)) * Math.PI / 180;
 		this.opacity = 1;
-		this.speed = 10;
+		this.speed = 400;
 		this.explode = false;
 
 		//RED, ORANGE, GREY, TANK COLOR
@@ -22,15 +22,15 @@ class TankParticle {
 		//GOAL: move particle in random angle while it slowly fades and slows
 
 		//update position
-		this.x += this.speed * Math.cos(this.angle);
-		this.y += this.speed * Math.sin(this.angle);
+		this.x += this.speed * Math.cos(this.angle) * deltaTime;
+		this.y += this.speed * Math.sin(this.angle) * deltaTime;
 
 		this.centerX = this.x + this.side / 2;
 		this.centerY = this.y + this.side / 2;
 
 		//update opacity and speed
-		this.opacity -= 0.05;
-		this.speed -= 0.3;
+		this.opacity -= 3 * deltaTime;
+		this.speed -= 2 * deltaTime;
 
 		//check for deletion
 		if (this.opacity <= 0) {
@@ -76,7 +76,7 @@ class Track {
 
 	update() {
 		//update opacity, mark for deletion
-		this.opacity -= 0.0008;
+		this.opacity -= 0.03 * deltaTime;
 
 		if (this.opacity <= 0) {
 			this.explode = true;
@@ -148,7 +148,7 @@ class Grave {
 
 //TANK CONSTRUCTOR
 class Tank {
-	constructor(x, y, angle, turretAngle, color, turretColor, sideColor, speed) {
+	constructor(x, y, angle, turretAngle, color, turretColor, sideColor, speed, rotationSpeed) {
 		//body
 		this.width = TANK_WIDTH;
 		this.height = TANK_HEIGHT;
@@ -168,6 +168,7 @@ class Tank {
 		this.centerX = this.x + this.width / 2;
 		this.centerY = this.y + this.height / 2;
 		this.speed = speed;
+		this.rotationSpeed = rotationSpeed;
 		this.angle = angle;
 		this.turretAngle = turretAngle;
 		this.color = color;
@@ -235,7 +236,7 @@ class Tank {
 		if (this.tankExplosion) {
 
 			//increase delay
-			this.explosionParticleDelay += 1;
+			this.explosionParticleDelay += deltaTime;
 
 			if (this.explosionParticleDelay > 0) {
 				//push new ring of 50 particles

@@ -1,4 +1,4 @@
-const NORMAL_SHELL = 4;
+const NORMAL_SHELL = 250;
 
 class HitParticle {
 	constructor(x, y) {
@@ -12,7 +12,7 @@ class HitParticle {
 		this.centerY = this.y + this.side / 2;
 		this.angle = (Math.floor(Math.random() * 360)) * Math.PI / 180;
 		this.opacity = 1;
-		this.speed = 7;
+		this.speed = 400;
 		this.explode = false;
 
 		//RED, ORANGE, YELLOW
@@ -24,15 +24,15 @@ class HitParticle {
 		//GOAL: move particle in random angle while it slowly fades and slows
 
 		//update position
-		this.x += this.speed * Math.cos(this.angle);
-		this.y += this.speed * Math.sin(this.angle);
+		this.x += this.speed * Math.cos(this.angle) * deltaTime;
+		this.y += this.speed * Math.sin(this.angle) * deltaTime;
 
 		this.centerX = this.x + this.side / 2;
 		this.centerY = this.y + this.side / 2;
 
 		//update opacity and speed
-		this.opacity -= 0.08;
-		this.speed -= 0.05;
+		this.opacity -= 5 * deltaTime;
+		this.speed -= 1 * deltaTime;
 
 		//check for deletion
 		if (this.opacity <= 0) {
@@ -67,7 +67,7 @@ class TrailParticle {
 		this.x = x;
 		this.y = y;
 		this.opacity = 1;
-		this.expansionRate = 1;
+		this.expansionRate = 60;
 		this.explode = false;
 
 		//color in rgba to support opacity
@@ -78,13 +78,13 @@ class TrailParticle {
 		//GOAL: make particle expand until it fades
 
 		//expand
-		this.radius += this.expansionRate;
+		this.radius += this.expansionRate * deltaTime;
 
 		//slow expansion rate down
-		this.expansionRate -= 0.01;
+		this.expansionRate -= 5 * deltaTime;
 
 		//lower opacity
-		this.opacity -= 0.08;
+		this.opacity -= 4 * deltaTime;
 	
 		//check for deletion
 		if (this.opacity <= 0) {
@@ -105,7 +105,7 @@ class TrailParticle {
 }
 
 class Shell {
-	constructor(x, y, bulletType, angle, tankID) {
+	constructor(x, y, shellType, angle, tankID) {
 		//body
 		this.width = SHELL_WIDTH;
 		this.height = SHELL_HEIGHT;
@@ -125,7 +125,7 @@ class Shell {
 		this.centerX = this.x + this.width / 2;
 		this.centerY = this.y + this.height / 2;
 		this.angle = angle;
-		this.speed = bulletType;
+		this.speed = shellType;
 		this.tankID = tankID;
 		this.id = Math.floor(Math.random() * 100000);
 		this.ricochet = 0;
@@ -152,14 +152,14 @@ class Shell {
 	//COLLISION CHECKS
 	bounceX() {
 		this.angle = Math.PI - this.angle;
-		this.x += this.speed * Math.cos(this.angle);
+		this.x += this.speed * Math.cos(this.angle) * deltaTime;
 				
 		this.makeHitParticles();
 	}
 
 	bounceY() {
 		this.angle = 2 * Math.PI - this.angle;
-		this.y += this.speed * Math.sin(this.angle);
+		this.y += this.speed * Math.sin(this.angle) * deltaTime;
 
 		this.makeHitParticles();
 	}
@@ -293,9 +293,9 @@ class Shell {
 			}
 
 			//ADD TRAIL PARTICLE AFTER DELAY
-			this.trailParticleDelay++;
+			this.trailParticleDelay += deltaTime;
 
-			if (this.trailParticleDelay > 5) {
+			if (this.trailParticleDelay > 0.09) {
 				this.trailParticleDelay = 0;
 				this.trailParticles.push(new TrailParticle(this.centerX, this.centerY));
 			}
@@ -303,8 +303,8 @@ class Shell {
 			//update coordinate of shell and collisions if not diminishing
 			if (!this.diminish) {
 				//UPDATE COORDINATES
-				this.x += this.speed * Math.cos(this.angle);
-				this.y += this.speed * Math.sin(this.angle);
+				this.x += this.speed * Math.cos(this.angle) * deltaTime;
+				this.y += this.speed * Math.sin(this.angle) * deltaTime;
 
 				this.centerX = this.x + this.width / 2;
 				this.centerY = this.y + this.height / 2;

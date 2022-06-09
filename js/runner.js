@@ -1,7 +1,5 @@
 (function() {
-	//essential globals, constants, delta time info//
-	const FPS_INTERVAL = 1000/200;
-	var globalThen = Date.now();
+	//essential globals and constants//
 
 	//GLOBAL GAME TIMERS//
 	var trackUpdate = 0;
@@ -12,17 +10,19 @@
 	CURR_LEVEL = 0;
 	STAGE_CACHE = levelCloner(CURR_LEVEL);
 
-	function globalStep() {
-		const now = Date.now();
-		const elapsed = now - globalThen;
+	function globalStep(time) {
+		accTime += (time - lastTime) / 1000;
 
-		//DELTA TIME//
-		if (elapsed > FPS_INTERVAL) {
+		while (accTime > deltaTime) {
+			if (accTime > 1) {
+				accTime = deltaTime;
+			}
+
 			globalUpdate();
-			globalThen = now - (elapsed % FPS_INTERVAL);
+			accTime -= deltaTime;
 		}
+		lastTime = time;
 		globalRender();
-
 		requestAnimationFrame(globalStep);
 	}
 	requestAnimationFrame(globalStep);
@@ -37,9 +37,9 @@
 		//set a bit of wait time before beginning the next round or repeating the same round after rendering mission (make sure level doesn't update during intermission)
 		if (maskFadeIn) {
 			//TRACK MANAGEMENT//
-			trackUpdate++;
+			trackUpdate += deltaTime;
 
-			if (trackUpdate > 6) {
+			if (trackUpdate > 0.1) {
 				//ADD TRACK FOR EVERY TANK
 				STAGE_CACHE.player.trackUpdate();
 				trackUpdate = 0;

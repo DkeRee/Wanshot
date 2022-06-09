@@ -7,7 +7,7 @@ class MineParticle {
 		this.x = x;
 		this.y = y;
 		this.angle = (Math.floor(Math.random() * 360)) * Math.PI / 180;
-		this.speed = 20;
+		this.speed = 1150;
 		this.opacity = 1;
 		this.centerX = this.x + this.side / 2;
 		this.centerY = this.y + this.side / 2;
@@ -24,21 +24,19 @@ class MineParticle {
 		//GOAL: Make particle explode outwards, twisting the angle to follow a radius of 30
 
 		//update particle position
-		this.angle += 5 * Math.PI / 180;
+		this.angle += 250 * Math.PI / 180 * deltaTime;
 		
-		this.x += this.speed * Math.cos(this.angle);
-		this.y += this.speed * Math.sin(this.angle);
+		this.x += this.speed * Math.cos(this.angle) * deltaTime;
+		this.y += this.speed * Math.sin(this.angle) * deltaTime;
 
 		this.centerX = this.x + this.side / 2;
 		this.centerY = this.y + this.side / 2;
 	
-		this.speed /= 1.2;
-		this.opacity -= 0.04;
+		this.speed /= 72 * deltaTime;
+		this.opacity -= 2.4 * deltaTime;
 
 		//update color
 		this.fillStyle = hexToRgbA(this.color, this.opacity);
-
-		//console.log(this.opacity)
 
 		if (this.opacity <= 0) {
 			this.explode = true;
@@ -90,13 +88,13 @@ class Mine {
 		this.particleDelay = 0;
 
 		//countdown for mine to explode
-		this.countdown = 800;
+		this.countdown = MINE_COUNTDOWN;
 
 		//color countdown
-		this.colorCountdown = 5;
+		this.colorCountdown = MINE_COLORCOUNTDOWN;
 
 		//once mine explodes, the fuse keeps it exploding until it runs out and deletes
-		this.fuse = 50;
+		this.fuse = MINE_FUSE;
 
 		//is this mine exploding, countdown has hit 0
 		this.exploding = false;
@@ -176,7 +174,7 @@ class Mine {
 		//update if player isn't dead
 		if (!STAGE_CACHE.player.dead) {
 			//update countdown
-			this.countdown -= 1;
+			this.countdown -= deltaTime;
 
 			//update mine explosion particles
 			for (var i = 0; i < this.mineParticles.length; i++) {
@@ -192,12 +190,12 @@ class Mine {
 			}
 
 			//if mine is within 100 milliseconds of exploding start flashing
-			if (this.countdown <= 100) {
-				this.colorCountdown -= 1;
+			if (this.countdown <= MINE_COUNTDOWN - (MINE_COUNTDOWN * (4 / 5))) {
+				this.colorCountdown -= deltaTime;
 
 				if (this.colorCountdown <= 0) {
 					//a little delay for flashing
-					this.colorCountdown = 5;
+					this.colorCountdown = MINE_COLORCOUNTDOWN;
 
 					if (this.currentColor == this.color) {
 						this.currentColor = this.flashingColor;
@@ -209,20 +207,21 @@ class Mine {
 
 			if (this.exploding) {
 				//mine is in the process of exploding
-				this.fuse -= 1;
+				this.fuse -= deltaTime;
 
-				this.particleDelay++;
+				this.particleDelay += deltaTime;
 
 				//COLLISIONS
 				this.mineWithPlayer();
 				this.mineWithLooseTile();
 				this.mineWithMine();
 
-				if (this.particleDelay > 1 && this.fuse > 20) {
+				//stop particles once fuse reaches below a certain level
+				if (this.particleDelay > 0.005 && this.fuse > MINE_FUSE * (4 / 5)) {
 					this.particleDelay = 0;
 
 					if (this.explosionRadius < MINE_EXPLOSION_RADIUS) {
-						this.explosionRadius += 20;
+						this.explosionRadius += EXPLOSION_INCR * deltaTime;
 					}
 
 					//create 30 mine explosion particles

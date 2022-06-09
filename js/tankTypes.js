@@ -1,7 +1,7 @@
 //TANK TYPES
 class Player {
 	constructor(x, y, angle, turretAngle) {
-		this.tank = new Tank(x, y, angle, turretAngle, "#224ACF", "#1E42B8", "#0101BA", 1.7);
+		this.tank = new Tank(x, y, angle, turretAngle, "#224ACF", "#1E42B8", "#0101BA", 100, 3);
 		this.dead = false;
 		this.tankID = PLAYER_ID;
 
@@ -28,17 +28,17 @@ class Player {
 		this.tank.updateBody(MOUSE_POS);
 
 		//update shellShock
-		this.tankShock++;
+		this.tankShock += deltaTime;
 
 		//update shellDelay
-		this.shellDelay++;
+		this.shellDelay += deltaTime;
 
 		//update mineDelay
-		this.mineDelay++;
+		this.mineDelay += deltaTime;
 
 		//update movement
-		const xInc = this.tank.speed * Math.cos(this.tank.angle);
-		const yInc = this.tank.speed * Math.sin(this.tank.angle);
+		const xInc = this.tank.speed * Math.cos(this.tank.angle) * deltaTime;
+		const yInc = this.tank.speed * Math.sin(this.tank.angle) * deltaTime;
 
 		const leftSide = this.tank.x;
 		const rightSide = this.tank.x + this.tank.width;
@@ -74,12 +74,12 @@ class Player {
 
 			//right rotation
 			if (this.keys[65] || this.keys[37]) {
-				this.tank.angle -= 0.05;
+				this.tank.angle -= this.tank.rotationSpeed * deltaTime;
 			}
 
 			//left rotation
 			if (this.keys[68] || this.keys[39]) {
-				this.tank.angle += 0.05;
+				this.tank.angle += this.tank.rotationSpeed * deltaTime;
 			}
 
 			//check for keybind for laying mines
@@ -105,8 +105,8 @@ class Player {
 
 	shoot() {
 		//delay shell fire rate && cap shell amount && isn't dead
-		if (this.shellDelay > 7 && this.shellShot < 5 && !this.dead) {
-			this.tankShock = -5;
+		if (this.shellDelay > 0.12 && this.shellShot < 5 && !this.dead) {
+			this.tankShock = -0.1;
 			this.shellShot++;
 			this.shellDelay = 0;
 
@@ -115,8 +115,8 @@ class Player {
 	}
 
 	layMine() {
-		if (this.mineLayed < 2 && this.mineDelay > 50) {
-			this.tankShock = -10;
+		if (this.mineLayed < 2 && this.mineDelay > 2) {
+			this.tankShock = -0.2;
 			this.mineLayed++;
 			this.mineDelay = 0;
 

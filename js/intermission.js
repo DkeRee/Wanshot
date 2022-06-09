@@ -6,7 +6,7 @@ var startLogoOpacity = 0;
 
 function startLogoUpdate() {
 	if (startLogoOpacity >= 0) {
-		startLogoOpacity -= 0.02;
+		startLogoOpacity -= 1.3 * deltaTime;
 	} else {
 		startLogoShow = false;
 		startLogoOpacity = 0;
@@ -34,16 +34,16 @@ var maskWait = 0;
 
 //starts with fade in process
 function intermissionUpdate() {
-	intermissionDelay++;
+	intermissionDelay += deltaTime;
 
 	//let player see that they have died before going to intermission screen
-	if (intermissionDelay > 70) {
+	if (intermissionDelay > 1.5) {
 		//if holding, start timer
 		if (maskHold) {
-			maskWait++;
+			maskWait += deltaTime;
 
 			//if timer reaches, reset timer and start fade out process, once reached start new round or restart and stop intermission
-			if (maskWait > 150) {
+			if (maskWait > 2) {
 				maskHold = false;
 				maskWait = 0;
 				maskFadeIn = false;
@@ -53,7 +53,7 @@ function intermissionUpdate() {
 
 		if (maskFadeIn) {
 			//fade in, once reached start hold timer
-			maskOpacity += 0.03;
+			maskOpacity += 1.3 * deltaTime;
 
 			if (maskOpacity >= 1) {
 				maskOpacity = 1;
@@ -61,7 +61,7 @@ function intermissionUpdate() {
 			}
 		} else {
 			//fade out, once reached stop intermission
-			maskOpacity -= 0.05;
+			maskOpacity -= 2.3 * deltaTime;
 
 			if (maskOpacity <= 0) {
 				maskOpacity = 0;

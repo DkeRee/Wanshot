@@ -10,7 +10,7 @@ class BlockParticle {
 		this.centerY = this.y + this.side / 2;
 		this.angle = (Math.floor(Math.random() * 360)) * Math.PI / 180;
 		this.opacity = 1;
-		this.speed = 100;
+		this.speed = 6000;
 		this.explode = false;
 
 		//LIGHT RED, RED, BROWN, GREY, YELLOW
@@ -23,12 +23,12 @@ class BlockParticle {
 		if (!STAGE_CACHE.player.dead) {
 			//GOAL: Make particles of different size spew out in random directions, slowing to a halt and laying there
 
-			this.speed /= 2;
-			this.opacity -= 0.01;
+			this.speed /= 120 * deltaTime;
+			this.opacity -= 0.7 * deltaTime;
 
 			//update position
-			this.x += this.speed * Math.cos(this.angle);
-			this.y += this.speed * Math.sin(this.angle);
+			this.x += this.speed * Math.cos(this.angle) * deltaTime;
+			this.y += this.speed * Math.sin(this.angle) * deltaTime;
 
 			this.centerX = this.x + this.side / 2;
 			this.centerY = this.y + this.side / 2;
@@ -143,7 +143,7 @@ class Pit {
 		this.centerX = this.x + this.width / 2;
 		this.centerY = this.y + this.height / 2;
 		this.radius = this.width / 2.5;
-		this.color = "#2E2E2E";
+		this.color = "#3D3D3D";
 	}
 
 	render() {

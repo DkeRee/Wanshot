@@ -1,3 +1,8 @@
+//essential delta time info//
+const deltaTime = 1 / 60;
+var accTime = 0;
+var lastTime = 0;
+
 const CANVAS_WIDTH = 910;
 const CANVAS_HEIGHT = 700;
 
@@ -43,8 +48,12 @@ const TANK_HEIGHT = 33;
 const HIT_PARTICLE_SIDE = 7;
 
 const MINE_RADIUS = 10;
-const MINE_EXPLOSION_RADIUS = 120;
+const MINE_EXPLOSION_RADIUS = 110;
 const MINE_PARTICLE_SIDE = 15;
+const MINE_COUNTDOWN = 10;
+const MINE_COLORCOUNTDOWN = 0.05;
+const MINE_FUSE = 1;
+const EXPLOSION_INCR = 610;
 
 const TRAIL_PARTICLE_RADIUS = 5;
 

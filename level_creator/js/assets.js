@@ -76,7 +76,7 @@ class Pit {
 		this.centerY = this.y + this.height / 2;
 		this.radius = this.width / 2.5;
 		this.opacity = opacity;
-		this.color = "#2E2E2E";
+		this.color = "#3D3D3D";
 	}
 
 	render() {
