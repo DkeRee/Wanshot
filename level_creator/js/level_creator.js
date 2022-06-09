@@ -2,9 +2,6 @@
 	const BACKGROUND_COLOR_STRONG = "#C2995D";
 	const BACKGROUND_COLOR_WEAK = "#FFDFA8";
 
-	const CANVAS_WIDTH = 910;
-	const CANVAS_HEIGHT = 700;
-
 	//INIT CANVAS/
 	canvas.width = CANVAS_WIDTH;
 	canvas.height = CANVAS_HEIGHT;
@@ -12,7 +9,6 @@
 	const gridWidth = CANVAS_WIDTH / boxSize;
 	const gridHeight = CANVAS_HEIGHT / boxSize;
 	const AREA = gridWidth * gridHeight;
-	const grid = [];
 
 	//init grid
 	var x = 0;
@@ -45,9 +41,12 @@
 	requestAnimationFrame(globalStep);
 
 	function globalUpdate() {
+		//update grid items
 		for (var i = 0; i < grid.length; i++) {
 			grid[i].update();
 		}
+
+		updateFloatingAssets();
 	}
 
 	function globalRender() {
@@ -63,9 +62,12 @@
 		ctx.fillStyle = grd;
 		ctx.fillRect(0, 0, canvas.width, canvas.height);
 
+		//render grid items
 		for (var i = 0; i < grid.length; i++) {
 			grid[i].render();
 		}
+
+		renderFloatingAssets();
 	}
 
 	function updateMousePos(clientX, clientY) {
@@ -81,7 +83,16 @@
 
 		//set up exports
 		//temp hardcode
-		var playerExport = "player: new Player(100, 100, 0, 0),";
+		var playerExport = "player: ";
+
+		if (!player) {
+			console.log("You MUST have a player in the game");
+			return;
+		}
+
+		playerExport += `new Player(${player.tank.x}, ${player.tank.y}, ${player.tank.angle}, ${player.tank.angle})`;
+
+		playerExport += ",";
 
 		//temp hardcode
 		var enemyExport = "enemies: [],";
@@ -149,12 +160,29 @@
 		switch (e.keyCode) {
 			case 49:
 				currAsset = REGULAR_BLOCK;
+				switchEditing(true);
 				break;
 			case 50:
 				currAsset = LOOSE_BLOCK;
+				switchEditing(true);
 				break;
 			case 51:
 				currAsset = PIT;
+				switchEditing(true);
+				break;
+			case 52:
+				currAsset = PLAYER;
+				switchEditing(false);
+				break;
+			case 82:
+				//rotate the floating cache
+				if (!editingBlocks) {
+					if (floating_cache.tank.angle - (90 * Math.PI / 180) >= 2 * Math.PI) {
+						floating_cache.tank.angle = 0;
+					} else {
+						floating_cache.tank.angle -= 90 * Math.PI / 180;
+					}
+				}
 				break;
 		}
 	});

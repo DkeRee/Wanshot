@@ -105,7 +105,7 @@ class Player {
 
 	shoot() {
 		//delay shell fire rate && cap shell amount && isn't dead
-		if (this.shellDelay > 0.12 && this.shellShot < 5 && !this.dead) {
+		if (this.shellDelay > 0.1 && this.shellShot < 5 && !this.dead) {
 			this.tankShock = -0.1;
 			this.shellShot++;
 			this.shellDelay = 0;

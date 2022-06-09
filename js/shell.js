@@ -193,7 +193,7 @@ class Shell {
 			if (SAT_POLYGON(this, tile).collision) {
 				if (this.collidedBlockID == tile.id) {
 					this.angle = Math.PI - this.angle;
-					this.bounceY();
+					this.bounceX();
 					this.collidedBlockID = tile.id;
 					break;
 				}

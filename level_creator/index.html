@@ -35,29 +35,11 @@
 			//GLOBAL CANVAS CONSTANTS//
 			const canvas = document.getElementById("canvas");
 			const ctx = canvas.getContext("2d");
-		
-			//MOUSE COORDS
-			var mouse = {
-				x: 0,
-				y: 0
-			}
-
-			const SHADOW = "rgba(0, 0, 0, 0.3)";
-
-			const boxSize = 35;
-			const exportedBlocks = [];
-			const exportedPits = [];
-			var holding = false;
-
-			//ASSETS//
-			const REGULAR_BLOCK = 1;
-			const LOOSE_BLOCK = 2;
-			const PIT = 3;
-
-			var currAsset = REGULAR_BLOCK;
 		</script>
+		<script src = "js/globals.js"></script>
 		<script src = "js/assets.js"></script>
 		<script src = "js/box.js"></script>
+		<script src = "js/floatingAssets.js"></script>
 		<script src = "js/level_creator.js" ></script>
 	</body>
 </html>
