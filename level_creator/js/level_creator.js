@@ -5,10 +5,6 @@
 	const CANVAS_WIDTH = 910;
 	const CANVAS_HEIGHT = 700;
 
-	//DELTA TIME
-	const FPS_INTERVAL = 1000/200;
-	var globalThen = Date.now();
-
 	//INIT CANVAS/
 	canvas.width = CANVAS_WIDTH;
 	canvas.height = CANVAS_HEIGHT;
@@ -42,16 +38,8 @@
 	}
 
 	function globalStep() {
-		const now = Date.now();
-		const elapsed = now - globalThen;
-
-		if (elapsed > FPS_INTERVAL) {
-			globalUpdate();
-			globalThen = now - (elapsed % FPS_INTERVAL);
-		}
-
+		globalUpdate();
 		globalRender();
-
 		requestAnimationFrame(globalStep);
 	}
 	requestAnimationFrame(globalStep);
