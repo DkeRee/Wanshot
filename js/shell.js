@@ -194,6 +194,7 @@ class Shell {
 				if (this.collidedBlockID == tile.id) {
 					this.angle = Math.PI - this.angle;
 					this.bounceY();
+					this.collidedBlockID = tile.id;
 					break;
 				}
 
