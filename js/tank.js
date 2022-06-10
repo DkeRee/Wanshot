@@ -306,7 +306,7 @@ class Tank {
 			//DRAW TURRET//
 			ctx.translate(this.centerX, this.centerY);
 			ctx.rotate(this.turretAngle);
-			ctx.lineWidth = 5;
+			ctx.lineWidth = 3;
 			ctx.strokeStyle = "black";
 
 			ctx.shadowBlur = 20;

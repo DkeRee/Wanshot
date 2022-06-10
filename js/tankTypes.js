@@ -1,4 +1,5 @@
 //TANK TYPES
+//color code: bodyColor, turretColor, sideColor
 class Player {
 	constructor(x, y, angle, turretAngle) {
 		this.tank = new Tank(x, y, angle, turretAngle, "#224ACF", "#1E42B8", "#0101BA", 100, 3);
@@ -9,7 +10,7 @@ class Player {
 		this.tankShock = 0;
 
 		//delays shell spamming
-		this.shellDelay = 7;
+		this.shellDelay = 0.1;
 
 		//caps number of shells to be shot/keeps track of how many shells are shot by this tank
 		this.shellShot = 0;
@@ -136,5 +137,12 @@ class Player {
 
 	renderShadow() {
 		this.tank.renderShadow(this.dead);
+	}
+}
+
+class BrownTank {
+	constructor(x, y, angle, turretAngle) {
+		this.tank = new Tank(x, y, angle, turretAngle, "#966A4B", "#8C6346", "#B0896B", 0, 0);
+		this.shellDelay = 4;
 	}
 }

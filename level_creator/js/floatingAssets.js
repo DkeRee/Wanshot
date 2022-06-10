@@ -15,22 +15,21 @@ function rectangleCollision(rectA, rectB) {
 }
 
 function isCollidingWithSurroundingBlocks(rect) {
-	//check surrounding blocks
-	for (var i = 0; i < grid.length; i++) {
-		//hit a grid box that is marked
-		if (rectangleCollision(rect, grid[i]) && grid[i].marked) {
-			return true;
-		}
-	}
+	const newRect = {};
 	//check wall
 	if (rect.angle == 0 || rect.angle == -Math.PI) {
 		//horizontal angle
+		newRect.x = rect.x;
+		newRect.y = rect.y;
+		newRect.width = rect.width;
+		newRect.height = rect.height;		
+
 		if (rect.x <= 0 || rect.x + rect.width >= CANVAS_WIDTH || rect.y <= 0 || rect.y + rect.height >= CANVAS_HEIGHT) {
 			return true;
 		}
 	} else {
 		//vertical angle
-		//translate 90 degrees
+		//rotate 90 degrees
 		const distX = rect.centerX - rect.x;
 		const distY = rect.centerY - rect.y;
 
@@ -43,7 +42,20 @@ function isCollidingWithSurroundingBlocks(rect) {
 		const transWidth = rect.height;
 		const transHeight = rect.width;
 
+		newRect.x = transX;
+		newRect.y = transY;
+		newRect.width = transWidth;
+		newRect.height = transHeight;
+
 		if (transX <= 0 || transX + transWidth >= CANVAS_WIDTH || transY <= 0 || transY + transHeight >= CANVAS_HEIGHT) {
+			return true;
+		}
+	}
+
+	//check surrounding blocks
+	for (var i = 0; i < grid.length; i++) {
+		//hit a grid box that is marked
+		if (rectangleCollision(newRect, grid[i]) && grid[i].marked) {
 			return true;
 		}
 	}
@@ -134,7 +146,7 @@ class Tank {
 		//DRAW TURRET//
 		ctx.translate(this.centerX, this.centerY);
 		ctx.rotate(this.angle);
-		ctx.lineWidth = 5;
+		ctx.lineWidth = 3;
 		ctx.strokeStyle = hexToRgbA("#000000", this.opacity);
 
 		ctx.shadowBlur = 20;
