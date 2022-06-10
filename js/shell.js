@@ -191,29 +191,29 @@ class Shell {
 
 			//initial collision detection
 			if (SAT_POLYGON(this, tile).collision) {
-				if (this.collidedBlockID == tile.id) {
-					this.bounceY();
-					this.angle = Math.PI - this.angle;
-					this.collidedBlockID = tile.id;
-					break;
-				}
+				const dx = (this.x + this.width / 2) - (tile.x + tile.width / 2);
+				const dy = (this.y + this.height / 2) - (tile.y + tile.height / 2);
+				const width = (this.width + tile.width) / 2;
+				const height = (this.height + tile.height) / 2;
+				const crossWidth = width * dy;
+				const crossHeight = height * dx;
 
-				this.collidedBlockID = tile.id;
-				//if peace mode is on and it hit tile, removal peace mode
-				if (this.peace) {
-					this.peace = false;
-				}
-
-				//left or right collision
-				if ((this.x + this.width >= tile.x) || (this.x <= tile.x + tile.width)) {
-					this.bounceX();
-				}
-
-				//top or bottom collision
-				if (SAT_POLYGON(this, tile).collision) {
-					//reset angle to pre bounceX collision for a y ricochet
-					this.angle = Math.PI - this.angle;
-					this.bounceY();
+				if (crossWidth > crossHeight) {
+					if (crossWidth > -crossHeight) {
+						//bottom
+						this.bounceY();
+					} else {
+						//left
+						this.bounceX();
+					}
+				} else {
+					if (crossWidth > -crossHeight) {
+						//right
+						this.bounceX();
+					} else {
+						//top
+						this.bounceY();
+					}
 				}
 
 				this.ricochet++;
