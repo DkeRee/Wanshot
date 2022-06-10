@@ -42,6 +42,10 @@
 			if (trackUpdate > 0.1) {
 				//ADD TRACK FOR EVERY TANK
 				STAGE_CACHE.player.trackUpdate();
+
+				for (var i = 0; i < STAGE_CACHE.enemies.length; i++) {
+					STAGE_CACHE.enemies[i].trackUpdate();
+				}
 				trackUpdate = 0;
 			}
 
@@ -117,6 +121,10 @@
 
 			STAGE_CACHE.player.update();
 
+			for (var i = 0; i < STAGE_CACHE.enemies.length; i++) {
+				STAGE_CACHE.enemies[i].update();
+			}
+
 			//update start logo
 			if (startLogoShow) {
 				startLogoUpdate();
@@ -153,6 +161,10 @@
 		
 		STAGE_CACHE.player.renderShadow();
 
+		for (var i = 0; i < STAGE_CACHE.enemies.length; i++) {
+			STAGE_CACHE.enemies[i].renderShadow();
+		}
+
 		for (var i = 0; i < STAGE_CACHE.tiles.length; i++) {
 			STAGE_CACHE.tiles[i].renderShadow();
 		}
@@ -184,6 +196,10 @@
 		}
 
 		STAGE_CACHE.player.render();
+
+		for (var i = 0; i < STAGE_CACHE.enemies.length; i++) {
+			STAGE_CACHE.enemies[i].render();
+		}
 
 		for (var i = 0; i < STAGE_CACHE.tiles.length; i++) {
 			STAGE_CACHE.tiles[i].render();

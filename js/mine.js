@@ -111,15 +111,35 @@ class Mine {
 	mineWithPlayer() {
 		const player = STAGE_CACHE.player;
 
-		if (SAT_POLYGON_CIRCLE(player.tank, {
-			x: this.x,
-			y: this.y,
-			radius: this.explosionRadius
-		}) && !player.dead) {
-			//MINE EXPLODED NEAR PLAYER && PLAYER ISNT DEAD
+		//if player isn't dead but it is intermission, player has won. don't let player die
+		if (!player.dead && !INTERMISSION) {
+			if (SAT_POLYGON_CIRCLE(player.tank, {
+				x: this.x,
+				y: this.y,
+				radius: this.explosionRadius
+			}) && !player.dead) {
+				//MINE EXPLODED NEAR PLAYER && PLAYER ISNT DEAD
 
-			//exploed player tank
-			player.explode();
+				//explode player tank
+				player.explode();
+			}
+		}
+	}
+
+	mineWithEnemy() {
+		for (var i = 0; i < STAGE_CACHE.enemies.length; i++) {
+			const enemy = STAGE_CACHE.enemies[i];
+
+			if (SAT_POLYGON_CIRCLE(enemy.tank, {
+				x: this.x,
+				y: this.y,
+				radius: this.explosionRadius
+			}) && !enemy.dead) {
+				//MINE EXPLODED NEAR ENEMY && ENEMY ISNT DEAD
+
+				//explode enemy tank
+				enemy.explode();
+			}
 		}
 	}
 
@@ -213,6 +233,7 @@ class Mine {
 
 				//COLLISIONS
 				this.mineWithPlayer();
+				this.mineWithEnemy();
 				this.mineWithLooseTile();
 				this.mineWithMine();
 

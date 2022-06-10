@@ -186,8 +186,6 @@ class Shell {
 	shellWithTile() {
 		for (var i = 0; i < STAGE_CACHE.tiles.length; i++) {
 			const tile = STAGE_CACHE.tiles[i];
-			
-			//special thanks to Shakkar23 for this method!
 
 			//initial collision detection
 			if (SAT_POLYGON(this, tile).collision) {
@@ -244,23 +242,51 @@ class Shell {
 
 	shellWithPlayer() {
 		const player = STAGE_CACHE.player;
-		const SATCollision = SAT_POLYGON(this, player.tank);
 
-		//wait for bullet to leave contact of tank then remove peace mode
-		if (this.peace) {
-			if (!SATCollision.collision) {
-				this.peace = false;
+		//if player isn't dead but it is intermission, player has won. don't let player die
+		if (!player.dead && !INTERMISSION) {
+			const SATCollision = SAT_POLYGON(this, player.tank);
+
+			//wait for bullet to leave contact of tank then remove peace mode
+			if (this.peace) {
+				if (!SATCollision.collision) {
+					this.peace = false;
+				}
+			}
+
+			if (SATCollision.collision && !player.dead && !this.peace) {
+				//SHELL COLLIDED WITH PLAYER && PLAYER IS NOT DEAD && SHELL IS NOT IN PEACE MODE
+
+				//explode this shell
+				this.diminish = true;
+
+				//explode player tank
+				player.explode();
 			}
 		}
+	}
 
-		if (SATCollision.collision && !player.dead && !this.peace) {
-			//SHELL COLLIDED WITH PLAYER && PLAYER IS NOT DEAD && SHELL IS NOT IN PEACE MODE
+	shellWithEnemy() {
+		for (var i = 0; i < STAGE_CACHE.enemies.length; i++) {
+			const enemy = STAGE_CACHE.enemies[i];
+			const SATCollision = SAT_POLYGON(this, enemy.tank);
 
-			//explode this shell
-			this.diminish = true;
+			//if this shell is in peace mode and it is no longer colliding with ITSELF, it is no longer peaceful
+			if (this.peace) {
+				if (!SATCollision.collision && this.tankID == enemy.tankID) {
+					this.peace = false;
+				}
+			}
 
-			//explode player tank
-			player.explode();
+			if (SATCollision.collision && !enemy.dead && !this.peace) {
+				//SHELL COLLIDED WITH ENEMY && ENEMY IS NOT DEAD && SHELL IS NOT IN PEACE MOD
+
+				//explode this shell
+				this.diminish = true;
+
+				//explode enemy tank
+				enemy.explode();
+			}
 		}
 	}
 
@@ -314,6 +340,7 @@ class Shell {
 				this.shellWithShell();
 				this.shellWithMine();
 				this.shellWithPlayer();
+				this.shellWithEnemy();
 				this.shellWithTile();
 
 				//LEFT AND RIGHT WALL

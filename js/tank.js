@@ -148,7 +148,10 @@ class Grave {
 
 //TANK CONSTRUCTOR
 class Tank {
-	constructor(x, y, angle, turretAngle, color, turretColor, sideColor, speed, rotationSpeed) {
+	constructor(x, y, angle, turretAngle, color, turretColor, sideColor, speed, rotationSpeed, tankID) {
+		//ID
+		this.tankID = tankID;
+
 		//body
 		this.width = TANK_WIDTH;
 		this.height = TANK_HEIGHT;
@@ -199,6 +202,41 @@ class Tank {
 	}
 
 	//COLLISIONS
+	tankWithTank() {
+		for (var i = 0; i < STAGE_CACHE.enemies.length; i++) {
+			const enemy = STAGE_CACHE.enemies[i];
+
+			//if this enemy im looping through is NOT me
+			if (enemy.tankID !== this.tankID) {
+				const SATCollision = SAT_POLYGON(this, enemy.tank);
+				if (SATCollision.collision) {
+					//push myself
+					this.x += SATCollision.normal.x * SATCollision.depth / 2;
+					this.y += SATCollision.normal.y * SATCollision.depth / 2;
+
+					//push enemy
+					enemy.tank.x -= SATCollision.normal.x * SATCollision.depth / 2;
+					enemy.tank.y -= SATCollision.normal.y * SATCollision.depth / 2;
+				}
+			}
+		}
+
+		//if i am not a player, check collisions for player
+		if (this.tankID !== PLAYER_ID) {
+			const player = STAGE_CACHE.player;
+			const SATCollision = SAT_POLYGON(this, player.tank);
+
+			if (SATCollision.collision) {
+				this.x += SATCollision.normal.x * SATCollision.depth / 2;
+				this.y += SATCollision.normal.y * SATCollision.depth / 2;
+
+				//push player
+				player.tank.x -= SATCollision.normal.x * SATCollision.depth / 2;
+				player.tank.y -= SATCollision.normal.y * SATCollision.depth / 2;
+			}
+		}
+	}
+
 	tankWithTile() {
 		for (var i = 0; i < STAGE_CACHE.tiles.length; i++) {
 			const tile = STAGE_CACHE.tiles[i];
@@ -229,6 +267,7 @@ class Tank {
 		this.centerY = this.y + this.height / 2;
 
 		//update collisions
+		this.tankWithTank();
 		this.tankWithTile();
 		this.tankWithPit();
 
@@ -267,9 +306,6 @@ class Tank {
 
 			particle.update();
 		}
-
-		//update turret angle
-		this.turretAngle = Math.atan2(targetCoords.y - this.centerY, targetCoords.x - this.centerX);
 	}
 
 	render(isDead) {

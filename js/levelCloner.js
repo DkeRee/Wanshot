@@ -1,6 +1,7 @@
 function levelCloner(CURR_LEVEL) {
 	const LEVEL_CACHE = {
 		player: null,
+		enemies: [],
 		shells: [],
 		graves: [],
 		tracks: [],
@@ -29,8 +30,14 @@ function levelCloner(CURR_LEVEL) {
 					LEVEL_CACHE.pits.push(new Pit(pits[i].x, pits[i].y));
 				}
 			case "enemies":
-				//will add enemy tank handler later on
-				LEVEL_CACHE.enemies = [];
+				const enemies = LOCATED_LEVEL[asset];
+				for (var i = 0; i < enemies.length; i++) {
+					switch (enemies[i].constructor.name) {
+						case "BrownTank":
+							LEVEL_CACHE.enemies.push(new BrownTank(enemies[i].tank.x, enemies[i].tank.y, enemies[i].tank.angle, enemies[i].tank.turretAngle));
+							break;
+					}
+				}
 				break;
 		}
 	}

@@ -2,9 +2,11 @@
 //color code: bodyColor, turretColor, sideColor
 class Player {
 	constructor(x, y, angle, turretAngle) {
-		this.tank = new Tank(x, y, angle, turretAngle, "#224ACF", "#1E42B8", "#0101BA", 100, 3);
-		this.dead = false;
+		//ID
 		this.tankID = PLAYER_ID;
+
+		this.tank = new Tank(x, y, angle, turretAngle, "#224ACF", "#1E42B8", "#0101BA", 100, 3, this.tankID);
+		this.dead = false;
 
 		//makes tank "shock" aka pause for a split second due to recoil from shot or mine
 		this.tankShock = 0;
@@ -26,7 +28,10 @@ class Player {
 
 	update() {
 		//update tankBody
-		this.tank.updateBody(MOUSE_POS);
+		this.tank.updateBody();
+
+		//update turret angle
+		this.tank.turretAngle = Math.atan2(MOUSE_POS.y - this.tank.centerY, MOUSE_POS.x - this.tank.centerX);
 
 		//update shellShock
 		this.tankShock += deltaTime;
@@ -142,7 +147,56 @@ class Player {
 
 class BrownTank {
 	constructor(x, y, angle, turretAngle) {
-		this.tank = new Tank(x, y, angle, turretAngle, "#966A4B", "#8C6346", "#B0896B", 0, 0);
+		//ID
+		this.tankID = Math.floor(Math.random() * 100000);
+
+		this.tank = new Tank(x, y, angle, turretAngle, "#966A4B", "#8C6346", "#B0896B", 0, 0, this.tankID);
+		this.dead = false;
+
+		//(90 * deltaTime) == 1.5 deg
+		this.turretRotation = 90 * deltaTime * Math.PI / 180;
 		this.shellDelay = 4;
+	}
+
+	update() {
+		if (!STAGE_CACHE.player.dead) {
+			this.tank.turretAngle += this.turretRotation;
+
+			if (Math.floor(Math.random() * 1000) > 985) {
+				this.turretRotation *= -1;
+			}
+
+			//update tankbody
+			this.tank.updateBody();
+		}
+	}
+
+	trackUpdate() {
+		if (!this.dead) {
+			this.tank.trackUpdate();
+		}
+	}
+
+	explode() {
+		//die
+		this.dead = true;
+		this.tank.explodeTank();
+
+		//start intermission
+		//the last enemy tank has been killed, you win this match!
+		if (STAGE_CACHE.enemies.length == 1) {
+			INTERMISSION = true;
+		}
+
+		//add grave
+		STAGE_CACHE.graves.push(new Grave(this.tank.centerX - GRAVE_WIDTH / 2, this.tank.centerY - GRAVE_HEIGHT / 2, this.tank.color));
+	}
+
+	render() {
+		this.tank.render(this.dead);
+	}
+
+	renderShadow() {
+		this.tank.renderShadow(this.dead);
 	}
 }
