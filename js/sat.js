@@ -4,13 +4,6 @@ http://programmerart.weebly.com/separating-axis-theorem.html
 help me
 */
 
-class xy {
-	constructor(x, y) {
-		this.x = x;
-		this.y = y;
-	}
-}
-
 function getVertex(cx, cy, vx, vy, rotatedAngle) {
 	//change rotatedAngle to radians
 	rotatedAngle = rotatedAngle * Math.PI / 180;
@@ -44,31 +37,31 @@ class Polygon {
 
 		//GET VERTEXES//
 
-		const vertexPoints = {
+		this.vertexPoints = {
 			topLeft: getVertex(this.centerX, this.centerY, this.x, this.y, this.rotation),
 			topRight: getVertex(this.centerX, this.centerY, this.x + this.width, this.y, this.rotation),
 			bottomLeft: getVertex(this.centerX, this.centerY, this.x, this.y + this.height, this.rotation),
 			bottomRight: getVertex(this.centerX, this.centerY, this.x + this.width, this.y + this.height, this.rotation)
-		}
+		};
 
 		//store in array for later use
-		for (var vertex in vertexPoints) {
-			this.vertices.push(vertexPoints[vertex]);
+		for (var vertex in this.vertexPoints) {
+			this.vertices.push(this.vertexPoints[vertex]);
 		}
 	
 		//GET EDGES//
 
 		//left edge
-		this.edges.push(new xy(vertexPoints.topLeft.x - vertexPoints.bottomLeft.x, vertexPoints.topLeft.y - vertexPoints.bottomLeft.y));
+		this.edges.push(new xy(this.vertexPoints.topLeft.x - this.vertexPoints.bottomLeft.x, this.vertexPoints.topLeft.y - this.vertexPoints.bottomLeft.y));
 
 		//top edge
-		this.edges.push(new xy(vertexPoints.topLeft.x - vertexPoints.topRight.x, vertexPoints.topLeft.y - vertexPoints.topRight.y));
+		this.edges.push(new xy(this.vertexPoints.topLeft.x - this.vertexPoints.topRight.x, this.vertexPoints.topLeft.y - this.vertexPoints.topRight.y));
 
 		//right edge
-		this.edges.push(new xy(vertexPoints.topRight.x - vertexPoints.bottomRight.x, vertexPoints.topRight.y - vertexPoints.bottomRight.y));
+		this.edges.push(new xy(this.vertexPoints.topRight.x - this.vertexPoints.bottomRight.x, this.vertexPoints.topRight.y - this.vertexPoints.bottomRight.y));
 
 		//bottom edge
-		this.edges.push(new xy(vertexPoints.bottomRight.x - vertexPoints.bottomLeft.x, vertexPoints.bottomRight.y - vertexPoints.bottomLeft.y));
+		this.edges.push(new xy(this.vertexPoints.bottomRight.x - this.vertexPoints.bottomLeft.x, this.vertexPoints.bottomRight.y - this.vertexPoints.bottomLeft.y));
 	}
 }
 

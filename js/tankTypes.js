@@ -158,16 +158,52 @@ class BrownTank {
 		this.shellDelay = 4;
 	}
 
+	shouldFire(ray, angle, bouncesLeft) {
+		if (bouncesLeft > 0) {
+			//it can still bounce, check for wall/block collision
+			const intersection = getWallIntersection(angle, ray);
+
+			//it collided with something!
+			if (intersection.intersect) {
+				return shouldFire(intersection.newRay, intersection.newAngle, bouncesLeft - 1);
+			}
+		} else {
+			//it can no longer bounce, check for player collision
+			const intersection = getPlayerIntersection(ray);
+
+			if (intersection) {
+				//after bouncing on the walls, it hit the player!
+				return true;
+			} else {
+				//after bouncing on the walls, it didn't hit the player :(
+				return false;
+			}
+		}
+	}
+
 	update() {
 		if (!STAGE_CACHE.player.dead) {
+			//update tankbody
+			this.tank.updateBody();	
+
 			this.tank.turretAngle += this.turretRotation;
 
-			if (Math.floor(Math.random() * 1000) > 985) {
-				this.turretRotation *= -1;
-			}
+			const shootCoordinates = new xy(1000 * Math.cos(this.tank.turretAngle) + this.tank.centerX, 1000 * Math.sin(this.tank.turretAngle) + this.tank.centerY);
 
-			//update tankbody
-			this.tank.updateBody();
+			const ray = new Ray(new xy(this.tank.centerX, this.tank.centerY), shootCoordinates);
+			
+			//check if ray hits player after exhausting all ricochetes
+
+			//brown tank shoots normal bullet. it can only ricochet once
+			if (this.shouldFire(ray, this.tank.turretAngle, 1)) {
+				//it found the ray to fire upon
+				this.tank.shoot(shootCoordinates, NORMAL_SHELL, this.tankID);
+			} else {
+				//it didn't find the ray to fire upon. continue idle animation
+				if (Math.floor(Math.random() * 1000) > 985) {
+					this.turretRotation *= -1;
+				}
+			}
 		}
 	}
 
