@@ -270,7 +270,9 @@ class Tank {
 		this.tankWithTank();
 		this.tankWithTile();
 		this.tankWithPit();
+	}
 
+	updateParticles() {
 		//update tank explosion particles
 		if (this.tankExplosion) {
 
@@ -294,7 +296,7 @@ class Tank {
 				this.explosionParticleDelay = 0;
 			}
 		}
-
+		
 		for (var i = 0; i < this.explosionParticles.length; i++) {
 			const particle = this.explosionParticles[i];
 

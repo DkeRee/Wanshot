@@ -15,8 +15,9 @@ function getVertex(cx, cy, vx, vy, rotatedAngle) {
 
 	//original angle of polygon without the added rotation
 	const originalAngle = Math.atan2(distanceY, distanceX);
-	const rotatedVertexX = cx + distance * Math.cos(originalAngle + rotatedAngle);
-	const rotatedVertexY = cy + distance * Math.sin(originalAngle + rotatedAngle);
+
+	const rotatedVertexX = cx + distance * Math.cos(originalAngle - rotatedAngle);
+	const rotatedVertexY = cy + distance * Math.sin(originalAngle - rotatedAngle);
 
 	//vertex with polygon's rotation
 	return new xy(rotatedVertexX, rotatedVertexY);

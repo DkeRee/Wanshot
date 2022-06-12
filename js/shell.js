@@ -109,6 +109,8 @@ class Shell {
 		//body
 		this.width = SHELL_WIDTH;
 		this.height = SHELL_HEIGHT;
+		this.fakeWidth = 9;
+		this.fakeHeight = 6;
 		this.color = "#D3D3D3";
 		this.explode = false;
 
@@ -249,7 +251,7 @@ class Shell {
 
 			//wait for bullet to leave contact of tank then remove peace mode
 			if (this.peace) {
-				if (!SATCollision.collision) {
+				if (!SATCollision.collision && this.tankID == PLAYER_ID) {
 					this.peace = false;
 				}
 			}
@@ -287,6 +289,7 @@ class Shell {
 				//explode enemy tank
 				enemy.explode();
 			}
+
 		}
 	}
 
@@ -389,7 +392,7 @@ class Shell {
 			ctx.rotate(this.angle);
 
 			ctx.fillStyle = this.color;
-			ctx.fillRect(this.width / -2, this.height / -2, this.width, this.height);
+			ctx.fillRect(this.fakeWidth / -2, this.fakeHeight / -2, this.fakeWidth, this.fakeHeight);
 
 			ctx.restore();
 

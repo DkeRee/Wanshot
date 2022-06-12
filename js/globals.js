@@ -57,8 +57,8 @@ const EXPLOSION_INCR = 610;
 
 const TRAIL_PARTICLE_RADIUS = 5;
 
-const SHELL_WIDTH = 10;
-const SHELL_HEIGHT = 7;
+const SHELL_WIDTH = 8.5;
+const SHELL_HEIGHT = 3;
 
 const TILE_WIDTH = 35;
 const TILE_HEIGHT = 35;
@@ -67,4 +67,8 @@ const TILE_PARTICLE_SIDE = 20;
 const REGULAR_BLOCK = 1;
 const LOOSE_BLOCK = 2;
 
+const BROWN_TANK = 10;
+
 const SHADOW = "rgba(0, 0, 0, 0.3)";
+
+var tempRay = new Ray(new xy(0, 0), new xy(0, 0));

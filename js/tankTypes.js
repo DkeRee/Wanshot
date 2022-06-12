@@ -95,6 +95,9 @@ class Player {
 				delete this.keys[32];
 			}
 		}
+
+		//update particles
+		this.tank.updateParticles();
 	}
 	
 	explode() {
@@ -151,38 +154,57 @@ class BrownTank {
 		this.tankID = Math.floor(Math.random() * 100000);
 
 		this.tank = new Tank(x, y, angle, turretAngle, "#966A4B", "#8C6346", "#B0896B", 0, 0, this.tankID);
+		this.tankType = BROWN_TANK
 		this.dead = false;
 
 		//(90 * deltaTime) == 1.5 deg
 		this.turretRotation = 90 * deltaTime * Math.PI / 180;
-		this.shellDelay = 4;
+		this.shellDelay = 10;
 	}
 
-	shouldFire(ray, angle, bouncesLeft) {
-		if (bouncesLeft > 0) {
-			//it can still bounce, check for wall/block collision
-			const intersection = getWallIntersection(angle, ray);
+	shouldFire(ray, angle, bouncesLeft, firstShot, collidedTileID) {
+		//check for comrade collisions overall. If a ray has a comrade collision it should not be taken
+		const comradeCollision = getComradeCollisions(ray, angle, firstShot, this.tankID);
 
-			//it collided with something!
-			if (intersection.intersect) {
-				return shouldFire(intersection.newRay, intersection.newAngle, bouncesLeft - 1);
-			}
-		} else {
-			//it can no longer bounce, check for player collision
-			const intersection = getPlayerIntersection(ray);
+		if (!comradeCollision.reflection) {
+			if (bouncesLeft > 0) {
+				const wallCollision = getWallCollisions(ray, angle, collidedTileID);
 
-			if (intersection) {
-				//after bouncing on the walls, it hit the player!
-				return true;
+				if (wallCollision.reflection) {
+					return this.shouldFire(wallCollision.reflection.newRay, wallCollision.reflection.newAngle, bouncesLeft - 1, false, wallCollision.id);
+				} else {
+					const borderCollision = getBorderCollisions(ray, angle);
+					return this.shouldFire(borderCollision.reflection.newRay, borderCollision.reflection.newAngle, bouncesLeft - 1, false, null);
+				}
 			} else {
-				//after bouncing on the walls, it didn't hit the player :(
-				return false;
+				//must hit player on last round
+				const playerCollision = getPlayerCollisions(ray, angle);
+
+				if (playerCollision.reflection) {
+					//check if any walls are in the way
+					this.turretRotation *= -1;
+					const wallCollision = getWallCollisions(new Ray(ray.pointA, new xy(STAGE_CACHE.player.tank.x, STAGE_CACHE.player.tank.y)), angle, collidedTileID);
+
+					if (!wallCollision.reflection) {
+						//no walls are in the way!
+						return true;
+					} else {
+						//some walls are in the way :(
+						return false;
+					}
+				} else {
+					//doesn't hit player :(
+					return false;
+				}
 			}
 		}
 	}
 
 	update() {
-		if (!STAGE_CACHE.player.dead) {
+		if (!STAGE_CACHE.player.dead && !this.dead) {
+			//update limiters
+			this.shellDelay += deltaTime;
+
 			//update tankbody
 			this.tank.updateBody();	
 
@@ -191,12 +213,12 @@ class BrownTank {
 			const shootCoordinates = new xy(1000 * Math.cos(this.tank.turretAngle) + this.tank.centerX, 1000 * Math.sin(this.tank.turretAngle) + this.tank.centerY);
 
 			const ray = new Ray(new xy(this.tank.centerX, this.tank.centerY), shootCoordinates);
-			
-			//check if ray hits player after exhausting all ricochetes
 
+			//check if ray hits player after exhausting all ricochetes
 			//brown tank shoots normal bullet. it can only ricochet once
-			if (this.shouldFire(ray, this.tank.turretAngle, 1)) {
+			if (this.shouldFire(ray, this.tank.turretAngle, 1, true, null) && this.shellDelay > 10) {
 				//it found the ray to fire upon
+				this.shellDelay = 0;
 				this.tank.shoot(shootCoordinates, NORMAL_SHELL, this.tankID);
 			} else {
 				//it didn't find the ray to fire upon. continue idle animation
@@ -205,6 +227,9 @@ class BrownTank {
 				}
 			}
 		}
+
+		//update particles
+		this.tank.updateParticles();
 	}
 
 	trackUpdate() {

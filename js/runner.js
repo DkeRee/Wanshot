@@ -44,7 +44,14 @@
 				STAGE_CACHE.player.trackUpdate();
 
 				for (var i = 0; i < STAGE_CACHE.enemies.length; i++) {
-					STAGE_CACHE.enemies[i].trackUpdate();
+					const enemy = STAGE_CACHE.enemies[i];
+
+					//dont update tracks for tanks that don't move
+					if (enemy.tankType == BROWN_TANK)  {
+						continue;
+					}
+
+					enemy.trackUpdate();
 				}
 				trackUpdate = 0;
 			}
@@ -214,6 +221,16 @@
 		if (startLogoShow) {
 			startLogoRender();
 		}
+
+    // set line stroke and line width
+    ctx.strokeStyle = 'red';
+    ctx.lineWidth = 5;
+
+    // draw a red line
+    ctx.beginPath();
+    ctx.moveTo(tempRay.pointA.x, tempRay.pointA.y);
+    ctx.lineTo(tempRay.pointB.x, tempRay.pointB.y);
+    ctx.stroke();
 	}
 
 	//KEYBOARD & MOUSE EVENTS//
