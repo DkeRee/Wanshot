@@ -207,7 +207,7 @@ class Tank {
 			const enemy = STAGE_CACHE.enemies[i];
 
 			//if this enemy im looping through is NOT me
-			if (enemy.tankID !== this.tankID) {
+			if (enemy.tankID !== this.tankID && !enemy.dead) {
 				const SATCollision = SAT_POLYGON(this, enemy.tank);
 				if (SATCollision.collision) {
 					//push myself
@@ -263,13 +263,15 @@ class Tank {
 
 	updateBody(targetCoords) {
 		//update center
-		this.centerX = this.x + this.width / 2;
-		this.centerY = this.y + this.height / 2;
+		if (!this.dead) {
+			this.centerX = this.x + this.width / 2;
+			this.centerY = this.y + this.height / 2;
 
-		//update collisions
-		this.tankWithTank();
-		this.tankWithTile();
-		this.tankWithPit();
+			//update collisions
+			this.tankWithTank();
+			this.tankWithTile();
+			this.tankWithPit();
+		}
 	}
 
 	updateParticles() {

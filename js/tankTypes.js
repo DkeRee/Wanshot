@@ -1,3 +1,13 @@
+function checkGameOver() {
+	for (var i = 0; i < STAGE_CACHE.enemies.length; i++) {
+		//game is not over if an enemy tank is still alive
+		if (!STAGE_CACHE.enemies[i].dead) {
+			return false;
+		}
+	}
+	return true;
+}
+
 //TANK TYPES
 //color code: bodyColor, turretColor, sideColor
 class Player {
@@ -159,6 +169,7 @@ class BrownTank {
 		this.dead = false;
 
 		//(90 * deltaTime) == 1.5 deg
+		this.getNewGoal = true;
 		this.goalRot = turretAngle * Math.PI / 180;
 		this.noise = false;
 		this.noiseDelay = 0;
@@ -238,11 +249,6 @@ class BrownTank {
 			const ray = new Ray(new xy(this.tank.centerX, this.tank.centerY), shootCoordinates);
 
 			//get the angle to where the player is
-			const playerInfo = this.findPlayer();
-
-			if (playerInfo.foundAngle) {
-				this.goalRot = playerInfo.angle;
-			}
 
 			//rotate until it reaches goal, once it reaches goal activate some noise to avoid pinpoint accuracy
 
@@ -254,11 +260,31 @@ class BrownTank {
 			if (Math.sign(this.turretRotation) == 1) {
 				//positive
 				if (this.tank.turretAngle + this.turretRotation >= this.goalRot) {
+					if (this.getNewGoal) {
+						const playerInfo = this.findPlayer();
+
+						if (playerInfo.foundAngle) {
+							this.goalRot = playerInfo.angle;
+						}
+
+						this.getNewGoal = false;
+					}
+
 					this.noise = true;
 				}
 			} else {
 				//negative
 				if (this.tank.turretAngle + this.turretRotation <= this.goalRot) {
+					if (this.getNewGoal) {
+						const playerInfo = this.findPlayer();
+
+						if (playerInfo.foundAngle) {
+							this.goalRot = playerInfo.angle;
+						}
+
+						this.getNewGoal = false;
+					}
+
 					this.noise = true;
 				}
 			}
@@ -270,6 +296,7 @@ class BrownTank {
 				if (this.noiseDelay > this.noiseAmount) {
 					this.noiseDelay = 0;
 					this.turretRotation *= -1;
+					this.getNewGoal = true;
 					this.noise = false;
 				}
 			}
@@ -282,13 +309,6 @@ class BrownTank {
 				//it found the ray to fire upon
 				this.shellDelay = 0;
 				this.tank.shoot(shootCoordinates, NORMAL_SHELL, this.tankID);
-			} else {
-				/*
-				//it didn't find the ray to fire upon. continue idle animation
-				if (Math.floor(Math.random() * 1000) > 985) {
-					this.turretRotation *= -1;
-				}
-				*/
 			}
 		}
 
@@ -309,7 +329,7 @@ class BrownTank {
 
 		//start intermission
 		//the last enemy tank has been killed, you win this match!
-		if (STAGE_CACHE.enemies.length == 1) {
+		if (checkGameOver()) {
 			INTERMISSION = true;
 		}
 
