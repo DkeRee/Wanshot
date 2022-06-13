@@ -46,6 +46,7 @@ class Box {
 
 				//mark or unmark
 				if (holding) {
+					console.log(exportedBlocks)
 					if (!this.clicked) {
 						if (!this.marked) {
 							//place tile

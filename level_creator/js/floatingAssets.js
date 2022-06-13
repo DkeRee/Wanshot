@@ -14,20 +14,16 @@ function rectangleCollision(rectA, rectB) {
 	return false
 }
 
-function isCollidingWithSurroundingBlocks(rect) {
-	const newRect = {};
-	//check wall
-	if (rect.angle == 0 || rect.angle == -Math.PI) {
-		//horizontal angle
-		newRect.x = rect.x;
-		newRect.y = rect.y;
-		newRect.width = rect.width;
-		newRect.height = rect.height;		
-
-		if (rect.x <= 0 || rect.x + rect.width >= CANVAS_WIDTH || rect.y <= 0 || rect.y + rect.height >= CANVAS_HEIGHT) {
-			return true;
-		}
-	} else {
+function transRect(rect) {
+	const newRect = {
+		x: rect.x,
+		y: rect.y,
+		width: rect.width,
+		height: rect.height
+	}
+	
+	//if vertical angle
+	if (rect.angle !== 0 || rect.angle !== -Math.PI) {
 		//vertical angle
 		//rotate 90 degrees
 		const distX = rect.centerX - rect.x;
@@ -36,26 +32,90 @@ function isCollidingWithSurroundingBlocks(rect) {
 		const newX = -distY;
 		const newY = distX;
 
-		const transX = rect.centerX + newX;
-		const transY = rect.centerY - newY;
+		newRect.x = rect.centerX + newX;
+		newRect.y = rect.centerY - newY;
 
-		const transWidth = rect.height;
-		const transHeight = rect.width;
+		newRect.width = rect.height;
+		newRect.height = rect.width;
+	}
 
-		newRect.x = transX;
-		newRect.y = transY;
-		newRect.width = transWidth;
-		newRect.height = transHeight;
+	return newRect;
+}
 
-		if (transX <= 0 || transX + transWidth >= CANVAS_WIDTH || transY <= 0 || transY + transHeight >= CANVAS_HEIGHT) {
-			return true;
-		}
+function isCollidingWithSurroundingBlocks(rect) {
+	const newRect = transRect(rect);
+
+	if (newRect.x <= 0 || newRect.x + newRect.width >= CANVAS_WIDTH || newRect.y <= 0 || newRect.y + newRect.height >= CANVAS_HEIGHT) {
+		return true;
 	}
 
 	//check surrounding blocks
 	for (var i = 0; i < grid.length; i++) {
 		//hit a grid box that is marked
 		if (rectangleCollision(newRect, grid[i]) && grid[i].marked) {
+			return true;
+		}
+	}
+
+	return false;
+}
+
+function checkTankDeletion() {
+	//check player
+	if (player) {
+		const transPlayer = transRect(player.tank);
+
+		if ((transPlayer.x <= mouse.x && mouse.x <= transPlayer.x + transPlayer.width) && (transPlayer.y <= mouse.y && mouse.y <= transPlayer.y + transPlayer.height)) {
+			player.hovering = true;
+
+			//colliding manages the color scheme
+			player.tank.colliding = true;
+		} else {
+			player.hovering = false;
+
+			//colliding manages the color scheme
+			player.tank.colliding = false;
+		}
+	}
+
+	//check enemy
+	for (var i = 0; i < exportedEnemies.length; i++) {
+		//(this.x <= mouse.x && mouse.x <= this.x + this.side) && (this.y <= mouse.y && mouse.y <= this.y + this.side)
+		const enemy = exportedEnemies[i];
+		const rect = enemy.tank;
+
+		const trans = transRect(rect);
+
+		//check if mouse is on enemy tank to delete
+		if ((trans.x <= mouse.x && mouse.x <= trans.x + trans.width) && (trans.y <= mouse.y && mouse.y <= trans.y + trans.height)) {
+			enemy.hovering = true;
+
+			//colliding manages the color scheme
+			rect.colliding = true;
+		} else {
+			enemy.hovering = false;
+
+			//colliding manages the color scheme
+			rect.colliding = false;
+		}
+	}
+}
+
+function tankCollision(rect) {
+	const newRect = transRect(rect);
+
+	//player collision
+	if (player) {
+		if (rectangleCollision(newRect, transRect(player.tank))) {
+			return true;
+		}
+	}
+
+	for (var i = 0; i < exportedEnemies.length; i++) {
+		const enemy = exportedEnemies[i];
+
+		//enemy collision
+		if (rectangleCollision(newRect, transRect(enemy.tank))) {
 			return true;
 		}
 	}
@@ -182,38 +242,117 @@ class Tank {
 class Player {
 	constructor(opacity, angle) {
 		this.tank = new Tank(mouse.x - TANK_WIDTH / 2, mouse.y - TANK_HEIGHT / 2, angle, "#224ACF", "#1E42B8", "#0101BA", opacity);
+		this.hovering = false;
 		this.content = PLAYER;
-		this.placed = false;
 	}
 }
 
+class BrownTank {
+	constructor(opacity, angle) {
+		this.tank = new Tank(mouse.x - TANK_WIDTH / 2, mouse.y - TANK_HEIGHT / 2, angle, "#966A4B", "#8C6346", "#B0896B", opacity);
+		this.hovering = false;
+		this.content = BROWN_TANK;
+	}
+}
+
+var placed = false;
 function updateFloatingAssets() {
 	//only update floating assets if you are not editing blocks
-	if (!editingBlocks) {
-		floating_cache.tank.update();
+	if (!holding) {
+		placed = false;
+	}
 
-		//if floating cache is not colliding with surrounding blocks
-		if (!isCollidingWithSurroundingBlocks(floating_cache.tank)) {
-			floating_cache.tank.colliding = false;
-			if (holding) {
-				if (floating_cache.content == PLAYER) {
-					player = new Player(1, floating_cache.tank.angle);
+	//prevent mass clicking
+	if (!placed) {
+		if (!editingBlocks) {
+
+			var unpause = false;
+
+			//flags tanks for deletion
+			checkTankDeletion();
+
+			//deletes the player
+			if (player) {
+				if (player.hovering) {
+					floating_cache.pause = true;
+
+					if (holding) {
+						player = null;
+						unpause = true;
+						placed = true;
+					}
+				} else {
+					floating_cache.pause = false;
 				}
 			}
-		} else {
-			floating_cache.tank.colliding = true;
+
+			//deletes the enemies
+			for (var i = 0; i < exportedEnemies.length; i++) {
+				const enemy = exportedEnemies[i];
+
+				if (enemy.hovering) {
+					floating_cache.pause = true;
+
+					if (holding) {
+						exportedEnemies.splice(i, 1);
+						unpause = true;
+						placed = true;
+					}
+
+					break;
+				} else {
+					floating_cache.pause = false;
+				}
+			}
+
+			//if floating cache isn't paused (don't update)
+			if (!floating_cache.pause) {
+				floating_cache.content.tank.update();
+
+				//if floating cache is not colliding with surrounding blocks && other tanks
+				if (!isCollidingWithSurroundingBlocks(floating_cache.content.tank) && !tankCollision(floating_cache.content.tank)) {
+					floating_cache.content.tank.colliding = false;
+					if (holding) {
+						placed = true;
+						if (floating_cache.content.content == PLAYER) {
+							player = new Player(1, floating_cache.content.tank.angle);
+						} else {
+							switch(floating_cache.content.content) {
+								case BROWN_TANK:
+									exportedEnemies.push(new BrownTank(1, floating_cache.content.tank.angle));
+									break;
+							}
+						}
+					}
+				} else {
+					floating_cache.content.tank.colliding = true;
+				}
+			}
+
+			if (unpause) {
+				floating_cache.pause = false;
+				unpause = false;
+			}
 		}
-	}
+	}	
 }
 
 function renderFloatingAssets() {
-	//only render floating cache if it exists. this also means that you are not editing blocks.
-	if (floating_cache) {
-		floating_cache.tank.renderShadow();
-		floating_cache.tank.render();
+	if (player) {
+		player.tank.renderShadow();
+		player.tank.render();
 	}
 
-	if (player) {
-		player.tank.render();
+	for (var i = 0; i < exportedEnemies.length; i++) {
+		exportedEnemies[i].tank.renderShadow();
+		exportedEnemies[i].tank.render();
+	}
+
+	//only render floating cache if it exists and it isn't paused. this also means that you are not editing blocks.
+	if (floating_cache.content) {
+		if (!floating_cache.pause) {
+			floating_cache.content.tank.renderShadow();
+			floating_cache.content.tank.render();
+		}
 	}
 }

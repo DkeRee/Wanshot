@@ -146,7 +146,7 @@ function getComradeCollisions(ray, angle, firstShot, tankID) {
 
 	for (var i = 0; i < STAGE_CACHE.enemies.length; i++) {
 		//avoid clipping into own tank on first shot
-		if (firstShot && STAGE_CACHE.enemies[i].tankID) {
+		if (firstShot && STAGE_CACHE.enemies[i].tankID == tankID) {
 			continue;
 		}
 

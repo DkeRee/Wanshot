@@ -21,6 +21,7 @@
 		if (x == 0 || x == CANVAS_WIDTH - boxSize || y == 0 || y == CANVAS_HEIGHT - boxSize) {
 			const box = grid[i];
 			box.marked = true;
+			box.blockType = REGULAR_BLOCK;
 			box.content = new Block(box.x, box.y, 1, REGULAR_BLOCK);
 			exportedBlocks[box.id] = `new Block(${box.x}, ${box.y}, ${REGULAR_BLOCK})`;
 		}
@@ -32,6 +33,8 @@
 			x += boxSize;
 		}
 	}
+
+	player = new Player(1, 0);
 
 	function globalStep() {
 		globalUpdate();
@@ -90,12 +93,31 @@
 			return;
 		}
 
+		if (exportedEnemies.length == 0) {
+			console.log("You MUST have at least one enemy tank in the game");
+			return;
+		}
+
 		playerExport += `new Player(${player.tank.x}, ${player.tank.y}, ${player.tank.angle}, ${player.tank.angle})`;
 
 		playerExport += ",";
 
 		//temp hardcode
-		var enemyExport = "enemies: [],";
+		var enemyExport = "enemies: [";
+
+		for (var i = 0; i < exportedEnemies.length; i++) {
+			switch (exportedEnemies[i].content) {
+				case BROWN_TANK:
+					enemyExport += `new BrownTank(${exportedEnemies[i].tank.x}, ${exportedEnemies[i].tank.y}, ${exportedEnemies[i].tank.angle}, ${exportedEnemies[i].tank.angle})`;
+					break;
+			}
+
+			if (i !== exportedEnemies.length - 1) {
+				enemyExport += ", ";
+			}
+		}
+
+		enemyExport += "],";
 
 		var blockExport = "tiles: [";
 
@@ -174,13 +196,17 @@
 				currAsset = PLAYER;
 				switchEditing(false);
 				break;
+			case 53:
+				currAsset = BROWN_TANK;
+				switchEditing(false);
+				break;
 			case 82:
 				//rotate the floating cache
 				if (!editingBlocks) {
-					if (floating_cache.tank.angle - (90 * Math.PI / 180) >= 2 * Math.PI) {
-						floating_cache.tank.angle = 0;
+					if (floating_cache.content.tank.angle - (90 * Math.PI / 180) >= 2 * Math.PI) {
+						floating_cache.content.tank.angle = 0;
 					} else {
-						floating_cache.tank.angle -= 90 * Math.PI / 180;
+						floating_cache.content.tank.angle -= 90 * Math.PI / 180;
 					}
 				}
 				break;
