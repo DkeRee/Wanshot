@@ -146,31 +146,34 @@ function getComradeCollisions(ray, angle, firstShot, tankID) {
 
 	for (var i = 0; i < STAGE_CACHE.enemies.length; i++) {
 		//avoid clipping into own tank on first shot
-		if (firstShot && STAGE_CACHE.enemies[i].tankID == tankID) {
-			continue;
-		}
+		//if enemy tank isn't dead
+		if (!STAGE_CACHE.enemies[i].dead) {
+			if (firstShot && STAGE_CACHE.enemies[i].tankID == tankID) {
+				continue;
+			}
 
-		const enemy = new Polygon(STAGE_CACHE.enemies[i].tank);
-		const points = enemy.vertexPoints;
+			const enemy = new Polygon(STAGE_CACHE.enemies[i].tank);
+			const points = enemy.vertexPoints;
 
-		const edges = [
-			new Ray(points.topLeft, points.bottomLeft), //left
-			new Ray(points.topLeft, points.topRight), //top
-			new Ray(points.topRight, points.bottomRight), //right
-			new Ray(points.bottomLeft, points.bottomRight) //bottom
-		];
+			const edges = [
+				new Ray(points.topLeft, points.bottomLeft), //left
+				new Ray(points.topLeft, points.topRight), //top
+				new Ray(points.topRight, points.bottomRight), //right
+				new Ray(points.bottomLeft, points.bottomRight) //bottom
+			];
 
-		for (var i = 0; i < edges.length; i++) {
-			//bump up pointA of ray to avoid clipping based on side of collision
+			for (var o = 0; o < edges.length; o++) {
+				//bump up pointA of ray to avoid clipping based on side of collision
 
-			const intersection = getRayIntersect(ray, edges[i]);
+				const intersection = getRayIntersect(ray, edges[o]);
 
-			if (intersection.intersect) {
-				const rayLength = getRayLength(ray.pointA, intersection.point);
+				if (intersection.intersect) {
+					const rayLength = getRayLength(ray.pointA, intersection.point);
 
-				if (rayLength < closestIntersection.dist) {
-					closestIntersection.reflection = intersection;
-					closestIntersection.dist = rayLength;
+					if (rayLength < closestIntersection.dist) {
+						closestIntersection.reflection = intersection;
+						closestIntersection.dist = rayLength;
+					}
 				}
 			}
 		}

@@ -217,6 +217,7 @@ class BrownTank {
 
 				if (playerCollision.reflection) {
 					//check if any walls are in the way
+					this.turretRotation *= -1;
 					const wallCollision = getWallCollisions(new Ray(ray.pointA, new xy(STAGE_CACHE.player.tank.x, STAGE_CACHE.player.tank.y)), angle, collidedTileID);
 
 					if (!wallCollision.reflection) {
@@ -253,6 +254,7 @@ class BrownTank {
 			//rotate until it reaches goal, once it reaches goal activate some noise to avoid pinpoint accuracy
 
 			//if the turret rotation is currently bigger than the goal rotation, make it go backwards
+			/*
 			if (this.turretRotation > this.goalRot) {
 				this.turretRotation *= -1;
 			}
@@ -300,6 +302,7 @@ class BrownTank {
 					this.noise = false;
 				}
 			}
+			*/
 
 			this.tank.turretAngle += this.turretRotation;
 
@@ -309,6 +312,11 @@ class BrownTank {
 				//it found the ray to fire upon
 				this.shellDelay = 0;
 				this.tank.shoot(shootCoordinates, NORMAL_SHELL, this.tankID);
+			} else {
+				//it didn't find the ray to fire upon. continue idle animation
+				if (Math.floor(Math.random() * 1000) > 985) {
+					this.turretRotation *= -1;
+				}
 			}
 		}
 
