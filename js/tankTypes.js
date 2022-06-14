@@ -281,10 +281,6 @@ class BrownTank {
 					this.noiseDelay = 0;
 					this.turretRotation *= -1;
 					this.noise = false;
-				} else {
-					if (Math.floor(Math.random() * 1000) > 985) {
-						this.turretRotation *= -1;
-					}
 				}
 			}
 
