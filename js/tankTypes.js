@@ -174,10 +174,6 @@ class BrownTank {
 					return this.castToPlayer(wallCollision.reflection.newRay, wallCollision.reflection.newAngle, bouncesLeft - 1, false, wallCollision.id);
 				} else {
 					const borderCollision = getBorderCollisions(ray, angle, collidedSideID);
-					if (!borderCollision) return {
-						detectPlayer: false,
-						noWalls: false
-					}
 					return this.castToPlayer(borderCollision.reflection.newRay, borderCollision.reflection.newAngle, bouncesLeft - 1, false, borderCollision.id);
 				}
 			} else {
