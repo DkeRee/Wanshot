@@ -170,6 +170,7 @@ class BrownTank {
 
 		//(90 * deltaTime) == 1.5 deg
 		this.getNewGoal = true;
+		this.try = 0;
 		this.goalRot = turretAngle * Math.PI / 180;
 		this.noise = false;
 		this.noiseDelay = 0;
@@ -233,8 +234,8 @@ class BrownTank {
 	//fires two rays on each corner of a shell to determine if shell should be fired
 	shouldFire(ray) {
 		const perpAngle = getPerpAngle(ray);
-		const Cos = Math.cos(perpAngle) * SHELL_WIDTH / 1.2;
-		const Sin = Math.sin(perpAngle) * SHELL_WIDTH / 1.2;
+		const Cos = Math.cos(perpAngle) * SHELL_WIDTH / 1.193;
+		const Sin = Math.sin(perpAngle) * SHELL_WIDTH / 1.193;
 		
 		//left ray
 		const leftRay = new Ray(new xy(ray.pointA.x + Cos, ray.pointA.y + Sin), new xy(ray.pointB.x + Cos, ray.pointB.y + Sin));
@@ -251,11 +252,17 @@ class BrownTank {
 		//if either ray collide with player, lock on. If there are no walls, shoot!
 
 		if (leftCast.detectPlayer || rightCast.detectPlayer) {
-			this.noise = true;
+			if (this.try < 1) {
+				this.try++;
+				this.noise = true;
+			} else {
+				this.try = 0;
+			}
 		}
 
 		if (leftCast.detectPlayer && rightCast.detectPlayer) {
 			if (leftCast.noWalls && rightCast.noWalls) {
+				this.try = 0;
 				return true;
 			}
 		}
