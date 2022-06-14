@@ -233,8 +233,8 @@ class BrownTank {
 	//fires two rays on each corner of a shell to determine if shell should be fired
 	shouldFire(ray) {
 		const perpAngle = getPerpAngle(ray);
-		const Cos = Math.cos(perpAngle) * SHELL_WIDTH / 2;
-		const Sin = Math.sin(perpAngle) * SHELL_WIDTH / 2;
+		const Cos = Math.cos(perpAngle) * SHELL_WIDTH / 1.3;
+		const Sin = Math.sin(perpAngle) * SHELL_WIDTH / 1.3;
 		
 		//left ray
 		const leftRay = new Ray(new xy(ray.pointA.x + Cos, ray.pointA.y + Sin), new xy(ray.pointB.x + Cos, ray.pointB.y + Sin));
