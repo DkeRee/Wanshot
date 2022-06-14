@@ -2,6 +2,22 @@ function getRayLength(pointA, pointB) {
 	return Math.sqrt(Math.pow(pointA.x - pointB.x, 2) + Math.pow(pointA.y - pointB.y, 2));
 }
 
+function getPerpAngle(ray) {
+	const slope = (ray.pointA.y - ray.pointB.y) / (ray.pointA.x - ray.pointB.x);
+	const perpSlope = -(1 / slope);
+	const b = 1 / (perpSlope * 1);
+	const perpLine = new Ray(new xy(0, (perpSlope * 0) + b), new xy(20, (perpSlope * 20) + b));
+	var perpAngle;
+
+	if (perpSlope !== Infinity) {
+		perpAngle = Math.atan2(perpLine.pointA.y - perpLine.pointB.y, perpLine.pointA.x - perpLine.pointB.x);
+	} else {
+		perpAngle = Math.PI / 2;
+	}
+
+	return perpAngle;
+}
+
 function getRayIntersect(rayA, rayB) {
 	const x1 = rayA.pointA.x;
 	const y1 = rayA.pointA.y;

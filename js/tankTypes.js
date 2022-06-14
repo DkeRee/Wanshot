@@ -178,26 +178,8 @@ class BrownTank {
 		this.shellDelay = 10;
 	}
 
-	findPlayer() {
-		for (var i = 0; i < 360; i++) {
-			const angle = (i + 1) * Math.PI / 180;
-			const shootCoordinates = new xy(1000 * Math.cos(angle) + this.tank.centerX, 1000 * Math.sin(angle) + this.tank.centerY);
-
-			if (this.shouldFire(new Ray(new xy(this.tank.centerX, this.tank.centerY), shootCoordinates), angle, this.bounces, true, null)) {
-				return {
-					foundAngle: true,
-					angle: angle
-				}
-			}
-		}
-
-		return {
-			foundAngle: false,
-			angle: null
-		}
-	}
-
-	shouldFire(ray, angle, bouncesLeft, firstShot, collidedTileID) {
+	//cast a ray to player
+	castToPlayer(ray, angle, bouncesLeft, firstShot, collidedTileID) {
 		//check for comrade collisions overall. If a ray has a comrade collision it should not be taken
 		const comradeCollision = getComradeCollisions(ray, angle, firstShot, this.tankID);
 
@@ -206,10 +188,10 @@ class BrownTank {
 				const wallCollision = getWallCollisions(ray, angle, collidedTileID);
 
 				if (wallCollision.reflection) {
-					return this.shouldFire(wallCollision.reflection.newRay, wallCollision.reflection.newAngle, bouncesLeft - 1, false, wallCollision.id);
+					return this.castToPlayer(wallCollision.reflection.newRay, wallCollision.reflection.newAngle, bouncesLeft - 1, false, wallCollision.id);
 				} else {
 					const borderCollision = getBorderCollisions(ray, angle);
-					return this.shouldFire(borderCollision.reflection.newRay, borderCollision.reflection.newAngle, bouncesLeft - 1, false, borderCollision.id);
+					return this.castToPlayer(borderCollision.reflection.newRay, borderCollision.reflection.newAngle, bouncesLeft - 1, false, borderCollision.id);
 				}
 			} else {
 				//must hit player on last round
@@ -217,23 +199,62 @@ class BrownTank {
 
 				if (playerCollision.reflection) {
 					//check if any walls are in the way
-					this.turretRotation *= -1;
 					const wallCollision = getWallCollisions(new Ray(ray.pointA, new xy(STAGE_CACHE.player.tank.x, STAGE_CACHE.player.tank.y)), angle, collidedTileID);
 
 					if (!wallCollision.reflection) {
 						//no walls are in the way!
-						return true;
+						return {
+							detectPlayer: true,
+							noWalls: true
+						};
 					} else {
 						//some walls are in the way :(
-						return false;
+						return {
+							detectPlayer: true,
+							noWalls: false
+						}
 					}
 				} else {
 					//doesn't hit player :(
-					return false;
+					return {
+						detectPlayer: false,
+						noWalls: false
+					}
 				}
 			}
 		} else {
-			return false;
+			return {
+				detectPlayer: false,
+				noWalls: false
+			}
+		}
+	}
+
+	//fires two rays on each corner of a shell to determine if shell should be fired
+	shouldFire(ray) {
+		const perpAngle = getPerpAngle(ray);
+		const Cos = Math.cos(perpAngle) * SHELL_WIDTH / 2;
+		const Sin = Math.sin(perpAngle) * SHELL_WIDTH / 2;
+		
+		//left ray
+		const leftRay = new Ray(new xy(ray.pointA.x + Cos, ray.pointA.y + Sin), new xy(ray.pointB.x + Cos, ray.pointB.y + Sin));
+		
+		//right ray
+		const rightRay = new Ray(new xy(ray.pointA.x - Cos, ray.pointA.y - Sin), new xy(ray.pointB.x - Cos, ray.pointB.y - Sin));
+
+		//leftCast
+		const leftCast = this.castToPlayer(leftRay, this.tank.turretAngle, this.bounces, true, null);
+
+		//rightCast
+		const rightCast = this.castToPlayer(rightRay, this.tank.turretAngle, this.bounces, true, null);
+
+		//if both rays collide with player, lock on. If there are no walls, shoot!
+		if (leftCast.detectPlayer && rightCast.detectPlayer) {
+			this.noise = true;
+
+			if (leftCast.noWalls && rightCast.noWalls) {
+				return true;
+			}
 		}
 	}
 
@@ -245,78 +266,33 @@ class BrownTank {
 			//update tankbody
 			this.tank.updateBody();	
 
-			const shootCoordinates = new xy(1000 * Math.cos(this.tank.turretAngle) + this.tank.centerX, 1000 * Math.sin(this.tank.turretAngle) + this.tank.centerY);
-
-			const ray = new Ray(new xy(this.tank.centerX, this.tank.centerY), shootCoordinates);
-
-			//get the angle to where the player is
-
-			//rotate until it reaches goal, once it reaches goal activate some noise to avoid pinpoint accuracy
+			//rotate until it reaches goal (player hit), once it reaches goal activate some noise to avoid pinpoint accuracy
 
 			//if the turret rotation is currently bigger than the goal rotation, make it go backwards
-			/*
-			if (this.turretRotation > this.goalRot) {
-				this.turretRotation *= -1;
-			}
 
-			if (Math.sign(this.turretRotation) == 1) {
-				//positive
-				if (this.tank.turretAngle + this.turretRotation >= this.goalRot) {
-					if (this.getNewGoal) {
-						const playerInfo = this.findPlayer();
-
-						if (playerInfo.foundAngle) {
-							this.goalRot = playerInfo.angle;
-						}
-
-						this.getNewGoal = false;
-					}
-
-					this.noise = true;
-				}
-			} else {
-				//negative
-				if (this.tank.turretAngle + this.turretRotation <= this.goalRot) {
-					if (this.getNewGoal) {
-						const playerInfo = this.findPlayer();
-
-						if (playerInfo.foundAngle) {
-							this.goalRot = playerInfo.angle;
-						}
-
-						this.getNewGoal = false;
-					}
-
-					this.noise = true;
-				}
-			}
-
-			//add some noise
+			//add some noise so that it swings once it locks on
 			if (this.noise) {
 				this.noiseDelay += deltaTime;
 
 				if (this.noiseDelay > this.noiseAmount) {
 					this.noiseDelay = 0;
 					this.turretRotation *= -1;
-					this.getNewGoal = true;
 					this.noise = false;
 				}
 			}
-			*/
 
 			this.tank.turretAngle += this.turretRotation;
 
+			const shootCoordinates = new xy(1000 * Math.cos(this.tank.turretAngle) + this.tank.centerX, 1000 * Math.sin(this.tank.turretAngle) + this.tank.centerY);
+
+			const ray = new Ray(new xy(this.tank.centerX, this.tank.centerY), shootCoordinates);
+
 			//check if ray hits player after exhausting all ricochetes
 			//brown tank shoots normal bullet. it can only ricochet once
-			if (this.shouldFire(ray, this.tank.turretAngle, this.bounces, true, null) && this.shellDelay > 10) {
+			if (this.shouldFire(ray) && this.shellDelay > 10) {
 				//it found the ray to fire upon
 				this.shellDelay = 0;
 				this.tank.shoot(shootCoordinates, NORMAL_SHELL, this.tankID);
-			} else {
-				//it didn't find the ray to fire upon. continue idle animation
-				if (Math.floor(Math.random() * 1000) > 985) {
-					this.turretRotation *= -1;
-				}
 			}
 		}
 

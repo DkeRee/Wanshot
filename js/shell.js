@@ -109,8 +109,6 @@ class Shell {
 		//body
 		this.width = SHELL_WIDTH;
 		this.height = SHELL_HEIGHT;
-		this.fakeWidth = 9;
-		this.fakeHeight = 6;
 		this.color = "#D3D3D3";
 		this.explode = false;
 
@@ -392,7 +390,7 @@ class Shell {
 			ctx.rotate(this.angle);
 
 			ctx.fillStyle = this.color;
-			ctx.fillRect(this.fakeWidth / -2, this.fakeHeight / -2, this.fakeWidth, this.fakeHeight);
+			ctx.fillRect(this.width / -2, this.height / -2, this.width, this.height);
 
 			ctx.restore();
 
@@ -413,7 +411,7 @@ class Shell {
 			ctx.rotate(this.angle);
 
 			ctx.fillStyle = SHADOW;
-			ctx.fillRect(this.fakeWidth / -2, this.fakeHeight / -2, this.fakeWidth, this.fakeHeight);
+			ctx.fillRect(this.width / -2, this.height / -2, this.width, this.height);
 
 			ctx.restore();
 		}

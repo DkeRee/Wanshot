@@ -221,16 +221,6 @@
 		if (startLogoShow) {
 			startLogoRender();
 		}
-
-    // set line stroke and line width
-    ctx.strokeStyle = 'red';
-    ctx.lineWidth = 5;
-
-    // draw a red line
-    ctx.beginPath();
-    ctx.moveTo(tempRay.pointA.x, tempRay.pointA.y);
-    ctx.lineTo(tempRay.pointB.x, tempRay.pointB.y);
-    ctx.stroke();
 	}
 
 	//KEYBOARD & MOUSE EVENTS//
