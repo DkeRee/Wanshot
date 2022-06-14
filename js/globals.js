@@ -54,6 +54,7 @@ const REGULAR_BLOCK = 1;
 const LOOSE_BLOCK = 2;
 
 const BROWN_TANK = 10;
+const GREY_TANK = 20;
 
 const SHADOW = "rgba(0, 0, 0, 0.3)";
 

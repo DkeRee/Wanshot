@@ -151,9 +151,7 @@ class BrownTank {
 		this.dead = false;
 
 		//(90 * deltaTime) == 1.5 deg
-		this.getNewGoal = true;
 		this.try = 0;
-		this.goalRot = turretAngle * Math.PI / 180;
 		this.noise = false;
 		this.noiseDelay = 0;
 		this.noiseAmount = 0.5;
@@ -294,6 +292,102 @@ class BrownTank {
 				this.shellDelay = 0;
 				this.tank.shoot(shootCoordinates, NORMAL_SHELL, this.tankID);
 			}
+		}
+
+		//update particles
+		this.tank.updateParticles();
+	}
+
+	trackUpdate() {
+		if (!this.dead) {
+			this.tank.trackUpdate();
+		}
+	}
+
+	explode() {
+		//die
+		this.dead = true;
+		this.tank.explodeTank();
+
+		//start intermission
+		//the last enemy tank has been killed, you win this match!
+		if (checkGameOver()) {
+			INTERMISSION = true;
+		}
+
+		//add grave
+		STAGE_CACHE.graves.push(new Grave(this.tank.centerX - GRAVE_WIDTH / 2, this.tank.centerY - GRAVE_HEIGHT / 2, this.tank.color));
+	}
+
+	render() {
+		this.tank.render(this.dead);
+	}
+
+	renderShadow() {
+		this.tank.renderShadow(this.dead);
+	}
+}
+
+class GreyTank {
+	constructor(x, y, angle, turretAngle) {
+		//ID
+		this.tankID = Math.floor(Math.random() * 100000);
+
+		this.tank = new Tank(x, y, angle, turretAngle, "#4A4A4A", "#4D4D4D", "#B0896B", 0, 0, this.tankID);
+		this.tankType = GREY_TANK;
+		this.bounces = 1;
+		this.dead = false;
+
+		//lock on to player
+		this.goalRot = turretAngle * Math.PI / 180;
+
+		//(90 * deltaTime) == 1.5 deg
+		this.try = 0;
+		this.noise = false;
+		this.noiseDelay = 0;
+		this.noiseAmount = 0.5;
+		this.turretRotation = 90 * deltaTime * Math.PI / 180;
+		this.shellDelay = 10;
+	}
+
+	update() {
+		if (!STAGE_CACHE.player.dead && !this.dead) {
+			//update limiters
+			//this.shellDelay += deltaTime;
+
+			//update tankbody
+			this.tank.updateBody();
+
+			//rotate until it reaches goal (player hit), once it reaches goal activate some noise to avoid pinpoint accuracy
+
+			//if the turret rotation is currently bigger than the goal rotation, make it go backwards
+
+			//add some noise so that it swings once it locks on
+			/*
+			if (this.noise) {
+				this.noiseDelay += deltaTime;
+
+				if (this.noiseDelay > this.noiseAmount) {
+					this.noiseDelay = 0;
+					this.turretRotation *= -1;
+					this.noise = false;
+				}
+			}
+
+			this.tank.turretAngle += this.turretRotation;
+
+			const shootCoordinates = new xy(1500 * Math.cos(this.tank.turretAngle) + this.tank.centerX, 1500 * Math.sin(this.tank.turretAngle) + this.tank.centerY);
+
+			const ray = new Ray(new xy(this.tank.centerX, this.tank.centerY), shootCoordinates);
+
+			//check if ray hits player after exhausting all ricochetes
+			//brown tank shoots normal bullet. it can only ricochet once
+			if (this.shouldFire(ray) && this.shellDelay > 10) {
+				//it found the ray to fire upon
+				this.shellDelay = 0;
+				this.tank.shoot(shootCoordinates, NORMAL_SHELL, this.tankID);
+			}
+			*/
 		}
 
 		//update particles
