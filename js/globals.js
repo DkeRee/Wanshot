@@ -19,20 +19,6 @@ var INTERMISSION = false;
 const blueArtTank = new ArtTank(800, 600, 3, 0, 210, "#224ACF", "#0101BA");
 const redArtTank = new ArtTank(100, 80, 3, 0, 30, "#ED4245", "#9E2C2E");
 
-var MOUSE_POS = {
-	x: NaN,
-	y: NaN
-};
-const PLAYER_ID = Math.floor(Math.random() * 100000);
-
-function updateMousePos(clientX, clientY) {
-	const rect = canvas.getBoundingClientRect();
-	MOUSE_POS = {
-		x: clientX - rect.left,
-		y: clientY - rect.top
-	}
-}
-
 //GAME OBJECT CONSTANTS FOR FINE TUNING PLACEMENTS//
 const TANK_PARTICLE_SIDE = 20;
 
@@ -70,3 +56,67 @@ const LOOSE_BLOCK = 2;
 const BROWN_TANK = 10;
 
 const SHADOW = "rgba(0, 0, 0, 0.3)";
+
+var MOUSE_POS = {
+	x: NaN,
+	y: NaN
+};
+const PLAYER_ID = Math.floor(Math.random() * 100000);
+
+function updateMousePos(clientX, clientY) {
+	const rect = canvas.getBoundingClientRect();
+	MOUSE_POS = {
+		x: clientX - rect.left,
+		y: clientY - rect.top
+	}
+}
+
+//for SAT collision
+class BorderTile {
+	constructor(x, y) {
+		this.x = x;
+		this.y = y;
+		this.width = TILE_WIDTH;
+		this.height = TILE_HEIGHT;
+		this.angle = 0;
+	}
+}
+
+const borders = [];
+
+//init border tiles
+var x = 0;
+var y = -TILE_HEIGHT;
+
+//top border
+for (var i = 0; i < CANVAS_WIDTH / TILE_WIDTH; i++) {
+	borders.push(new BorderTile(x, y));
+	x += TILE_WIDTH;
+}
+
+//bottom border
+x = 0;
+y = CANVAS_HEIGHT;
+
+for (var i = 0; i < CANVAS_WIDTH / TILE_WIDTH; i++) {
+	borders.push(new BorderTile(x, y));
+	x += TILE_WIDTH;
+}
+
+//left border
+x = -TILE_WIDTH;
+y = 0;
+
+for (var i = 0; i < CANVAS_HEIGHT / TILE_HEIGHT; i++) {
+	borders.push(new BorderTile(x, y));
+	y += TILE_HEIGHT;
+}
+
+//right border
+x = CANVAS_WIDTH;
+y = 0;
+
+for (var i = 0; i < CANVAS_HEIGHT / TILE_HEIGHT; i++) {
+	borders.push(new BorderTile(x, y));
+	y += TILE_HEIGHT;
+}

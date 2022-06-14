@@ -261,6 +261,18 @@ class Tank {
 		}
 	}
 
+	tankWithBorder() {
+		for (var i = 0; i < borders.length; i++) {
+			const border = borders[i];
+			const SATCollision = SAT_POLYGON(this, border);
+
+			if (SATCollision.collision) {
+				this.x += SATCollision.normal.x * SATCollision.depth / 2;
+				this.y += SATCollision.normal.y * SATCollision.depth / 2;
+			}
+		}
+	}
+
 	updateBody(targetCoords) {
 		//update center
 		if (!this.dead) {
@@ -268,6 +280,7 @@ class Tank {
 			this.centerY = this.y + this.height / 2;
 
 			//update collisions
+			this.tankWithBorder();
 			this.tankWithTank();
 			this.tankWithTile();
 			this.tankWithPit();

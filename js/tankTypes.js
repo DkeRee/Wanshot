@@ -56,36 +56,18 @@ class Player {
 		const xInc = this.tank.speed * Math.cos(this.tank.angle) * deltaTime;
 		const yInc = this.tank.speed * Math.sin(this.tank.angle) * deltaTime;
 
-		const leftSide = this.tank.x;
-		const rightSide = this.tank.x + this.tank.width;
-		const bottomSide = this.tank.y + this.tank.height;
-		const topSide = this.tank.y;
-
 		//if tank is NOT SHELLSHOCKED and isn't dead
 		if (this.tankShock > 0 && !this.dead) {
 			//up
 			if (this.keys[87] || this.keys[38]) {
-				//IF NOT CROSSING OVER LEFT OR RIGHT SIDE AKA WITHIN BOUNDS
-				if (leftSide + xInc >= 0 && rightSide + xInc <= CANVAS_WIDTH) {
-					//update tank position
-					this.tank.x += xInc;
-				}
-				//IF NOT CROSSING OVER TOP OR BOTTOM AKA WITHIN BOUNDS
-				if (topSide + yInc >= 0 && bottomSide + yInc <= CANVAS_HEIGHT) {
-					this.tank.y += yInc;
-				}
+				this.tank.x += xInc;
+				this.tank.y += yInc;
 			}
 
 			//down
 			if (this.keys[83] || this.keys[40]) {
-				//IF NOT CROSSING OVER LEFT OR RIGHT SIDE AKA WITHIN BOUNDS
-				if (leftSide - xInc >= 0 && rightSide - xInc <= CANVAS_WIDTH) {
-					this.tank.x -= xInc;
-				}
-				//IF NOT CROSSING OVER TOP OR BOTTOM AKA WITHIN BOUNDS
-				if (topSide - yInc >= 0 && bottomSide - yInc <= CANVAS_HEIGHT) {
-					this.tank.y -= yInc;
-				}
+				this.tank.x -= xInc;
+				this.tank.y -= yInc;
 			}
 
 			//right rotation
@@ -180,18 +162,22 @@ class BrownTank {
 	}
 
 	//cast a ray to player
-	castToPlayer(ray, angle, bouncesLeft, firstShot, collidedTileID) {
+	castToPlayer(ray, angle, bouncesLeft, firstShot, collidedSideID) {
 		//check for comrade collisions overall. If a ray has a comrade collision it should not be taken
 		const comradeCollision = getComradeCollisions(ray, angle, firstShot, this.tankID);
 
 		if (!comradeCollision.reflection) {
 			if (bouncesLeft > 0) {
-				const wallCollision = getWallCollisions(ray, angle, collidedTileID);
+				const wallCollision = getWallCollisions(ray, angle, collidedSideID);
 
 				if (wallCollision.reflection) {
 					return this.castToPlayer(wallCollision.reflection.newRay, wallCollision.reflection.newAngle, bouncesLeft - 1, false, wallCollision.id);
 				} else {
-					const borderCollision = getBorderCollisions(ray, angle);
+					const borderCollision = getBorderCollisions(ray, angle, collidedSideID);
+					if (!borderCollision) return {
+						detectPlayer: false,
+						noWalls: false
+					}
 					return this.castToPlayer(borderCollision.reflection.newRay, borderCollision.reflection.newAngle, bouncesLeft - 1, false, borderCollision.id);
 				}
 			} else {
@@ -200,7 +186,7 @@ class BrownTank {
 
 				if (playerCollision.reflection) {
 					//check if any walls are in the way
-					const wallCollision = getWallCollisions(new Ray(ray.pointA, new xy(STAGE_CACHE.player.tank.x, STAGE_CACHE.player.tank.y)), angle, collidedTileID);
+					const wallCollision = getWallCollisions(new Ray(ray.pointA, playerCollision.reflection.point), angle, collidedSideID);
 
 					if (!wallCollision.reflection) {
 						//no walls are in the way!
@@ -275,7 +261,7 @@ class BrownTank {
 			this.shellDelay += deltaTime;
 
 			//update tankbody
-			this.tank.updateBody();	
+			this.tank.updateBody();
 
 			//rotate until it reaches goal (player hit), once it reaches goal activate some noise to avoid pinpoint accuracy
 
@@ -294,7 +280,7 @@ class BrownTank {
 
 			this.tank.turretAngle += this.turretRotation;
 
-			const shootCoordinates = new xy(1000 * Math.cos(this.tank.turretAngle) + this.tank.centerX, 1000 * Math.sin(this.tank.turretAngle) + this.tank.centerY);
+			const shootCoordinates = new xy(1500 * Math.cos(this.tank.turretAngle) + this.tank.centerX, 1500 * Math.sin(this.tank.turretAngle) + this.tank.centerY);
 
 			const ray = new Ray(new xy(this.tank.centerX, this.tank.centerY), shootCoordinates);
 
