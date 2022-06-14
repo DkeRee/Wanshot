@@ -248,10 +248,13 @@ class BrownTank {
 		//rightCast
 		const rightCast = this.castToPlayer(rightRay, this.tank.turretAngle, this.bounces, true, null);
 
-		//if both rays collide with player, lock on. If there are no walls, shoot!
-		if (leftCast.detectPlayer && rightCast.detectPlayer) {
-			this.noise = true;
+		//if either ray collide with player, lock on. If there are no walls, shoot!
 
+		if (leftCast.detectPlayer || rightCast.detectPlayer) {
+			this.noise = true;
+		}
+
+		if (leftCast.detectPlayer && rightCast.detectPlayer) {
 			if (leftCast.noWalls && rightCast.noWalls) {
 				return true;
 			}
@@ -278,6 +281,10 @@ class BrownTank {
 					this.noiseDelay = 0;
 					this.turretRotation *= -1;
 					this.noise = false;
+				} else {
+					if (Math.floor(Math.random() * 1000) > 985) {
+						this.turretRotation *= -1;
+					}
 				}
 			}
 
