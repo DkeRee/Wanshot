@@ -62,6 +62,12 @@ var MOUSE_POS = {
 	x: NaN,
 	y: NaN
 };
+
+var bigLeft = new Ray(new xy(0, 0), new xy(0, 0));
+var bigRight = new Ray(new xy(0, 0), new xy(0, 0));
+var smallLeft = new Ray(new xy(0, 0), new xy(0, 0));
+var smallRight = new Ray(new xy(0, 0), new xy(0, 0));
+
 const PLAYER_ID = Math.floor(Math.random() * 100000);
 
 function updateMousePos(clientX, clientY) {

@@ -1,21 +1,13 @@
+const U_TURN = 1;
+const TURN_LEFT = 2;
+const TURN_RIGHT = 3;
+
 function getRayLength(pointA, pointB) {
 	return Math.sqrt(Math.pow(pointA.x - pointB.x, 2) + Math.pow(pointA.y - pointB.y, 2));
 }
 
-function getPerpAngle(ray) {
-	const slope = (ray.pointA.y - ray.pointB.y) / (ray.pointA.x - ray.pointB.x);
-	const perpSlope = -(1 / slope);
-	const b = 1 / (perpSlope * 1);
-	const perpLine = new Ray(new xy(0, (perpSlope * 0) + b), new xy(20, (perpSlope * 20) + b));
-	var perpAngle;
-
-	if (perpSlope !== Infinity) {
-		perpAngle = Math.atan2(perpLine.pointA.y - perpLine.pointB.y, perpLine.pointA.x - perpLine.pointB.x);
-	} else {
-		perpAngle = Math.PI / 2;
-	}
-
-	return perpAngle;
+function getPerpAngle(angle) {
+	return angle - (Math.PI / 2);
 }
 
 function getRayIntersect(rayA, rayB) {
@@ -115,11 +107,43 @@ function getWallCollisions(ray, angle, forbiddenTile) {
 			const reflection = reflectRay(ray, edges[o], angle, o);
 
 			if (reflection.intersect) {
-				//function will also terminate here if bounces left is 0, 
 				const rayLength = getRayLength(ray.pointA, reflection.point);
 				if (rayLength < closestIntersection.dist) {
 					closestIntersection.reflection = reflection;
 					closestIntersection.id = STAGE_CACHE.tiles[i].id;
+					closestIntersection.dist = rayLength;
+				}
+			}
+		}
+	}
+
+	return closestIntersection;
+}
+
+function getPitCollisions(ray, angle) {
+	const closestIntersection = {
+		reflection: null,
+		dist: Infinity
+	};
+
+	for (var i = 0; i < STAGE_CACHE.pits.length; i++) {
+		const pit = new Polygon(STAGE_CACHE.pits[i]);
+		const points = pit.vertexPoints;
+
+		const edges = [
+			new Ray(points.topLeft, points.bottomLeft), //left
+			new Ray(points.topLeft, points.topRight), //top
+			new Ray(points.topRight, points.bottomRight), //right
+			new Ray(points.bottomLeft, points.bottomRight) //bottom
+		];
+
+		for (var o = 0; o < edges.length; o++) {
+			const collision = getRayIntersect(ray, edges[o]);
+
+			if (collision.intersect) {
+				const rayLength = getRayLength(ray.pointA, collision.point);
+				if (rayLength < closestIntersection.dist) {
+					closestIntersection.reflection = collision;
 					closestIntersection.dist = rayLength;
 				}
 			}
@@ -152,6 +176,11 @@ function getBorderCollisions(ray, angle, forbiddenBorder) {
 			};
 		}
 	}
+
+	return {
+		reflection: false,
+		id: null
+	};
 }
 
 function getComradeCollisions(ray, angle, firstShot, tankID) {
@@ -230,7 +259,34 @@ function getPlayerCollisions(ray, angle) {
 	return closestIntersection;
 }
 
+function getForeignCollisions(tank) {
+	const range = TANK_WIDTH * 1.8;
+	const offset = 20 * Math.PI / 180;
 
+	bigRight = new Ray(new xy(tank.centerX, tank.centerY), new xy(range * 3 * Math.cos(tank.angle + offset) + tank.centerX, range * 3 * Math.sin(tank.angle + offset) + tank.centerY));
+	bigLeft = new Ray(new xy(tank.centerX, tank.centerY), new xy(range * 3 * Math.cos(tank.angle - offset) + tank.centerX, range  * 3 * Math.sin(tank.angle - offset) + tank.centerY));
+
+	smallRight = new Ray(new xy(tank.centerX, tank.centerY), new xy(range * Math.cos(tank.angle + offset) + tank.centerX, range * Math.sin(tank.angle + offset) + tank.centerY));
+	smallLeft = new Ray(new xy(tank.centerX, tank.centerY), new xy(range * Math.cos(tank.angle - offset) + tank.centerX, range * Math.sin(tank.angle - offset) + tank.centerY));
+
+	const isBigRight = getBorderCollisions(bigRight, tank.angle + offset, null).reflection || getWallCollisions(bigRight, tank.angle + offset, null).reflection || getComradeCollisions(bigRight, tank.angle + offset, true, tank.tankID).reflection || getPitCollisions(bigRight, tank.angle + offset).reflection;
+	const isBigLeft = getBorderCollisions(bigLeft, tank.angle - offset, null).reflection || getWallCollisions(bigLeft, tank.angle - offset, null).reflection || getComradeCollisions(bigLeft, tank.angle - offset, true, tank.itankID).reflection || getPitCollisions(bigLeft, tank.angle - offset).reflection;
+	
+	const isSmallRight = getBorderCollisions(smallRight, tank.angle + offset, null).reflection || getWallCollisions(smallRight, tank.angle + offset, null).reflection || getComradeCollisions(smallRight, tank.angle + offset, true, tank.tankID).reflection || getPitCollisions(smallRight, tank.angle + offset).reflection;
+	const isSmallLeft = getBorderCollisions(smallLeft, tank.angle - offset, null).reflection || getWallCollisions(smallLeft, tank.angle - offset, null).reflection || getComradeCollisions(smallLeft, tank.angle - offset, true, tank.tankID).reflection || getPitCollisions(smallLeft, tank.angle - offset).reflection;
+
+	if (isSmallRight && isSmallLeft) {
+		return U_TURN;
+	} else {
+		if (isBigRight) {
+			return TURN_RIGHT;
+		} else if (isBigLeft) {
+			return TURN_LEFT;
+		}
+	}
+
+	return false;
+}
 
 
 

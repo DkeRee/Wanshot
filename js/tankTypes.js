@@ -150,6 +150,7 @@ class BrownTank {
 		this.bounces = 1;
 		this.dead = false;
 
+		//turret update
 		//(90 * deltaTime) == 1.5 deg
 		this.try = 0;
 		this.noise = false;
@@ -220,9 +221,9 @@ class BrownTank {
 
 	//fires two rays on each corner of a shell to determine if shell should be fired
 	shouldFire(ray) {
-		const perpAngle = getPerpAngle(ray);
-		const Cos = Math.cos(perpAngle) * SHELL_HEIGHT / 2;
-		const Sin = Math.sin(perpAngle) * SHELL_HEIGHT / 2;
+		const perpAngle = getPerpAngle(this.tank.angle);
+		const Cos = Math.cos(perpAngle) * SHELL_HEIGHT * 1.15;
+		const Sin = Math.sin(perpAngle) * SHELL_HEIGHT * 1.15;
 		
 		//left ray
 		const leftRay = new Ray(new xy(ray.pointA.x + Cos, ray.pointA.y + Sin), new xy(ray.pointB.x + Cos, ray.pointB.y + Sin));
@@ -333,21 +334,36 @@ class GreyTank {
 		//ID
 		this.tankID = Math.floor(Math.random() * 100000);
 
-		this.tank = new Tank(x, y, angle, turretAngle, "#4A4A4A", "#4D4D4D", "#B0896B", 0, 0, this.tankID);
+		this.tank = new Tank(x, y, angle, turretAngle, "#4A4A4A", "#4D4D4D", "#B0896B", 80, 1, this.tankID);
 		this.tankType = GREY_TANK;
 		this.bounces = 1;
 		this.dead = false;
+
+
+		//movement update
+		this.tankRotation = 0;
+		this.tankRotationDelay = 0;
+		this.tankRotationCap = 0.1;
+
+		//turret update
 
 		//lock on to player
 		this.goalRot = turretAngle * Math.PI / 180;
 
 		//(90 * deltaTime) == 1.5 deg
-		this.try = 0;
 		this.noise = false;
 		this.noiseDelay = 0;
 		this.noiseAmount = 0.5;
 		this.turretRotation = 90 * deltaTime * Math.PI / 180;
-		this.shellDelay = 10;
+		this.shellDelay = 5;
+	}
+
+	getRandomBodyRot() {
+		//return a random rotation for the tank to travel with in radians
+		//degree difference from -10 to 10
+		const max = 600;
+		const min = -600;
+		return ((Math.random() * (max - min) + min) * deltaTime * this.tank.rotationSpeed) * Math.PI / 180;
 	}
 
 	update() {
@@ -357,6 +373,44 @@ class GreyTank {
 
 			//update tankbody
 			this.tank.updateBody();
+
+			//update tank angle
+			this.tankRotationDelay += deltaTime;
+
+			if (this.tankRotationDelay > this.tankRotationCap) {
+				this.tankRotationDelay = 0;
+				this.tank.angle += this.tankRotation;
+
+				const foreignCollision = getForeignCollisions(this.tank);
+				if (foreignCollision) {
+					//about to collide, don't idle
+					switch (foreignCollision) {
+						case U_TURN:
+							//hit a 180 babyyy
+							this.tankRotation = 10800 * deltaTime * this.tank.rotationSpeed * Math.PI / 180;
+							break;
+						case TURN_LEFT:
+							//7.5 degrees
+							this.tankRotation = 450 * deltaTime * this.tank.rotationSpeed * Math.PI / 180;
+							break;
+						case TURN_RIGHT:
+							//-7.5 degrees
+							this.tankRotation = -450 * deltaTime * this.tank.rotationSpeed * Math.PI / 180;
+							break;
+					}
+
+					this.tankRotation += this.getRandomBodyRot();
+				} else {
+					this.tankRotation = this.getRandomBodyRot();
+				}
+			}
+
+			//update movement
+			const xInc = this.tank.speed * Math.cos(this.tank.angle) * deltaTime;
+			const yInc = this.tank.speed * Math.sin(this.tank.angle) * deltaTime;
+
+			this.tank.x += xInc;
+			this.tank.y += yInc;
 
 			//rotate until it reaches goal (player hit), once it reaches goal activate some noise to avoid pinpoint accuracy
 
