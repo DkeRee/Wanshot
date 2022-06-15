@@ -221,42 +221,6 @@
 		if (startLogoShow) {
 			startLogoRender();
 		}
-
-    ctx.strokeStyle = 'red';
-    ctx.lineWidth = 5;
-
-    // draw a red line
-    ctx.beginPath();
-    ctx.moveTo(bigRight.pointA.x, bigRight.pointA.y);
-    ctx.lineTo(bigRight.pointB.x, bigRight.pointB.y);
-    ctx.stroke();
-
-    ctx.strokeStyle = 'blue';
-    ctx.lineWidth = 5;
-
-    // draw a red line
-    ctx.beginPath();
-    ctx.moveTo(bigLeft.pointA.x, bigLeft.pointA.y);
-    ctx.lineTo(bigLeft.pointB.x, bigLeft.pointB.y);
-    ctx.stroke();
-
-    ctx.strokeStyle = 'purple';
-    ctx.lineWidth = 5;
-
-    // draw a red line
-    ctx.beginPath();
-    ctx.moveTo(smallLeft.pointA.x, smallLeft.pointA.y);
-    ctx.lineTo(smallLeft.pointB.x, smallLeft.pointB.y);
-    ctx.stroke();
-
-    ctx.strokeStyle = 'green';
-    ctx.lineWidth = 5;
-
-    // draw a red line
-    ctx.beginPath();
-    ctx.moveTo(smallRight.pointA.x, smallRight.pointA.y);
-    ctx.lineTo(smallRight.pointB.x, smallRight.pointB.y);
-    ctx.stroke();
 	}
 
 	//KEYBOARD & MOUSE EVENTS//

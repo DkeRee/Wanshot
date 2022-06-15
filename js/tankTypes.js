@@ -342,8 +342,9 @@ class GreyTank {
 
 		//movement update
 		this.tankRotation = 0;
+		this.uTurning = false;
 		this.tankRotationDelay = 0;
-		this.tankRotationCap = 0.1;
+		this.tankRotationCap = 0.08;
 
 		//turret update
 
@@ -388,19 +389,36 @@ class GreyTank {
 						case U_TURN:
 							//hit a 180 babyyy
 							this.tankRotation = 10800 * deltaTime * this.tank.rotationSpeed * Math.PI / 180;
+							if (!this.uTurning) {
+								this.uTurning = true;
+								this.tank.speed /= 2;
+							}
 							break;
 						case TURN_LEFT:
 							//7.5 degrees
 							this.tankRotation = 450 * deltaTime * this.tank.rotationSpeed * Math.PI / 180;
+							if (this.uTurning) {
+								this.uTurning = false;
+								this.tank.speed *= 2;
+							}
 							break;
 						case TURN_RIGHT:
 							//-7.5 degrees
 							this.tankRotation = -450 * deltaTime * this.tank.rotationSpeed * Math.PI / 180;
+							if (this.uTurning) {
+								this.uTurning = false;
+								this.tank.speed *= 2;
+							}
 							break;
 					}
 
 					this.tankRotation += this.getRandomBodyRot();
 				} else {
+					if (this.uTurning) {
+						this.uTurning = false;
+						this.tank.speed *= 2;
+					}
+
 					this.tankRotation = this.getRandomBodyRot();
 				}
 			}

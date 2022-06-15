@@ -263,17 +263,18 @@ function getForeignCollisions(tank) {
 	const range = TANK_WIDTH * 1.8;
 	const offset = 20 * Math.PI / 180;
 
-	bigRight = new Ray(new xy(tank.centerX, tank.centerY), new xy(range * 3 * Math.cos(tank.angle + offset) + tank.centerX, range * 3 * Math.sin(tank.angle + offset) + tank.centerY));
-	bigLeft = new Ray(new xy(tank.centerX, tank.centerY), new xy(range * 3 * Math.cos(tank.angle - offset) + tank.centerX, range  * 3 * Math.sin(tank.angle - offset) + tank.centerY));
+	const bigRight = new Ray(new xy(tank.centerX, tank.centerY), new xy(range * 3 * Math.cos(tank.angle + offset) + tank.centerX, range * 3 * Math.sin(tank.angle + offset) + tank.centerY));
+	const bigLeft = new Ray(new xy(tank.centerX, tank.centerY), new xy(range * 3 * Math.cos(tank.angle - offset) + tank.centerX, range  * 3 * Math.sin(tank.angle - offset) + tank.centerY));
 
-	smallRight = new Ray(new xy(tank.centerX, tank.centerY), new xy(range * Math.cos(tank.angle + offset) + tank.centerX, range * Math.sin(tank.angle + offset) + tank.centerY));
-	smallLeft = new Ray(new xy(tank.centerX, tank.centerY), new xy(range * Math.cos(tank.angle - offset) + tank.centerX, range * Math.sin(tank.angle - offset) + tank.centerY));
+	const smallRight = new Ray(new xy(tank.centerX, tank.centerY), new xy(range * Math.cos(tank.angle + offset) + tank.centerX, range * Math.sin(tank.angle + offset) + tank.centerY));
+	const smallLeft = new Ray(new xy(tank.centerX, tank.centerY), new xy(range * Math.cos(tank.angle - offset) + tank.centerX, range * Math.sin(tank.angle - offset) + tank.centerY));
 
 	const isBigRight = getBorderCollisions(bigRight, tank.angle + offset, null).reflection || getWallCollisions(bigRight, tank.angle + offset, null).reflection || getComradeCollisions(bigRight, tank.angle + offset, true, tank.tankID).reflection || getPitCollisions(bigRight, tank.angle + offset).reflection;
 	const isBigLeft = getBorderCollisions(bigLeft, tank.angle - offset, null).reflection || getWallCollisions(bigLeft, tank.angle - offset, null).reflection || getComradeCollisions(bigLeft, tank.angle - offset, true, tank.itankID).reflection || getPitCollisions(bigLeft, tank.angle - offset).reflection;
 	
 	const isSmallRight = getBorderCollisions(smallRight, tank.angle + offset, null).reflection || getWallCollisions(smallRight, tank.angle + offset, null).reflection || getComradeCollisions(smallRight, tank.angle + offset, true, tank.tankID).reflection || getPitCollisions(smallRight, tank.angle + offset).reflection;
 	const isSmallLeft = getBorderCollisions(smallLeft, tank.angle - offset, null).reflection || getWallCollisions(smallLeft, tank.angle - offset, null).reflection || getComradeCollisions(smallLeft, tank.angle - offset, true, tank.tankID).reflection || getPitCollisions(smallLeft, tank.angle - offset).reflection;
+
 
 	if (isSmallRight && isSmallLeft) {
 		return U_TURN;
