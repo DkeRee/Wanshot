@@ -266,8 +266,8 @@ function getForeignCollisions(tank) {
 	const bigRight = new Ray(new xy(tank.centerX, tank.centerY), new xy(range * 3 * Math.cos(tank.angle + offset) + tank.centerX, range * 3 * Math.sin(tank.angle + offset) + tank.centerY));
 	const bigLeft = new Ray(new xy(tank.centerX, tank.centerY), new xy(range * 3 * Math.cos(tank.angle - offset) + tank.centerX, range  * 3 * Math.sin(tank.angle - offset) + tank.centerY));
 
-	const smallRight = new Ray(new xy(tank.centerX, tank.centerY), new xy(range * Math.cos(tank.angle + offset) + tank.centerX, range * Math.sin(tank.angle + offset) + tank.centerY));
-	const smallLeft = new Ray(new xy(tank.centerX, tank.centerY), new xy(range * Math.cos(tank.angle - offset) + tank.centerX, range * Math.sin(tank.angle - offset) + tank.centerY));
+	const smallRight = new Ray(new xy(tank.centerX, tank.centerY), new xy(TANK_WIDTH / 1.3 * Math.cos(tank.angle + offset) + tank.centerX, TANK_WIDTH / 1.3 * Math.sin(tank.angle + offset) + tank.centerY));
+	const smallLeft = new Ray(new xy(tank.centerX, tank.centerY), new xy(TANK_WIDTH / 1.3 * Math.cos(tank.angle - offset) + tank.centerX, TANK_WIDTH / 1.3 * Math.sin(tank.angle - offset) + tank.centerY));
 
 	const smallMiddle = new Ray(new xy(tank.centerX, tank.centerY), new xy(TANK_WIDTH / 1.3 * Math.cos(tank.angle) + tank.centerX, TANK_WIDTH / 1.3 * Math.sin(tank.angle) + tank.centerY));
 

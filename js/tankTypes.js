@@ -395,16 +395,16 @@ class GreyTank {
 							}
 							break;
 						case TURN_LEFT:
-							//7.5 degrees
-							this.tankRotation = 450 * deltaTime * this.tank.rotationSpeed * Math.PI / 180;
+							//5 degrees
+							this.tankRotation = 300 * deltaTime * this.tank.rotationSpeed * Math.PI / 180;
 							if (this.uTurning) {
 								this.uTurning = false;
 								this.tank.speed *= 2;
 							}
 							break;
 						case TURN_RIGHT:
-							//-7.5 degrees
-							this.tankRotation = -450 * deltaTime * this.tank.rotationSpeed * Math.PI / 180;
+							//-5 degrees
+							this.tankRotation = -300 * deltaTime * this.tank.rotationSpeed * Math.PI / 180;
 							if (this.uTurning) {
 								this.uTurning = false;
 								this.tank.speed *= 2;
