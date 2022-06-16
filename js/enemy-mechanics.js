@@ -261,21 +261,22 @@ function getPlayerCollisions(ray, angle) {
 
 function getForeignCollisions(tank) {
 	const range = TANK_WIDTH * 1.8;
-	const offset = 20 * Math.PI / 180;
+	const bigOffset = 20 * Math.PI / 180;
+	const smallOffset = 25 * Math.PI / 180;
 
-	const bigRight = new Ray(new xy(tank.centerX, tank.centerY), new xy(range * 3 * Math.cos(tank.angle + offset) + tank.centerX, range * 3 * Math.sin(tank.angle + offset) + tank.centerY));
-	const bigLeft = new Ray(new xy(tank.centerX, tank.centerY), new xy(range * 3 * Math.cos(tank.angle - offset) + tank.centerX, range  * 3 * Math.sin(tank.angle - offset) + tank.centerY));
+	const bigRight = new Ray(new xy(tank.centerX, tank.centerY), new xy(range * 3 * Math.cos(tank.angle + bigOffset) + tank.centerX, range * 3 * Math.sin(tank.angle + bigOffset) + tank.centerY));
+	const bigLeft = new Ray(new xy(tank.centerX, tank.centerY), new xy(range * 3 * Math.cos(tank.angle - bigOffset) + tank.centerX, range  * 3 * Math.sin(tank.angle - bigOffset) + tank.centerY));
 
-	const smallRight = new Ray(new xy(tank.centerX, tank.centerY), new xy(TANK_WIDTH / 1.3 * Math.cos(tank.angle + offset) + tank.centerX, TANK_WIDTH / 1.3 * Math.sin(tank.angle + offset) + tank.centerY));
-	const smallLeft = new Ray(new xy(tank.centerX, tank.centerY), new xy(TANK_WIDTH / 1.3 * Math.cos(tank.angle - offset) + tank.centerX, TANK_WIDTH / 1.3 * Math.sin(tank.angle - offset) + tank.centerY));
+	const smallRight = new Ray(new xy(tank.centerX, tank.centerY), new xy(TANK_WIDTH / 1.3 * Math.cos(tank.angle + smallOffset) + tank.centerX, TANK_WIDTH / 1.3 * Math.sin(tank.angle + smallOffset) + tank.centerY));
+	const smallLeft = new Ray(new xy(tank.centerX, tank.centerY), new xy(TANK_WIDTH / 1.3 * Math.cos(tank.angle - smallOffset) + tank.centerX, TANK_WIDTH / 1.3 * Math.sin(tank.angle - smallOffset) + tank.centerY));
 
 	const smallMiddle = new Ray(new xy(tank.centerX, tank.centerY), new xy(TANK_WIDTH / 1.3 * Math.cos(tank.angle) + tank.centerX, TANK_WIDTH / 1.3 * Math.sin(tank.angle) + tank.centerY));
 
-	const isBigRight = getBorderCollisions(bigRight, tank.angle + offset, null).reflection || getWallCollisions(bigRight, tank.angle + offset, null).reflection || getComradeCollisions(bigRight, tank.angle + offset, true, tank.tankID).reflection || getPitCollisions(bigRight, tank.angle + offset).reflection;
-	const isBigLeft = getBorderCollisions(bigLeft, tank.angle - offset, null).reflection || getWallCollisions(bigLeft, tank.angle - offset, null).reflection || getComradeCollisions(bigLeft, tank.angle - offset, true, tank.itankID).reflection || getPitCollisions(bigLeft, tank.angle - offset).reflection;
+	const isBigRight = getBorderCollisions(bigRight, tank.angle + bigOffset, null).reflection || getWallCollisions(bigRight, tank.angle + bigOffset, null).reflection || getComradeCollisions(bigRight, tank.angle + bigOffset, true, tank.tankID).reflection || getPitCollisions(bigRight, tank.angle + bigOffset).reflection;
+	const isBigLeft = getBorderCollisions(bigLeft, tank.angle - bigOffset, null).reflection || getWallCollisions(bigLeft, tank.angle - bigOffset, null).reflection || getComradeCollisions(bigLeft, tank.angle - bigOffset, true, tank.itankID).reflection || getPitCollisions(bigLeft, tank.angle - bigOffset).reflection;
 	
-	const isSmallRight = getBorderCollisions(smallRight, tank.angle + offset, null).reflection || getWallCollisions(smallRight, tank.angle + offset, null).reflection || getComradeCollisions(smallRight, tank.angle + offset, true, tank.tankID).reflection || getPitCollisions(smallRight, tank.angle + offset).reflection;
-	const isSmallLeft = getBorderCollisions(smallLeft, tank.angle - offset, null).reflection || getWallCollisions(smallLeft, tank.angle - offset, null).reflection || getComradeCollisions(smallLeft, tank.angle - offset, true, tank.tankID).reflection || getPitCollisions(smallLeft, tank.angle - offset).reflection;
+	const isSmallRight = getBorderCollisions(smallRight, tank.angle + smallOffset, null).reflection || getWallCollisions(smallRight, tank.angle + smallOffset, null).reflection || getComradeCollisions(smallRight, tank.angle + smallOffset, true, tank.tankID).reflection || getPitCollisions(smallRight, tank.angle + smallOffset).reflection;
+	const isSmallLeft = getBorderCollisions(smallLeft, tank.angle - smallOffset, null).reflection || getWallCollisions(smallLeft, tank.angle - smallOffset, null).reflection || getComradeCollisions(smallLeft, tank.angle - smallOffset, true, tank.tankID).reflection || getPitCollisions(smallLeft, tank.angle - smallOffset).reflection;
 
 	const isSmallMiddle = getBorderCollisions(smallMiddle, tank.angle, null).reflection || getWallCollisions(smallMiddle, tank.angle, null).reflection || getComradeCollisions(smallMiddle, tank.angle, true, tank.tankID).reflection || getPitCollisions(smallMiddle, tank.angle).reflection;
 
