@@ -580,31 +580,11 @@ class GreyTank {
 			const ray = new Ray(new xy(this.tank.centerX, this.tank.centerY), shootCoordinates);
 
 			//grey tanks shoots normal bullet. it can only ricochet once
-			if (this.shouldFire(ray) && this.shellDelay > 5) {
+			if (this.shouldFire(ray) && this.shellDelay > 8) {
 				//it found the ray to fire upon
 				this.shellDelay = 0;
 				this.tank.shoot(shootCoordinates, NORMAL_SHELL, this.tankID);
 			}
-
-			//rotate until it reaches goal (player hit), once it reaches goal activate some noise to avoid pinpoint accuracy
-
-			//if the turret rotation is currently bigger than the goal rotation, make it go backwards
-
-			//add some noise so that it swings once it locks on
-			/*
-
-
-
-
-
-			//check if ray hits player after exhausting all ricochetes
-			//brown tank shoots normal bullet. it can only ricochet once
-			if (this.shouldFire(ray) && this.shellDelay > 10) {
-				//it found the ray to fire upon
-				this.shellDelay = 0;
-				this.tank.shoot(shootCoordinates, NORMAL_SHELL, this.tankID);
-			}
-			*/
 		}
 
 		//update particles
