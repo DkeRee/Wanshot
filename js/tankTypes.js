@@ -178,7 +178,7 @@ class BrownTank {
 					if (!borderCollision) return {
 						detectPlayer: false,
 						noWalls: false
-					}
+					};
 
 					return this.castToPlayer(borderCollision.reflection.newRay, borderCollision.reflection.newAngle, bouncesLeft - 1, false, borderCollision.id);
 				}
@@ -201,29 +201,29 @@ class BrownTank {
 						return {
 							detectPlayer: true,
 							noWalls: false
-						}
+						};
 					}
 				} else {
 					//doesn't hit player :(
 					return {
 						detectPlayer: false,
 						noWalls: false
-					}
+					};
 				}
 			}
 		} else {
 			return {
 				detectPlayer: false,
 				noWalls: false
-			}
+			};
 		}
 	}
 
 	//fires two rays on each corner of a shell to determine if shell should be fired
 	shouldFire(ray) {
 		const perpAngle = getPerpAngle(this.tank.angle);
-		const Cos = Math.cos(perpAngle) * SHELL_HEIGHT * RAY_OFFSET;
-		const Sin = Math.sin(perpAngle) * SHELL_HEIGHT * RAY_OFFSET;
+		const Cos = Math.cos(perpAngle) * SHELL_HEIGHT * STATIONARY_RAY_OFFSET;
+		const Sin = Math.sin(perpAngle) * SHELL_HEIGHT * STATIONARY_RAY_OFFSET;
 		
 		//left ray
 		const leftRay = new Ray(new xy(ray.pointA.x + Cos, ray.pointA.y + Sin), new xy(ray.pointB.x + Cos, ray.pointB.y + Sin));
@@ -350,6 +350,7 @@ class GreyTank {
 		this.tankRotationCap = 0.08;
 
 		//turret update
+		this.shellDetectionRadius = 100;
 
 		//lock on to player
 		this.goalRot = turretAngle * Math.PI / 180;
@@ -368,6 +369,27 @@ class GreyTank {
 		const comradeCollision = getComradeCollisions(ray, angle, firstShot, this.tankID);
 
 		if (!comradeCollision.reflection) {
+			//it doesn't matter how many bounces are left, it matters if the tank is still alive. check for incoming shells and remove the threat
+			const shellCollision = getShellCollisions(ray, angle);
+
+			//check if shell is within a certain target radius, aka close enough for it to be a threat
+			if (shellCollision.dist <= this.shellDetectionRadius) {
+				//check if any walls are in the way
+				const wallCollision = getWallCollisions(new Ray(ray.pointA, shellCollision.reflection.point), angle, collidedSideID);
+
+				if (!wallCollision.reflection) {
+					//no walls are in the way!
+
+					/*technically did not detect player, but that's what i will use for object detection*/
+					return {
+						detectPlayer: true,
+						noWalls: true
+					};
+				}
+
+				//if there was a wall collision, then continue normally
+			}
+
 			const playerCollision = getPlayerCollisions(ray, angle);
 
 			if (bouncesLeft > 0) {
@@ -381,7 +403,7 @@ class GreyTank {
 						return {
 							detectPlayer: true,
 							noWalls: true
-						}
+						};
 					} else {
 						//bounce off the wall we have detected!
 						return this.castToPlayer(wallCollision.reflection.newRay, wallCollision.reflection.newAngle, bouncesLeft - 1, false, wallCollision.id);
@@ -398,7 +420,7 @@ class GreyTank {
 						if (!borderCollision) return {
 							detectPlayer: false,
 							noWalls: false
-						}
+						};
 
 						return this.castToPlayer(borderCollision.reflection.newRay, borderCollision.reflection.newAngle, bouncesLeft - 1, false, borderCollision.id);
 					}
@@ -420,28 +442,28 @@ class GreyTank {
 						return {
 							detectPlayer: true,
 							noWalls: false
-						}
+						};
 					}
 				} else {
 					//doesn't hit player :(
 					return {
 						detectPlayer: false,
 						noWalls: false
-					}
+					};
 				}
 			}
 		} else {
 			return {
 				detectPlayer: false,
 				noWalls: false
-			}
+			};
 		}
 	}
 
 	shouldFire(ray) {
 		const perpAngle = getPerpAngle(this.tank.angle);
-		const Cos = Math.cos(perpAngle) * SHELL_HEIGHT * RAY_OFFSET;
-		const Sin = Math.sin(perpAngle) * SHELL_HEIGHT * RAY_OFFSET;
+		const Cos = Math.cos(perpAngle) * SHELL_HEIGHT * MOBILE_RAY_OFFSET;
+		const Sin = Math.sin(perpAngle) * SHELL_HEIGHT * MOBILE_RAY_OFFSET;
 		
 		//left ray
 		const leftRay = new Ray(new xy(ray.pointA.x + Cos, ray.pointA.y + Sin), new xy(ray.pointB.x + Cos, ray.pointB.y + Sin));
@@ -461,6 +483,29 @@ class GreyTank {
 			if (leftCast.noWalls && rightCast.noWalls) {
 				this.try = 0;
 				return true;
+			}
+		}
+	}
+
+	dodgeShells() {
+		for (var i = 0; i < STAGE_CACHE.shells.length; i++) {
+			const shell = STAGE_CACHE.shells[i];
+
+			const playerCoord = new xy(this.tank.centerX, this.tank.centerY);
+			const shellCoord = new xy(shell.centerX, shell.centerY);
+
+			const shellDist = getRayLength(playerCoord, shellCoord);
+
+			const playerRay = new Ray(playerCoord, new xy(playerCoord.x + Math.cos(this.tank.angle) * 100, playerCoord.y + Math.sin(this.tank.angle) * 100));
+			const shellRay = new Ray(shellCoord, new xy(shellCoord.x + Math.cos(shell.angle) * 100, shellCoord.y + Math.sin(shell.angle) * 100));
+
+			const playerDot = dotProduct(playerRay.pointA, playerRay.pointB);
+			const shellDot = dotProduct(shellRay.pointA, shellRay.pointB);
+
+			//if the shell is getting too close to the tank and the tank is heading in the same direction, back off!
+			if (shellDist <= this.shellDetectionRadius && Math.sign(playerDot) == Math.sign(shellDot)) {
+				//hit a 180 babyyy
+				this.tankRotation = 1200 * deltaTime * this.tank.rotationSpeed * Math.PI / 180;
 			}
 		}
 	}
@@ -530,6 +575,8 @@ class GreyTank {
 
 					this.tankRotation = this.getRandomBodyRot();
 				}
+
+				this.dodgeShells();
 			}
 
 			//update movement if tank is not shocked!
