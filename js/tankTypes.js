@@ -43,7 +43,7 @@ class Player {
 		//update turret angle
 		this.tank.turretAngle = Math.atan2(MOUSE_POS.y - this.tank.centerY, MOUSE_POS.x - this.tank.centerX);
 
-		//update shellShock
+		//update tankShock
 		this.tankShock += deltaTime;
 
 		//update shellDelay
@@ -341,6 +341,9 @@ class GreyTank {
 
 
 		//movement update
+
+		//makes tank "shock" aka pause for a split second due to recoil from shot or mine
+		this.tankShock = 0;
 		this.tankRotation = 0;
 		this.uTurning = false;
 		this.tankRotationDelay = 0;
@@ -475,6 +478,9 @@ class GreyTank {
 			//update limiters
 			this.shellDelay += deltaTime;
 
+			//update tankShock
+			this.tankShock += deltaTime;
+
 			//update tank angle
 			this.tankRotationDelay += deltaTime;
 
@@ -526,12 +532,14 @@ class GreyTank {
 				}
 			}
 
-			//update movement
-			const xInc = this.tank.speed * Math.cos(this.tank.angle) * deltaTime;
-			const yInc = this.tank.speed * Math.sin(this.tank.angle) * deltaTime;
+			//update movement if tank is not shocked!
+			if (this.tankShock > 0) {
+				const xInc = this.tank.speed * Math.cos(this.tank.angle) * deltaTime;
+				const yInc = this.tank.speed * Math.sin(this.tank.angle) * deltaTime;
 
-			this.tank.x += xInc;
-			this.tank.y += yInc;
+				this.tank.x += xInc;
+				this.tank.y += yInc;
+			}
 
 			//update turret
 			this.goalRot = Math.atan2(STAGE_CACHE.player.tank.y - this.tank.y, STAGE_CACHE.player.tank.x - this.tank.x);
@@ -583,6 +591,7 @@ class GreyTank {
 			if (this.shouldFire(ray) && this.shellDelay > 8) {
 				//it found the ray to fire upon
 				this.shellDelay = 0;
+				this.tankShock = -0.1;
 				this.tank.shoot(shootCoordinates, NORMAL_SHELL, this.tankID);
 			}
 		}
