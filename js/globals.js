@@ -20,6 +20,8 @@ const blueArtTank = new ArtTank(800, 600, 3, 0, 210, "#224ACF", "#0101BA");
 const redArtTank = new ArtTank(100, 80, 3, 0, 30, "#ED4245", "#9E2C2E");
 
 //GAME OBJECT CONSTANTS FOR FINE TUNING PLACEMENTS//
+const RAY_OFFSET = 1.5;
+
 const TANK_PARTICLE_SIDE = 20;
 
 const TRACK_WIDTH = 4;
