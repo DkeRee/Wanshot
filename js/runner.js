@@ -41,9 +41,17 @@
 
 			if (trackUpdate > 0.1) {
 				//ADD TRACK FOR EVERY TANK
+				if (STAGE_CACHE.tracks.length > 400) {
+					STAGE_CACHE.tracks.shift();
+				}
+
 				STAGE_CACHE.player.trackUpdate();
 
 				for (var i = 0; i < STAGE_CACHE.enemies.length; i++) {
+					if (STAGE_CACHE.tracks.length > 500) {
+						STAGE_CACHE.tracks.shift();
+					}
+
 					const enemy = STAGE_CACHE.enemies[i];
 
 					//dont update tracks for tanks that don't move
@@ -58,6 +66,7 @@
 
 			//UPDATE OBJECTS//
 			for (var i = 0; i < STAGE_CACHE.tracks.length; i++) {
+
 				const track = STAGE_CACHE.tracks[i];
 
 				if (track.explode) {
