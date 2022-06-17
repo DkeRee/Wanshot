@@ -11,16 +11,18 @@ class GreyTank {
 
 		//movement update
 
+		//mines that are remembered
+		this.mineMemory = [];
+
 		//makes tank "shock" aka pause for a split second due to recoil from shot or mine
 		this.tankShock = 0;
 		this.tankRotation = 0;
 		this.uTurning = false;
-		this.avoiding = false;
 		this.tankRotationDelay = 0;
 		this.tankRotationCap = 0.08;
 
 		//turret update
-		this.shellDetectionRadius = 400;
+		this.shellDetectionRadius = 250;
 
 		//lock on to player
 		this.goalRot = turretAngle * Math.PI / 180;
@@ -157,44 +159,69 @@ class GreyTank {
 		}
 	}
 
+	matchMineID(mineID) {
+		for (var i = 0; i < this.mineMemory.length; i++) {
+			if (this.mineMemory[i] == mineID) {
+				return {
+					i: i
+				};
+			}
+		}
+
+		return false;
+	}
+
+	dodgeMines() {
+		for (var i = 0; i < STAGE_CACHE.mines.length; i++) {
+			const mine = STAGE_CACHE.mines[i];
+
+			if (SAT_POLYGON_CIRCLE(this.tank, {
+				x: mine.x,
+				y: mine.y,
+				radius: MINE_EXPLOSION_RADIUS
+			})) {
+				//if we have not already dodged this mine
+				if (!this.matchMineID(mine.id)) {
+					this.mineMemory.push(mine.id);
+
+					//hit a 180 babyyy
+					this.tankRotation = 10800 * deltaTime * this.tank.rotationSpeed * Math.PI / 180;
+				}
+			} else {
+				const mineImprint = this.matchMineID(mine.id);
+				
+				//if we are no longer touching the mine but we remember it, forget about the mine
+				if (mineImprint) {
+					this.mineMemory.splice(mineImprint.i, 1);
+				}
+			}
+		}
+	}
+
 	dodgeShells() {
 		for (var i = 0; i < STAGE_CACHE.shells.length; i++) {
 			const shell = STAGE_CACHE.shells[i];
 			
 			//if the shell is not diminishing
 			if (!shell.diminish) {
-				const playerCoord = new xy(this.tank.centerX, this.tank.centerY);
+				const tankCoord = new xy(this.tank.centerX, this.tank.centerY);
 				const shellCoord = new xy(shell.centerX, shell.centerY);
 
-				const shellDist = getRayLength(playerCoord, shellCoord);
-				const playerShellAngle = Math.atan2(playerCoord.y - shellCoord.y, playerCoord.x - shellCoord.x);
+				const shellDist = getRayLength(tankCoord, shellCoord);
 
-				//if the shell is getting too close to the tank and the tank is heading in the same direction, back off!
+				//if the shell is getting too close and it is going to hit the tank, avoid!
 				if (shellDist <= this.shellDetectionRadius) {
-					const intersection = singleShellCollision(new Ray(playerCoord, shellCoord), playerShellAngle, shell);
+					const shellEndPoint = new xy(shellCoord.x + Math.cos(shell.angle) * 1000, shellCoord.y + Math.sin(shell.angle) * 1000);
+					const intersection = singleShellCollision(new Ray(shellCoord, shellEndPoint), this.tank);
 
-					if (!this.avoiding) {
-						this.avoiding = true;
-						this.speed *= 4;
-					}
-
-					if (intersection.side == 1 || intersection.side == 3) {
-						//shell is closer to the tank's bottom or right side
-						//sharp turn right
-						this.tankRotation = 1200 * deltaTime * this.tank.rotationSpeed * Math.PI / 180;
-					} else {
-						//shell is closer to the tank's left or top side
-						//sharp turn left
-						this.tankRotation = -1200 * deltaTime * this.tank.rotationSpeed * Math.PI / 180;
-					}
-					/*
-					//hit a 180 babyyy
-					this.tankRotation = 1200 * deltaTime * this.tank.rotationSpeed * Math.PI / 180;
-					*/			
-				} else {
-					if (this.avoiding) {
-						this.avoiding = false;
-						this.speed /= 4;
+					if (intersection.reflection) {
+						if (intersection.side == 0 || intersection.side == 3) {
+							//sharp turn left, left or bottom
+							this.tankRotation = 1200 * deltaTime * this.tank.rotationSpeed * Math.PI / 180;
+						} else {
+							//sharp turn right, right or top
+							this.tankRotation = -1200 * deltaTime * this.tank.rotationSpeed * Math.PI / 180;
+						}
 					}
 				}
 			}
@@ -268,6 +295,7 @@ class GreyTank {
 				}
 
 				this.dodgeShells();
+				this.dodgeMines();
 			}
 
 			//update movement if tank is not shocked!

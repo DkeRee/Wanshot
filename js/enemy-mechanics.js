@@ -232,15 +232,19 @@ function getShellCollisions(ray, angle) {
 	return closestIntersection;
 }
 
-function singleShellCollision(ray, angle, shell) {
+function singleShellCollision(shellRay, tank) {
 	const closestIntersection = {
 		reflection: null,
 		side: null,
 		dist: Infinity
 	};
 
-	const polygonShell = new Polygon(shell);
-	const points = polygonShell.vertexPoints;
+	const polygonTank = new Polygon(tank);
+	const points = polygonTank.vertexPoints;
+
+	//predict
+	polygonTank.x += Math.cos(tank.angle) * 40;
+	polygonTank.y += Math.sin(tank.angle) * 40;
 
 	const edges = [
 		new Ray(points.topLeft, points.bottomLeft), //left
@@ -249,22 +253,21 @@ function singleShellCollision(ray, angle, shell) {
 		new Ray(points.bottomLeft, points.bottomRight) //bottom
 	];
 
-	for (var o = 0; o < edges.length; o++) {
-		const intersection = getRayIntersect(ray, edges[o]);
-		const shellRay = new Ray(new xy(shell.centerX, shell.centerY), new xy(shell.centerX + Math.cos(shell.angle) * 1000, shell.centerY + Math.sin(shell.angle) * 1000));
+	for (var i = 0; i < edges.length; i++) {
+		const intersection = getRayIntersect(shellRay, edges[i]);
 
 		if (intersection.intersect) {
-			const rayLength = getRayLength(ray.pointA, intersection.point);
+			const rayLength = getRayLength(shellRay.pointA, intersection.point);
 
 			if (rayLength < closestIntersection.dist) {
 				closestIntersection.reflection = intersection;
-				closestIntersection.side = o;
+				closestIntersection.side = i;
 				closestIntersection.dist = rayLength;
 			}
 		}
 	}
 
-	return closestIntersection;	
+	return closestIntersection;
 }
 
 function getComradeCollisions(ray, angle, firstShot, tankID) {

@@ -70,6 +70,9 @@ class Mine {
 		//tankID
 		this.tankID = tankID;
 
+		//mine id
+		this.id = Math.floor(Math.random() * 100000);
+
 		//light yellow
 		this.color = "#FEE75C";
 		//light red
