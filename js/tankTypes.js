@@ -346,11 +346,12 @@ class GreyTank {
 		this.tankShock = 0;
 		this.tankRotation = 0;
 		this.uTurning = false;
+		this.avoiding = false;
 		this.tankRotationDelay = 0;
 		this.tankRotationCap = 0.08;
 
 		//turret update
-		this.shellDetectionRadius = 200;
+		this.shellDetectionRadius = 400;
 
 		//lock on to player
 		this.goalRot = turretAngle * Math.PI / 180;
@@ -503,6 +504,11 @@ class GreyTank {
 				if (shellDist <= this.shellDetectionRadius) {
 					const intersection = singleShellCollision(new Ray(playerCoord, shellCoord), playerShellAngle, shell);
 
+					if (!this.avoiding) {
+						this.avoiding = true;
+						this.speed *= 4;
+					}
+
 					if (intersection.side == 1 || intersection.side == 3) {
 						//shell is closer to the tank's bottom or right side
 						//sharp turn right
@@ -516,6 +522,11 @@ class GreyTank {
 					//hit a 180 babyyy
 					this.tankRotation = 1200 * deltaTime * this.tank.rotationSpeed * Math.PI / 180;
 					*/			
+				} else {
+					if (this.avoiding) {
+						this.avoiding = false;
+						this.speed /= 4;
+					}
 				}
 			}
 		}
