@@ -349,7 +349,7 @@ function getPlayerCollisions(ray, angle) {
 function getForeignCollisions(tank) {
 	const range = TANK_WIDTH * 1.8;
 	const bigOffset = 20 * Math.PI / 180;
-	const smallOffset = 25 * Math.PI / 180;
+	const smallOffset = 22 * Math.PI / 180;
 
 	const bigRight = new Ray(new xy(tank.centerX, tank.centerY), new xy(range * 3 * Math.cos(tank.angle + bigOffset) + tank.centerX, range * 3 * Math.sin(tank.angle + bigOffset) + tank.centerY));
 	const bigLeft = new Ray(new xy(tank.centerX, tank.centerY), new xy(range * 3 * Math.cos(tank.angle - bigOffset) + tank.centerX, range  * 3 * Math.sin(tank.angle - bigOffset) + tank.centerY));

@@ -41,14 +41,14 @@
 
 			if (trackUpdate > 0.1) {
 				//ADD TRACK FOR EVERY TANK
-				if (STAGE_CACHE.tracks.length > 400) {
+				if (STAGE_CACHE.tracks.length > 300) {
 					STAGE_CACHE.tracks.shift();
 				}
 
 				STAGE_CACHE.player.trackUpdate();
 
 				for (var i = 0; i < STAGE_CACHE.enemies.length; i++) {
-					if (STAGE_CACHE.tracks.length > 500) {
+					if (STAGE_CACHE.tracks.length > 300) {
 						STAGE_CACHE.tracks.shift();
 					}
 

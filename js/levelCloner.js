@@ -39,6 +39,9 @@ function levelCloner(CURR_LEVEL) {
 						case "GreyTank":
 							LEVEL_CACHE.enemies.push(new GreyTank(enemies[i].tank.x, enemies[i].tank.y, enemies[i].tank.angle, enemies[i].tank.turretAngle));
 							break;
+						case "YellowTank":
+							LEVEL_CACHE.enemies.push(new YellowTank(enemies[i].tank.x, enemies[i].tank.y, enemies[i].tank.angle, enemies[i].tank.turretAngle));
+							break;
 					}
 				}
 				break;

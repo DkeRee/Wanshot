@@ -1,10 +1,10 @@
-class GreyTank {
+class YellowTank {
 	constructor(x, y, angle, turretAngle) {
 		//ID
 		this.tankID = Math.floor(Math.random() * 100000);
 
-		this.tank = new Tank(x, y, angle, turretAngle, "#4A4A4A", "#4D4D4D", "#B0896B", 80, 1, this.tankID);
-		this.tankType = GREY_TANK;
+		this.tank = new Tank(x, y, angle, turretAngle, "#DEC951", "#C4B248", "#B0896B", 130, 1, this.tankID);
+		this.tankType = YELLOW_TANK;
 		this.bounces = 1;
 		this.dead = false;
 
@@ -13,13 +13,15 @@ class GreyTank {
 
 		//mines that are remembered
 		this.mineMemory = [];
+		this.mineDelay = 9;
+		this.mineDelayCap = 9;
 
 		//makes tank "shock" aka pause for a split second due to recoil from shot or mine
 		this.tankShock = 0;
 		this.tankRotation = 0;
 		this.uTurning = false;
 		this.tankRotationDelay = 0;
-		this.tankRotationCap = 0.08;
+		this.tankRotationCap = 0.05;
 
 		//turret update
 		this.shellDetectionRadius = 250;
@@ -31,7 +33,7 @@ class GreyTank {
 		this.noise = false;
 		this.noiseDelay = 0;
 		this.noiseAmount = 0.3;
-		this.turretRotation = 90 * deltaTime * Math.PI / 180;
+		this.turretRotation = 150 * deltaTime * Math.PI / 180;
 		this.shellDelay = 8;
 	}
 
@@ -178,7 +180,7 @@ class GreyTank {
 			if (SAT_POLYGON_CIRCLE(this.tank, {
 				x: mine.x,
 				y: mine.y,
-				radius: MINE_EXPLOSION_RADIUS
+				radius: MINE_EXPLOSION_RADIUS * 2
 			})) {
 				//if we have not already dodged this mine
 				if (!this.matchMineID(mine.id)) {
@@ -196,6 +198,36 @@ class GreyTank {
 				}
 			}
 		}
+	}
+
+	checkIfClose() {
+		//check if we're too close to another tank
+		for (var i = 0; i < STAGE_CACHE.enemies.length; i++) {
+			const enemy = STAGE_CACHE.enemies[i];
+
+			//if we're not looking at the same tank
+			if (enemy.tankID !== this.tankID) {
+				const thisCoord = new xy(this.tank.centerX, this.tank.centerY);
+				const comradeCoord = new xy(enemy.tank.centerX, enemy.tank.centerY);
+				if (getRayLength(thisCoord, comradeCoord) <= MINE_EXPLOSION_RADIUS * 1.8) {
+					return true;
+				}
+			}
+		}
+
+		//check if we're too cloe to another mine
+		for (var i = 0; i < STAGE_CACHE.mines.length; i++) {
+			const mine = STAGE_CACHE.mines[i];
+
+			const thisCoord = new xy(this.tank.centerX, this.tank.centerY);
+			const mineCoord = new xy(mine.x, mine.y);
+
+			if (getRayLength(thisCoord, mineCoord) <= MINE_EXPLOSION_RADIUS * 2) {
+				return true;
+			}
+		}
+
+		return false;
 	}
 
 	dodgeShells() {
@@ -217,10 +249,10 @@ class GreyTank {
 					if (intersection.reflection) {
 						if (intersection.side == 0 || intersection.side == 3) {
 							//sharp turn left, left or bottom
-							this.tankRotation = 1400 * deltaTime * this.tank.rotationSpeed * Math.PI / 180;
+							this.tankRotation = 1200 * deltaTime * this.tank.rotationSpeed * Math.PI / 180;
 						} else {
 							//sharp turn right, right or top
-							this.tankRotation = -1400 * deltaTime * this.tank.rotationSpeed * Math.PI / 180;
+							this.tankRotation = -1200 * deltaTime * this.tank.rotationSpeed * Math.PI / 180;
 						}
 
 						return true;
@@ -232,7 +264,6 @@ class GreyTank {
 
 	getRandomBodyRot() {
 		//return a random rotation for the tank to travel with in radians
-		//degree difference from -10 to 10
 		const max = 500;
 		const min = -500;
 		return ((Math.random() * (max - min) + min) * deltaTime * this.tank.rotationSpeed) * Math.PI / 180;
@@ -242,6 +273,7 @@ class GreyTank {
 		if (!STAGE_CACHE.player.dead && !this.dead) {
 			//update limiters
 			this.shellDelay += deltaTime;
+			this.mineDelay += deltaTime;
 
 			//update tankShock
 			this.tankShock += deltaTime;
@@ -297,6 +329,7 @@ class GreyTank {
 						this.tankRotation = this.getRandomBodyRot();
 					}
 				}
+
 				this.dodgeMines();
 			}
 
@@ -348,6 +381,14 @@ class GreyTank {
 						this.noise = true;
 					}
 				}
+			}
+
+			//update mine laying if the mine delay is bigger than the cap and if we are not close to any other enemy tanks
+			if (this.mineDelay > this.mineDelayCap && !this.checkIfClose()) {
+				this.tankShock = -0.1;
+				this.mineDelay = 0;
+
+				this.tank.layMine(this.tankID);
 			}
 
 			//update shooting

@@ -263,6 +263,14 @@ class GreyTank {
 	}
 }
 
+class YellowTank {
+	constructor(opacity, angle) {
+		this.tank = new Tank(mouse.x - TANK_WIDTH / 2, mouse.y - TANK_HEIGHT / 2, angle, "#DEC951", "#C4B248", "#B0896B", opacity);
+		this.hovering = false;
+		this.content = YELLOW_TANK;
+	}
+}
+
 var placed = false;
 function updateFloatingAssets() {
 	//only update floating assets if you are not editing blocks
@@ -331,6 +339,9 @@ function updateFloatingAssets() {
 									break;
 								case GREY_TANK:
 									exportedEnemies.push(new GreyTank(1, floating_cache.content.tank.angle));
+									break;
+								case YELLOW_TANK:
+									exportedEnemies.push(new YellowTank(1, floating_cache.content.tank.angle));
 									break;
 							}
 						}

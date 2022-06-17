@@ -249,7 +249,7 @@ class Mine {
 					}
 
 					//create 30 mine explosion particles
-					for (var i = 0; i < 30; i++) {
+					for (var i = 0; i < 10; i++) {
 						this.mineParticles.push(new MineParticle(this.x - MINE_PARTICLE_SIDE / 2, this.y - MINE_PARTICLE_SIDE / 2));
 					}
 				}
