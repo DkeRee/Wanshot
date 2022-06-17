@@ -2,6 +2,16 @@ const U_TURN = 1;
 const TURN_LEFT = 2;
 const TURN_RIGHT = 3;
 
+function checkGameOver() {
+	for (var i = 0; i < STAGE_CACHE.enemies.length; i++) {
+		//game is not over if an enemy tank is still alive
+		if (!STAGE_CACHE.enemies[i].dead) {
+			return false;
+		}
+	}
+	return true;
+}
+
 function getRayLength(pointA, pointB) {
 	return Math.sqrt(Math.pow(pointA.x - pointB.x, 2) + Math.pow(pointA.y - pointB.y, 2));
 }
