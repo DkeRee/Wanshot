@@ -295,7 +295,7 @@ class YellowTank {
 						//about to collide, don't idle
 						switch (foreignCollision) {
 							case U_TURN:
-								this.tankRotation = 1800 * deltaTime * this.tank.rotationSpeed * Math.PI / 180;
+								this.tankRotation = 2400 * deltaTime * this.tank.rotationSpeed * Math.PI / 180;
 								if (!this.uTurning) {
 									this.uTurning = true;
 									this.tank.speed /= 2;
