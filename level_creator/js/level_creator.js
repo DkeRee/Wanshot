@@ -110,6 +110,9 @@
 				case BROWN_TANK:
 					enemyExport += `new BrownTank(${exportedEnemies[i].tank.x}, ${exportedEnemies[i].tank.y}, ${exportedEnemies[i].tank.angle}, ${exportedEnemies[i].tank.angle})`;
 					break;
+				case GREY_TANK:
+					enemyExport += `new GreyTank(${exportedEnemies[i].tank.x}, ${exportedEnemies[i].tank.y}, ${exportedEnemies[i].tank.angle}, ${exportedEnemies[i].tank.angle})`;
+					break;
 			}
 
 			if (i !== exportedEnemies.length - 1) {
@@ -198,6 +201,10 @@
 				break;
 			case 53:
 				currAsset = BROWN_TANK;
+				switchEditing(false);
+				break;
+			case 54:
+				currAsset = GREY_TANK;
 				switchEditing(false);
 				break;
 			case 82:

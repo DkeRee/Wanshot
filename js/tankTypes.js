@@ -361,7 +361,7 @@ class GreyTank {
 		this.noiseDelay = 0;
 		this.noiseAmount = 0.3;
 		this.turretRotation = 90 * deltaTime * Math.PI / 180;
-		this.shellDelay = 4;
+		this.shellDelay = 8;
 	}
 
 	//cast a ray to player
