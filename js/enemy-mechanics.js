@@ -222,6 +222,41 @@ function getShellCollisions(ray, angle) {
 	return closestIntersection;
 }
 
+function singleShellCollision(ray, angle, shell) {
+	const closestIntersection = {
+		reflection: null,
+		side: null,
+		dist: Infinity
+	};
+
+	const polygonShell = new Polygon(shell);
+	const points = polygonShell.vertexPoints;
+
+	const edges = [
+		new Ray(points.topLeft, points.bottomLeft), //left
+		new Ray(points.topLeft, points.topRight), //top
+		new Ray(points.topRight, points.bottomRight), //right
+		new Ray(points.bottomLeft, points.bottomRight) //bottom
+	];
+
+	for (var o = 0; o < edges.length; o++) {
+		const intersection = getRayIntersect(ray, edges[o]);
+		const shellRay = new Ray(new xy(shell.centerX, shell.centerY), new xy(shell.centerX + Math.cos(shell.angle) * 1000, shell.centerY + Math.sin(shell.angle) * 1000));
+
+		if (intersection.intersect) {
+			const rayLength = getRayLength(ray.pointA, intersection.point);
+
+			if (rayLength < closestIntersection.dist) {
+				closestIntersection.reflection = intersection;
+				closestIntersection.side = o;
+				closestIntersection.dist = rayLength;
+			}
+		}
+	}
+
+	return closestIntersection;	
+}
+
 function getComradeCollisions(ray, angle, firstShot, tankID) {
 	const closestIntersection = {
 		reflection: null,

@@ -350,7 +350,7 @@ class GreyTank {
 		this.tankRotationCap = 0.08;
 
 		//turret update
-		this.shellDetectionRadius = 100;
+		this.shellDetectionRadius = 200;
 
 		//lock on to player
 		this.goalRot = turretAngle * Math.PI / 180;
@@ -490,22 +490,33 @@ class GreyTank {
 	dodgeShells() {
 		for (var i = 0; i < STAGE_CACHE.shells.length; i++) {
 			const shell = STAGE_CACHE.shells[i];
+			
+			//if the shell is not diminishing
+			if (!shell.diminish) {
+				const playerCoord = new xy(this.tank.centerX, this.tank.centerY);
+				const shellCoord = new xy(shell.centerX, shell.centerY);
 
-			const playerCoord = new xy(this.tank.centerX, this.tank.centerY);
-			const shellCoord = new xy(shell.centerX, shell.centerY);
+				const shellDist = getRayLength(playerCoord, shellCoord);
+				const playerShellAngle = Math.atan2(playerCoord.y - shellCoord.y, playerCoord.x - shellCoord.x);
 
-			const shellDist = getRayLength(playerCoord, shellCoord);
+				//if the shell is getting too close to the tank and the tank is heading in the same direction, back off!
+				if (shellDist <= this.shellDetectionRadius) {
+					const intersection = singleShellCollision(new Ray(playerCoord, shellCoord), playerShellAngle, shell);
 
-			const playerRay = new Ray(playerCoord, new xy(playerCoord.x + Math.cos(this.tank.angle) * 100, playerCoord.y + Math.sin(this.tank.angle) * 100));
-			const shellRay = new Ray(shellCoord, new xy(shellCoord.x + Math.cos(shell.angle) * 100, shellCoord.y + Math.sin(shell.angle) * 100));
-
-			const playerDot = dotProduct(playerRay.pointA, playerRay.pointB);
-			const shellDot = dotProduct(shellRay.pointA, shellRay.pointB);
-
-			//if the shell is getting too close to the tank and the tank is heading in the same direction, back off!
-			if (shellDist <= this.shellDetectionRadius && Math.sign(playerDot) == Math.sign(shellDot)) {
-				//hit a 180 babyyy
-				this.tankRotation = 1200 * deltaTime * this.tank.rotationSpeed * Math.PI / 180;
+					if (intersection.side == 1 || intersection.side == 3) {
+						//shell is closer to the tank's bottom or right side
+						//sharp turn right
+						this.tankRotation = 1200 * deltaTime * this.tank.rotationSpeed * Math.PI / 180;
+					} else {
+						//shell is closer to the tank's left or top side
+						//sharp turn left
+						this.tankRotation = -1200 * deltaTime * this.tank.rotationSpeed * Math.PI / 180;
+					}
+					/*
+					//hit a 180 babyyy
+					this.tankRotation = 1200 * deltaTime * this.tank.rotationSpeed * Math.PI / 180;
+					*/			
+				}
 			}
 		}
 	}
