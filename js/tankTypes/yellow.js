@@ -8,13 +8,12 @@ class YellowTank {
 		this.bounces = 1;
 		this.dead = false;
 
-
 		//movement update
 
 		//mines that are remembered
 		this.mineMemory = [];
-		this.mineDelay = 9;
-		this.mineDelayCap = 9;
+		this.mineDelay = 7;
+		this.mineDelayCap = 7;
 
 		//makes tank "shock" aka pause for a split second due to recoil from shot or mine
 		this.tankShock = 0;

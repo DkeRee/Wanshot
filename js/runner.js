@@ -145,7 +145,13 @@
 			STAGE_CACHE.player.update();
 
 			for (var i = 0; i < STAGE_CACHE.enemies.length; i++) {
-				STAGE_CACHE.enemies[i].update();
+				const enemy = STAGE_CACHE.enemies[i];
+				enemy.update();
+
+				//if tanks are white, then turn them invisible
+				if (enemy.tankType == WHITE_TANK && !enemy.invisible) {
+					enemy.turnInvisible();
+				}
 			}
 
 			//update start logo

@@ -31,6 +31,8 @@ const TRACK_HEIGHT = 7;
 const GRAVE_WIDTH = 10;
 const GRAVE_HEIGHT = 30;
 
+const SUPERPOWER_PARTICLE_SIDE = 100;
+
 const TANK_WIDTH = 43;
 const TANK_HEIGHT = 33;
 
@@ -64,6 +66,7 @@ const YELLOW_TANK = 30;
 const PINK_TANK = 40;
 const TEAL_TANK = 50;
 const PURPLE_TANK = 60;
+const WHITE_TANK = 70;
 
 const SHADOW = "rgba(0, 0, 0, 0.3)";
 

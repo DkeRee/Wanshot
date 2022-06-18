@@ -1,18 +1,83 @@
-class PinkTank {
+class SuperpowerParticles {
+	constructor(x, y) {
+		//particle body (IT IS A SQUARE)
+		this.maxSide = SUPERPOWER_PARTICLE_SIDE;
+		this.side = 0;
+
+		this.x = x;
+		this.y = y;
+		this.centerX = this.x + this.side / 2;
+		this.centerY = this.y + this.side / 2;
+		this.angle = (Math.floor(Math.random() * 360)) * Math.PI / 180;
+		this.opacity = 1;
+		this.speed = 200;
+		this.explode = false;
+
+		this.color = "#DBDBDB";
+	}
+
+	update() {
+		//GOAL: move particle in random angle while it slowly fades and slows
+
+		//update position
+		this.x += this.speed * Math.cos(this.angle) * deltaTime;
+		this.y += this.speed * Math.sin(this.angle) * deltaTime;
+
+		this.centerX = this.x + this.side / 2;
+		this.centerY = this.y + this.side / 2;
+
+		//update side (make it slowly expand from 0)
+		this.maxSide /= 2;
+		this.side += this.maxSide;
+
+		//update opacity and speed
+		this.opacity -= 0.5 * deltaTime;
+		this.speed -= 1 * deltaTime;
+
+		//check for deletion
+		if (this.opacity <= 0) {
+			this.explode = true;
+		}
+	}
+
+	render() {
+		//RENDER PARTICLE
+		ctx.shadowBlur = 5;
+		ctx.shadowColor = this.color;
+		ctx.save();
+
+		ctx.translate(this.centerX, this.centerY);
+		ctx.rotate(this.angle);
+
+		//color in rgba to support opacity
+		ctx.fillStyle = hexToRgbA(this.color, this.opacity);
+		ctx.fillRect(this.side / -2, this.side / -2, this.side, this.side);
+
+		ctx.restore();
+		ctx.shadowBlur = 0;
+	}
+}
+
+class WhiteTank {
 	constructor(x, y, angle, turretAngle) {
 		//ID
 		this.tankID = Math.floor(Math.random() * 100000);
 
-		this.tank = new Tank(x, y, angle, turretAngle, "#B82A55", "#B02951", "#B0896B", 120, 1, this.tankID);
-		this.tankType = PINK_TANK;
+		this.tank = new Tank(x, y, angle, turretAngle, "#DBDBDB", "#CFCFCF", "#B0896B", 130, 1, this.tankID);
+		this.tankType = WHITE_TANK;
 		this.bounces = 1;
 		this.dead = false;
 
+		//special power! Invisibility!
+		this.invisible = false;
+		this.invisibleParticles = [];
 
 		//movement update
 
 		//mines that are remembered
 		this.mineMemory = [];
+		this.mineDelay = 5;
+		this.mineDelayCap = 7;
 
 		//makes tank "shock" aka pause for a split second due to recoil from shot or mine
 		this.tankShock = 0;
@@ -31,9 +96,18 @@ class PinkTank {
 		this.noise = false;
 		this.noiseDelay = 0;
 		this.noiseAmount = 0.2;
-		this.turretRotation = 150 * deltaTime * Math.PI / 180;
-		this.shellDelay = 0.4;
+		this.turretRotation = 200 * deltaTime * Math.PI / 180;
+		this.shellDelay = 0.35;
 		this.shellShot = 0;
+	}
+
+	turnInvisible() {
+		this.invisible = true;
+
+		//make 15 invisible particles
+		for (var i = 0; i < 15; i++) {
+			this.invisibleParticles.push(new SuperpowerParticles(this.tank.centerX - SUPERPOWER_PARTICLE_SIDE / 2, this.tank.centerY - SUPERPOWER_PARTICLE_SIDE / 2));
+		}
 	}
 
 	//cast a ray to player
@@ -199,6 +273,36 @@ class PinkTank {
 		}
 	}
 
+	checkIfClose() {
+		//check if we're too close to another tank
+		for (var i = 0; i < STAGE_CACHE.enemies.length; i++) {
+			const enemy = STAGE_CACHE.enemies[i];
+
+			//if we're not looking at the same tank
+			if (enemy.tankID !== this.tankID) {
+				const thisCoord = new xy(this.tank.centerX, this.tank.centerY);
+				const comradeCoord = new xy(enemy.tank.centerX, enemy.tank.centerY);
+				if (getRayLength(thisCoord, comradeCoord) <= MINE_EXPLOSION_RADIUS * 1.8) {
+					return true;
+				}
+			}
+		}
+
+		//check if we're too cloe to another mine
+		for (var i = 0; i < STAGE_CACHE.mines.length; i++) {
+			const mine = STAGE_CACHE.mines[i];
+
+			const thisCoord = new xy(this.tank.centerX, this.tank.centerY);
+			const mineCoord = new xy(mine.x, mine.y);
+
+			if (getRayLength(thisCoord, mineCoord) <= MINE_EXPLOSION_RADIUS * 2) {
+				return true;
+			}
+		}
+
+		return false;
+	}
+
 	dodgeShells() {
 		for (var i = 0; i < STAGE_CACHE.shells.length; i++) {
 			const shell = STAGE_CACHE.shells[i];
@@ -355,19 +459,41 @@ class PinkTank {
 				}
 			}
 
+			//update mine laying if the mine delay is bigger than the cap and if we are not close to any other enemy tanks
+			if (this.mineDelay > this.mineDelayCap && !this.checkIfClose()) {
+				this.tankShock = -0.1;
+				this.mineDelay = 0;
+
+				this.tank.layMine(this.tankID);
+			}
+
 			//update shooting
 			const shootCoordinates = new xy(1500 * Math.cos(this.tank.turretAngle) + this.tank.centerX, 1500 * Math.sin(this.tank.turretAngle) + this.tank.centerY);
 
 			const ray = new Ray(new xy(this.tank.centerX, this.tank.centerY), shootCoordinates);
 
-			//pink tanks shoot up to 3 shells rapidly
-			if (this.shouldFire(ray) && this.shellDelay > 0.3 && this.shellShot < 3) {
+			//white tanks shoot up to 5 shells rapidly
+			if (this.shouldFire(ray) && this.shellDelay > 0.3 && this.shellShot < 5) {
 				//it found the ray to fire upon
 				this.shellShot++;
 				this.shellDelay = 0;
 				this.tankShock = -0.1;
 				this.tank.shoot(shootCoordinates, NORMAL_SHELL, this.tankID);
 			}
+			
+		}
+
+		//update superpower particles
+		for (var i = 0; i < this.invisibleParticles.length; i++) {
+			const particle = this.invisibleParticles[i];
+
+			if (particle.explode) {
+				//DELETE PARTICLE
+				this.invisibleParticles.splice(i, 1);
+				continue;
+			}
+
+			particle.update();
 		}
 
 		//update particles
@@ -396,10 +522,26 @@ class PinkTank {
 	}
 
 	render() {
-		this.tank.render(this.dead);
+		//if tank isn't invisible
+		if (!this.invisible) {
+			this.tank.render(this.dead);
+		} else {
+			//render explosion particles
+			for (var i = 0; i < this.tank.explosionParticles.length; i++) {
+				this.tank.explosionParticles[i].render();
+			}
+		}
+
+		//render superpower particles
+		for (var i = 0; i < this.invisibleParticles.length; i++) {
+			this.invisibleParticles[i].render();
+		}
 	}
 
 	renderShadow() {
-		this.tank.renderShadow(this.dead);
+		//if tank isn't invisible
+		if (!this.invisible) {
+			this.tank.renderShadow(this.dead);	
+		}
 	}
 }
