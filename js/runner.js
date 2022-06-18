@@ -127,6 +127,13 @@
 						STAGE_CACHE.player.shellShot--;
 					}
 
+					for (var o = 0; o < STAGE_CACHE.enemies.length; o++) {
+						if (STAGE_CACHE.enemies[o].tankID == shell.tankID) {
+							STAGE_CACHE.enemies[o].shellShot--;
+							break;
+						}
+					}
+
 					//DELETE SHELL
 					STAGE_CACHE.shells.splice(i, 1);
 					continue;

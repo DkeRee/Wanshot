@@ -59,6 +59,7 @@ const LOOSE_BLOCK = 2;
 const BROWN_TANK = 10;
 const GREY_TANK = 20;
 const YELLOW_TANK = 30;
+const PINK_TANK = 40;
 
 const SHADOW = "rgba(0, 0, 0, 0.3)";
 

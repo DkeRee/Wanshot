@@ -33,6 +33,7 @@ const PLAYER = 4;
 const BROWN_TANK = 5;
 const GREY_TANK = 6;
 const YELLOW_TANK = 7;
+const PINK_TANK = 8;
 
 var currAsset = REGULAR_BLOCK;
 
@@ -57,6 +58,9 @@ function switchEditing(isEditingBlocks) {
 				break;
 			case YELLOW_TANK:
 				floating_cache.content = new YellowTank(0.5, 0);
+				break;
+			case PINK_TANK:
+				floating_cache.content = new PinkTank(0.5, 0);
 				break;
 		}
 	}
