@@ -217,10 +217,10 @@ class GreyTank {
 					if (intersection.reflection) {
 						if (intersection.side == 0 || intersection.side == 3) {
 							//sharp turn left, left or bottom
-							this.tankRotation = 1400 * deltaTime * this.tank.rotationSpeed * Math.PI / 180;
+							this.tankRotation = 1300 * deltaTime * this.tank.rotationSpeed * Math.PI / 180;
 						} else {
 							//sharp turn right, right or top
-							this.tankRotation = -1400 * deltaTime * this.tank.rotationSpeed * Math.PI / 180;
+							this.tankRotation = -1300 * deltaTime * this.tank.rotationSpeed * Math.PI / 180;
 						}
 
 						return true;
