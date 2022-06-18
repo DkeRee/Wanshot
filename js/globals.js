@@ -63,6 +63,7 @@ const GREY_TANK = 20;
 const YELLOW_TANK = 30;
 const PINK_TANK = 40;
 const TEAL_TANK = 50;
+const PURPLE_TANK = 60;
 
 const SHADOW = "rgba(0, 0, 0, 0.3)";
 
