@@ -31,7 +31,7 @@ class TealTank {
 		//(60 * deltaTime) == 1 deg
 		this.lockedOn = false;
 		this.turretRotation = 500 * deltaTime * Math.PI / 180;
-		this.shellDelay = 8;
+		this.shellDelay = 1;
 	}
 
 	//cast a ray to player
