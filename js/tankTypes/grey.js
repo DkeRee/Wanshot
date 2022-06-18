@@ -178,7 +178,7 @@ class GreyTank {
 			if (SAT_POLYGON_CIRCLE(this.tank, {
 				x: mine.x,
 				y: mine.y,
-				radius: MINE_EXPLOSION_RADIUS
+				radius: MINE_EXPLOSION_RADIUS * 2
 			})) {
 				//if we have not already dodged this mine
 				if (!this.matchMineID(mine.id)) {
@@ -263,7 +263,7 @@ class GreyTank {
 						//about to collide, don't idle
 						switch (foreignCollision) {
 							case U_TURN:
-								this.tankRotation = 1800 * deltaTime * this.tank.rotationSpeed * Math.PI / 180;
+								this.tankRotation = -1800 * deltaTime * this.tank.rotationSpeed * Math.PI / 180;
 								if (!this.uTurning) {
 									this.uTurning = true;
 									this.tank.speed /= 2;
@@ -286,8 +286,6 @@ class GreyTank {
 								}
 								break;
 						}
-
-						this.tankRotation += this.getRandomBodyRot();
 					} else {
 						if (this.uTurning) {
 							this.uTurning = false;

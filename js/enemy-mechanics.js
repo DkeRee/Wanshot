@@ -239,12 +239,12 @@ function singleShellCollision(shellRay, tank) {
 		dist: Infinity
 	};
 
-	const polygonTank = new Polygon(tank);
-	const points = polygonTank.vertexPoints;
+	//extend the tank's width to make the tanks predict ahead of time (funny idea!)
+	const tankClone = {...tank};
+	tankClone.width += 20;
 
-	//predict
-	polygonTank.x += Math.cos(tank.angle) * 40;
-	polygonTank.y += Math.sin(tank.angle) * 40;
+	const polygonTank = new Polygon(tankClone);
+	const points = polygonTank.vertexPoints;
 
 	const edges = [
 		new Ray(points.topLeft, points.bottomLeft), //left
@@ -349,7 +349,7 @@ function getPlayerCollisions(ray, angle) {
 function getForeignCollisions(tank) {
 	const range = TANK_WIDTH * 1.8;
 	const bigOffset = 20 * Math.PI / 180;
-	const smallOffset = 22 * Math.PI / 180;
+	const smallOffset = 21 * Math.PI / 180;
 
 	const bigRight = new Ray(new xy(tank.centerX, tank.centerY), new xy(range * 3 * Math.cos(tank.angle + bigOffset) + tank.centerX, range * 3 * Math.sin(tank.angle + bigOffset) + tank.centerY));
 	const bigLeft = new Ray(new xy(tank.centerX, tank.centerY), new xy(range * 3 * Math.cos(tank.angle - bigOffset) + tank.centerX, range  * 3 * Math.sin(tank.angle - bigOffset) + tank.centerY));
