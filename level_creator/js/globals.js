@@ -34,6 +34,7 @@ const BROWN_TANK = 5;
 const GREY_TANK = 6;
 const YELLOW_TANK = 7;
 const PINK_TANK = 8;
+const TEAL_TANK = 9;
 
 var currAsset = REGULAR_BLOCK;
 
@@ -61,6 +62,9 @@ function switchEditing(isEditingBlocks) {
 				break;
 			case PINK_TANK:
 				floating_cache.content = new PinkTank(0.5, 0);
+				break;
+			case TEAL_TANK:
+				floating_cache.content = new TealTank(0.5, 0);
 				break;
 		}
 	}

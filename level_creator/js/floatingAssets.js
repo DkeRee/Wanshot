@@ -279,6 +279,13 @@ class PinkTank {
 	}
 }
 
+class TealTank {
+	constructor(opacity, angle) {
+		this.tank = new Tank(mouse.x - TANK_WIDTH / 2, mouse.y - TANK_HEIGHT / 2, angle, "#154734", "#0E4732", "#B0896B", opacity);
+		this.hovering = false;
+		this.content = TEAL_TANK;
+	}
+}
 
 var placed = false;
 function updateFloatingAssets() {
@@ -354,6 +361,9 @@ function updateFloatingAssets() {
 									break;
 								case PINK_TANK:
 									exportedEnemies.push(new PinkTank(1, floating_cache.content.tank.angle));
+									break;
+								case TEAL_TANK:
+									exportedEnemies.push(new TealTank(1, floating_cache.content.tank.angle));
 									break;
 							}
 						}

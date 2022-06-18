@@ -1,4 +1,5 @@
 const NORMAL_SHELL = 250;
+const MISSLE = 800;
 
 class HitParticle {
 	constructor(x, y) {
@@ -104,12 +105,66 @@ class TrailParticle {
 	}
 }
 
+class MissleParticle {
+	constructor(x, y) {
+		this.side = MISSLE_PARTICLE_SIDE;
+		this.x = x;
+		this.y = y;
+		this.centerX = this.x + this.side / 2;
+		this.centerY = this.y + this.side / 2;
+		this.angle = (Math.floor(Math.random() * 360)) * Math.PI / 180;
+		this.opacity = 1;
+		this.speed = 100;
+		this.explode = false;
+
+		//RED, ORANGE, YELLOW
+		this.possibleColors = ["#ED4245", "#FFA500", "#FFBF00"];
+		this.color = this.possibleColors[Math.floor(Math.random() * this.possibleColors.length)];
+	}
+
+	update() {
+		//GOAL: move particle in random angle while it slowly fades and slows
+
+		//update position
+		this.x += this.speed * Math.cos(this.angle) * deltaTime;
+		this.y += this.speed * Math.sin(this.angle) * deltaTime;
+
+		this.centerX = this.x + this.side / 2;
+		this.centerY = this.y + this.side / 2;
+
+		//update opacity and speed
+		this.opacity -= 5 * deltaTime;
+		this.speed -= 1 * deltaTime;
+
+		//check for deletion
+		if (this.opacity <= 0) {
+			this.explode = true;
+		}
+	}
+
+	render() {
+		//RENDER PARTICLE
+		ctx.shadowBlur = 5;
+		ctx.shadowColor = this.color;
+		ctx.save();
+
+		ctx.translate(this.centerX, this.centerY);
+		ctx.rotate(this.angle);
+
+		//color in rgba to support opacity
+		ctx.fillStyle = hexToRgbA(this.color, this.opacity);
+		ctx.fillRect(this.side / -2, this.side / -2, this.side, this.side);
+
+		ctx.restore();
+		ctx.shadowBlur = 0;
+	}
+}
+
 class Shell {
 	constructor(x, y, shellType, angle, tankID) {
 		//body
 		this.width = SHELL_WIDTH;
 		this.height = SHELL_HEIGHT;
-		this.color = "#D3D3D3";
 		this.explode = false;
 
 		//particles
@@ -129,6 +184,12 @@ class Shell {
 		this.tankID = tankID;
 		this.id = Math.floor(Math.random() * 100000);
 		this.ricochet = 0;
+
+		if (this.speed == MISSLE) {
+			this.color = "#DE522F";
+		} else {
+			this.color = "#D3D3D3";
+		}
 
 		//keep track of what block this shell has last collided with to avoid double collisions
 		this.collidedBlockID = null;
@@ -326,6 +387,12 @@ class Shell {
 			if (this.trailParticleDelay > 0.09) {
 				this.trailParticleDelay = 0;
 				this.trailParticles.push(new TrailParticle(this.centerX, this.centerY));
+
+				if (this.speed == MISSLE) {
+					for (var i = 0; i < 5; i++) {
+						this.trailParticles.push(new MissleParticle(this.x, this.y));
+					}
+				}
 			}
 
 			//update coordinate of shell and collisions if not diminishing
@@ -360,7 +427,11 @@ class Shell {
 
 				//MARK SHELL TO DELETE
 				if (this.speed == NORMAL_SHELL && this.ricochet >= 2) {
+					this.makeHitParticles();
+					this.diminish = true;
+				}
 
+				if (this.speed == MISSLE && this.ricochet >= 1) {
 					this.makeHitParticles();
 					this.diminish = true;
 				}
@@ -383,7 +454,13 @@ class Shell {
 
 			//RENDER SHELL
 			ctx.shadowBlur = 3;
-			ctx.shadowColor = "black";
+
+			if (this.speed == MISSLE) {
+				ctx.shadowColor = this.color;
+			} else {
+				ctx.shadowColor = "black";
+			}
+
 			ctx.save();
 
 			ctx.translate(this.centerX, this.centerY);

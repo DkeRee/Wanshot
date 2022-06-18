@@ -1,11 +1,11 @@
-class PinkTank {
+class TealTank {
 	constructor(x, y, angle, turretAngle) {
 		//ID
 		this.tankID = Math.floor(Math.random() * 100000);
 
-		this.tank = new Tank(x, y, angle, turretAngle, "#B82A55", "#B02951", "#B0896B", 120, 1, this.tankID);
-		this.tankType = PINK_TANK;
-		this.bounces = 1;
+		this.tank = new Tank(x, y, angle, turretAngle, "#154734", "#0E4732", "#B0896B", 65, 1, this.tankID);
+		this.tankType = TEAL_TANK;
+		this.bounces = 0;
 		this.dead = false;
 
 
@@ -18,8 +18,9 @@ class PinkTank {
 		this.tankShock = 0;
 		this.tankRotation = 0;
 		this.uTurning = false;
+		this.avoiding = false;
 		this.tankRotationDelay = 0;
-		this.tankRotationCap = 0.05;
+		this.tankRotationCap = 0.02;
 
 		//turret update
 		this.shellDetectionRadius = 250;
@@ -28,12 +29,9 @@ class PinkTank {
 		this.goalRot = turretAngle * Math.PI / 180;
 
 		//(60 * deltaTime) == 1 deg
-		this.noise = false;
-		this.noiseDelay = 0;
-		this.noiseAmount = 0.2;
-		this.turretRotation = 150 * deltaTime * Math.PI / 180;
-		this.shellDelay = 0.35;
-		this.shellShot = 0;
+		this.lockedOn = false;
+		this.turretRotation = 500 * deltaTime * Math.PI / 180;
+		this.shellDelay = 8;
 	}
 
 	//cast a ray to player
@@ -223,13 +221,24 @@ class PinkTank {
 					if (intersection.reflection) {
 						if (intersection.side == 0 || intersection.side == 3) {
 							//sharp turn left, left or bottom
-							this.tankRotation = 1100 * deltaTime * this.tank.rotationSpeed * Math.PI / 180;
+							this.tankRotation = 540 * deltaTime * this.tank.rotationSpeed * Math.PI / 180;
+
 						} else {
 							//sharp turn right, right or top
-							this.tankRotation = -1100 * deltaTime * this.tank.rotationSpeed * Math.PI / 180;
+							this.tankRotation = -540 * deltaTime * this.tank.rotationSpeed * Math.PI / 180;
+						}
+
+						if (!this.avoiding) {
+							this.avoiding = true;
+							this.tank.speed *= 2;
 						}
 
 						return true;
+					} else {
+						if (this.avoiding) {
+							this.avoiding = false;
+							this.tank.speed /= 2;
+						}
 					}
 				}
 			}
@@ -238,8 +247,9 @@ class PinkTank {
 
 	getRandomBodyRot() {
 		//return a random rotation for the tank to travel with in radians
-		const max = 500;
-		const min = -500;
+		//degree difference from -10 to 10
+		const max = 200;
+		const min = -200;
 		return ((Math.random() * (max - min) + min) * deltaTime * this.tank.rotationSpeed) * Math.PI / 180;
 	}
 
@@ -247,7 +257,6 @@ class PinkTank {
 		if (!STAGE_CACHE.player.dead && !this.dead) {
 			//update limiters
 			this.shellDelay += deltaTime;
-			this.mineDelay += deltaTime;
 
 			//update tankShock
 			this.tankShock += deltaTime;
@@ -269,7 +278,7 @@ class PinkTank {
 						//about to collide, don't idle
 						switch (foreignCollision) {
 							case U_TURN:
-								this.tankRotation = -2400 * deltaTime * this.tank.rotationSpeed * Math.PI / 180;
+								this.tankRotation = -1800 * deltaTime * this.tank.rotationSpeed * Math.PI / 180;
 								if (!this.uTurning) {
 									this.uTurning = true;
 									this.tank.speed /= 2;
@@ -277,7 +286,7 @@ class PinkTank {
 								break;
 							case TURN_LEFT:
 								//5 degrees
-								this.tankRotation = 300 * deltaTime * this.tank.rotationSpeed * Math.PI / 180;
+								this.tankRotation = 280 * deltaTime * this.tank.rotationSpeed * Math.PI / 180;
 								if (this.uTurning) {
 									this.uTurning = false;
 									this.tank.speed *= 2;
@@ -285,7 +294,7 @@ class PinkTank {
 								break;
 							case TURN_RIGHT:
 								//-5 degrees
-								this.tankRotation = -300 * deltaTime * this.tank.rotationSpeed * Math.PI / 180;
+								this.tankRotation = -280 * deltaTime * this.tank.rotationSpeed * Math.PI / 180;
 								if (this.uTurning) {
 									this.uTurning = false;
 									this.tank.speed *= 2;
@@ -301,7 +310,6 @@ class PinkTank {
 						this.tankRotation = this.getRandomBodyRot();
 					}
 				}
-
 				this.dodgeMines();
 			}
 
@@ -329,30 +337,24 @@ class PinkTank {
 			this.goalRot %= 2 * Math.PI;
 			this.tank.turretAngle %= 2 * Math.PI;
 
-			this.tank.turretAngle += this.turretRotation;
-
-			//noise to make turret swing
-			if (this.noise) {
-				this.noiseDelay += deltaTime;
-
-				if (this.noiseDelay > this.noiseAmount) {
-					this.noiseDelay = 0;
-					this.turretRotation *= -1;
-					this.noise = false;
-				}
-			} else {
+			//lock on turret
+			if (!this.lockedOn) {
 				//check if goalRot has been met :)
 				if (this.tank.turretAngle < this.goalRot) {
 					//if this used to be under...
 					if (this.tank.turretAngle + (5 * Math.PI / 180) >= this.goalRot) {
-						this.noise = true;
+						this.lockedOn = true;
 					}
 				} else {
 					//if this used to be over...
 					if (this.tank.turretAngle - (5 * Math.PI / 180) <= this.goalRot) {
-						this.noise = true;
+						this.lockedOn = true;
 					}
 				}
+
+				this.tank.turretAngle += this.turretRotation;
+			} else {
+				this.tank.turretAngle = this.goalRot;
 			}
 
 			//update shooting
@@ -360,13 +362,11 @@ class PinkTank {
 
 			const ray = new Ray(new xy(this.tank.centerX, this.tank.centerY), shootCoordinates);
 
-			//pink tanks shoot up to 3 shells rapidly
-			if (this.shouldFire(ray) && this.shellDelay > 0.3 && this.shellShot < 3) {
+			if (this.shouldFire(ray) && this.shellDelay > 1) {
 				//it found the ray to fire upon
-				this.shellShot++;
 				this.shellDelay = 0;
 				this.tankShock = -0.1;
-				this.tank.shoot(shootCoordinates, NORMAL_SHELL, this.tankID);
+				this.tank.shoot(shootCoordinates, MISSLE, this.tankID);
 			}
 		}
 

@@ -244,7 +244,12 @@ class YellowTank {
 				//if the shell is getting too close and it is going to hit the tank, avoid!
 				if (shellDist <= this.shellDetectionRadius) {
 					const shellEndPoint = new xy(shellCoord.x + Math.cos(shell.angle) * 1000, shellCoord.y + Math.sin(shell.angle) * 1000);
-					const intersection = singleShellCollision(new Ray(shellCoord, shellEndPoint), this.tank);
+
+					//extend the tank's width to make the tanks predict ahead of time (funny idea!)
+					const tankClone = {...this.tank};
+					tankClone.width += 20;
+
+					const intersection = singleShellCollision(new Ray(shellCoord, shellEndPoint), tankClone);
 
 					if (intersection.reflection) {
 						if (intersection.side == 0 || intersection.side == 3) {
@@ -394,7 +399,7 @@ class YellowTank {
 
 			const ray = new Ray(new xy(this.tank.centerX, this.tank.centerY), shootCoordinates);
 
-			//grey tanks shoots normal bullet. it can only ricochet once
+			//yellow tanks shoot one shell at a time, slowly; however, they poop mines everywhere
 			if (this.shouldFire(ray) && this.shellDelay > 8) {
 				//it found the ray to fire upon
 				this.shellDelay = 0;

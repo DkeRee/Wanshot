@@ -212,7 +212,12 @@ class GreyTank {
 				//if the shell is getting too close and it is going to hit the tank, avoid!
 				if (shellDist <= this.shellDetectionRadius) {
 					const shellEndPoint = new xy(shellCoord.x + Math.cos(shell.angle) * 1000, shellCoord.y + Math.sin(shell.angle) * 1000);
-					const intersection = singleShellCollision(new Ray(shellCoord, shellEndPoint), this.tank);
+
+					//extend the tank's width to make the tanks predict ahead of time (funny idea!)
+					const tankClone = {...this.tank};
+					tankClone.width += 20;
+
+					const intersection = singleShellCollision(new Ray(shellCoord, shellEndPoint), tankClone);
 
 					if (intersection.reflection) {
 						if (intersection.side == 0 || intersection.side == 3) {

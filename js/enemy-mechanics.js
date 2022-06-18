@@ -239,11 +239,7 @@ function singleShellCollision(shellRay, tank) {
 		dist: Infinity
 	};
 
-	//extend the tank's width to make the tanks predict ahead of time (funny idea!)
-	const tankClone = {...tank};
-	tankClone.width += 20;
-
-	const polygonTank = new Polygon(tankClone);
+	const polygonTank = new Polygon(tank);
 	const points = polygonTank.vertexPoints;
 
 	const edges = [

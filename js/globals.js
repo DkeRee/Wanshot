@@ -36,6 +36,8 @@ const TANK_HEIGHT = 33;
 
 const HIT_PARTICLE_SIDE = 7;
 
+const MISSLE_PARTICLE_SIDE = 12;
+
 const MINE_RADIUS = 10;
 const MINE_EXPLOSION_RADIUS = 110;
 const MINE_PARTICLE_SIDE = 15;
@@ -60,6 +62,7 @@ const BROWN_TANK = 10;
 const GREY_TANK = 20;
 const YELLOW_TANK = 30;
 const PINK_TANK = 40;
+const TEAL_TANK = 50;
 
 const SHADOW = "rgba(0, 0, 0, 0.3)";
 
