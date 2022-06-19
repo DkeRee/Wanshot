@@ -20,7 +20,7 @@ const blueArtTank = new ArtTank(800, 600, 3, 0, 210, "#224ACF", "#0101BA");
 const redArtTank = new ArtTank(100, 80, 3, 0, 30, "#ED4245", "#9E2C2E");
 
 //GAME OBJECT CONSTANTS FOR FINE TUNING PLACEMENTS//
-const STATIONARY_RAY_OFFSET = 1.7;
+const STATIONARY_RAY_OFFSET = 4;
 const MOBILE_RAY_OFFSET = 3;
 
 const TANK_PARTICLE_SIDE = 20;
@@ -67,6 +67,7 @@ const PINK_TANK = 40;
 const TEAL_TANK = 50;
 const PURPLE_TANK = 60;
 const WHITE_TANK = 70;
+const GREEN_TANK = 80;
 
 const SHADOW = "rgba(0, 0, 0, 0.3)";
 

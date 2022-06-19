@@ -1,5 +1,6 @@
 const NORMAL_SHELL = 250;
 const MISSLE = 800;
+const ULTRA_MISSLE = 585;
 
 class HitParticle {
 	constructor(x, y) {
@@ -106,8 +107,7 @@ class TrailParticle {
 }
 
 class MissleParticle {
-	constructor(x, y) {
-		this.side = MISSLE_PARTICLE_SIDE;
+	constructor(x, y, missleType) {
 		this.x = x;
 		this.y = y;
 		this.centerX = this.x + this.side / 2;
@@ -116,6 +116,14 @@ class MissleParticle {
 		this.opacity = 1;
 		this.speed = 100;
 		this.explode = false;
+
+		this.missleType = missleType;
+
+		if (this.missleType == MISSLE) {
+			this.side = MISSLE_PARTICLE_SIDE;
+		} else {
+			this.side = MISSLE_PARTICLE_SIDE * 2;
+		}
 
 		//RED, ORANGE, YELLOW
 		this.possibleColors = ["#ED4245", "#FFA500", "#FFBF00"];
@@ -133,8 +141,13 @@ class MissleParticle {
 		this.centerY = this.y + this.side / 2;
 
 		//update opacity and speed
-		this.opacity -= 5 * deltaTime;
 		this.speed -= 1 * deltaTime;
+
+		if (this.missleType == MISSLE) {
+			this.opacity -= 5 * deltaTime;
+		} else {
+			this.opacity -= 20 * deltaTime;
+		}
 
 		//check for deletion
 		if (this.opacity <= 0) {
@@ -185,7 +198,7 @@ class Shell {
 		this.id = Math.floor(Math.random() * 100000);
 		this.ricochet = 0;
 
-		if (this.speed == MISSLE) {
+		if (this.speed == MISSLE || this.speed == ULTRA_MISSLE) {
 			this.color = "#DE522F";
 		} else {
 			this.color = "#D3D3D3";
@@ -388,9 +401,9 @@ class Shell {
 				this.trailParticleDelay = 0;
 				this.trailParticles.push(new TrailParticle(this.centerX, this.centerY));
 
-				if (this.speed == MISSLE) {
+				if (this.speed == MISSLE || this.speed == ULTRA_MISSLE) {
 					for (var i = 0; i < 5; i++) {
-						this.trailParticles.push(new MissleParticle(this.x, this.y));
+						this.trailParticles.push(new MissleParticle(this.x, this.y, this.speed));
 					}
 				}
 			}
@@ -434,6 +447,11 @@ class Shell {
 				if (this.speed == MISSLE && this.ricochet >= 1) {
 					this.makeHitParticles();
 					this.diminish = true;
+				}
+
+				if (this.speed == ULTRA_MISSLE && this.ricochet >= 3) {
+					this.makeHitParticles();
+					this.diminish = true;			
 				}
 			}
 

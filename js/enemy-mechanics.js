@@ -310,13 +310,27 @@ function getComradeCollisions(ray, angle, firstShot, tankID) {
 	return closestIntersection;
 }
 
-function getPlayerCollisions(ray, angle) {
+function getPlayerCollisions(ray, angle, predict) {
 	const closestIntersection = {
 		reflection: null,
 		dist: Infinity
 	};
+	
+	var player;
+	
+	//if this tank is smart enough to predict where the player will be
+	if (predict) {
+		const playerClone = {...STAGE_CACHE.player.tank};
+		playerClone.x += 100000 * Math.cos(playerClone.angle);
+		playerClone.y += 100000 * Math.sin(playerClone.angle);
 
-	const player = new Polygon(STAGE_CACHE.player.tank);
+		player = new Polygon(playerClone);
+	} else {
+		player = new Polygon(STAGE_CACHE.player.tank);
+	}
+
+	player = new Polygon(STAGE_CACHE.player.tank);
+
 	const points = player.vertexPoints;
 
 	const edges = [

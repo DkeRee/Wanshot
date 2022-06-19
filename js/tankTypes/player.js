@@ -5,6 +5,7 @@ class Player {
 		this.tankID = PLAYER_ID;
 
 		this.tank = new Tank(x, y, angle, turretAngle, "#224ACF", "#1E42B8", "#0101BA", 100, 3, this.tankID);
+		this.moving = false;
 		this.dead = false;
 
 		//makes tank "shock" aka pause for a split second due to recoil from shot or mine
@@ -45,18 +46,31 @@ class Player {
 		const xInc = this.tank.speed * Math.cos(this.tank.angle) * deltaTime;
 		const yInc = this.tank.speed * Math.sin(this.tank.angle) * deltaTime;
 
+		//moving trackers
+		var isUp = false;
+		var isDown = false;
+
 		//if tank is NOT SHELLSHOCKED and isn't dead
 		if (this.tankShock > 0 && !this.dead) {
 			//up
 			if (this.keys[87] || this.keys[38]) {
 				this.tank.x += xInc;
 				this.tank.y += yInc;
+				isUp = true;
 			}
 
 			//down
 			if (this.keys[83] || this.keys[40]) {
 				this.tank.x -= xInc;
 				this.tank.y -= yInc;
+				isDown = true;
+			}
+
+			//update moving trackers
+			if ((isUp == false && isDown == false) || (isUp == true && isDown == true)) {
+				this.moving = false;
+			} else {
+				this.moving = true;
 			}
 
 			//right rotation

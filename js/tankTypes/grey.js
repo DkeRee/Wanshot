@@ -62,7 +62,7 @@ class GreyTank {
 				//if there was a wall collision, then continue normally
 			}
 
-			const playerCollision = getPlayerCollisions(ray, angle);
+			const playerCollision = getPlayerCollisions(ray, angle, false);
 
 			if (bouncesLeft > 0) {
 				//found a player collision before hitting 0 bounces!
@@ -153,7 +153,6 @@ class GreyTank {
 
 		if (leftCast.detectPlayer && rightCast.detectPlayer) {
 			if (leftCast.noWalls && rightCast.noWalls) {
-				this.try = 0;
 				return true;
 			}
 		}
