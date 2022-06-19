@@ -8,6 +8,8 @@ class GreenTank {
 		this.bounces = 2;
 		this.dead = false;
 
+		this.shellDetectionRadius = 100;
+
 		//turret update
 		this.noise = false;
 		this.noiseDelay = 0;
