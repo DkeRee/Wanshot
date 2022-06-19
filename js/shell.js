@@ -110,20 +110,16 @@ class MissleParticle {
 	constructor(x, y, missleType) {
 		this.x = x;
 		this.y = y;
-		this.centerX = this.x + this.side / 2;
-		this.centerY = this.y + this.side / 2;
 		this.angle = (Math.floor(Math.random() * 360)) * Math.PI / 180;
 		this.opacity = 1;
 		this.speed = 100;
 		this.explode = false;
 
 		this.missleType = missleType;
+		this.side = MISSLE_PARTICLE_SIDE;
 
-		if (this.missleType == MISSLE) {
-			this.side = MISSLE_PARTICLE_SIDE;
-		} else {
-			this.side = MISSLE_PARTICLE_SIDE * 2;
-		}
+		this.centerX = this.x + this.side / 2;
+		this.centerY = this.y + this.side / 2;
 
 		//RED, ORANGE, YELLOW
 		this.possibleColors = ["#ED4245", "#FFA500", "#FFBF00"];
@@ -473,7 +469,7 @@ class Shell {
 			//RENDER SHELL
 			ctx.shadowBlur = 3;
 
-			if (this.speed == MISSLE) {
+			if (this.speed == MISSLE || this.speed == ULTRA_MISSLE) {
 				ctx.shadowColor = this.color;
 			} else {
 				ctx.shadowColor = "black";
