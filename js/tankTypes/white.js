@@ -10,7 +10,7 @@ class SuperpowerParticles {
 		this.centerY = this.y + this.side / 2;
 		this.angle = (Math.floor(Math.random() * 360)) * Math.PI / 180;
 		this.opacity = 1;
-		this.speed = 200;
+		this.speed = 150;
 		this.explode = false;
 
 		this.color = "#DBDBDB";
