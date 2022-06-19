@@ -11,7 +11,7 @@ class GreenTank {
 		//turret update
 		this.noise = false;
 		this.noiseDelay = 0;
-		this.noiseAmount = 1;
+		this.noiseAmount = 0.3;
 		this.turretRotation = 200 * deltaTime * Math.PI / 180;
 		this.tankRotationDelay = 0;
 		this.tankRotationCap = 0.08;

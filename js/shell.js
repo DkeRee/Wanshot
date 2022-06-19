@@ -194,10 +194,15 @@ class Shell {
 		this.id = Math.floor(Math.random() * 100000);
 		this.ricochet = 0;
 
-		if (this.speed == MISSLE || this.speed == ULTRA_MISSLE) {
+		if (this.speed == MISSLE) {
 			this.color = "#DE522F";
+			this.trailParticleCap = 0.04;
+		} else if (this.speed == ULTRA_MISSLE) {
+			this.color = "#FFBF00";
+			this.trailParticleCap = 0.02;
 		} else {
 			this.color = "#D3D3D3";
+			this.trailParticleCap = 0.09;
 		}
 
 		//keep track of what block this shell has last collided with to avoid double collisions
@@ -393,7 +398,7 @@ class Shell {
 			//ADD TRAIL PARTICLE AFTER DELAY
 			this.trailParticleDelay += deltaTime;
 
-			if (this.trailParticleDelay > 0.09) {
+			if (this.trailParticleDelay > this.trailParticleCap) {
 				this.trailParticleDelay = 0;
 				this.trailParticles.push(new TrailParticle(this.centerX, this.centerY));
 
