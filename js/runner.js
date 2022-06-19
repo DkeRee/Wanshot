@@ -7,7 +7,7 @@
 	//init game
 	const BACKGROUND_COLOR_STRONG = "#C2995D";
 	const BACKGROUND_COLOR_WEAK = "#FFDFA8";
-	CURR_LEVEL = 0;
+	CURR_LEVEL = 1;
 	STAGE_CACHE = levelCloner(CURR_LEVEL);
 
 	function globalStep(time) {
@@ -55,7 +55,7 @@
 					const enemy = STAGE_CACHE.enemies[i];
 
 					//dont update tracks for tanks that don't move
-					if (enemy.tankType == BROWN_TANK)  {
+					if (enemy.tankType == BROWN_TANK || enemy.tankType == GREEN_TANK)  {
 						continue;
 					}
 

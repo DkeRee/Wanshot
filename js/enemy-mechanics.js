@@ -9,6 +9,10 @@ function checkGameOver() {
 			return false;
 		}
 	}
+
+	//move onto next level :)
+	CURR_LEVEL++;
+
 	return true;
 }
 

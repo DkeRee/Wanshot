@@ -203,8 +203,8 @@ class GreenTank {
 			const ray = new Ray(new xy(this.tank.centerX, this.tank.centerY), shootCoordinates);
 
 			//check if ray hits player after exhausting all ricochetes
-			//green tank shoots 4 very fast missles that ricochet twice
-			if (this.shouldFire(ray) && this.shellDelay > 0.2 && this.shellShot < 4) {
+			//green tank shoots 2 very fast missles that ricochet twice
+			if (this.shouldFire(ray) && this.shellDelay > 0.2 && this.shellShot < 2) {
 				//it found the ray to fire upon
 				this.shellDelay = 0;
 				this.shellShot++;

@@ -361,7 +361,7 @@ class TealTank {
 
 			const ray = new Ray(new xy(this.tank.centerX, this.tank.centerY), shootCoordinates);
 
-			if (this.shouldFire(ray) && this.shellDelay > 1) {
+			if (this.shouldFire(ray) && this.shellDelay > 1.45) {
 				//it found the ray to fire upon
 				this.shellDelay = 0;
 				this.tankShock = -0.1;

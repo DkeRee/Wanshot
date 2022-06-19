@@ -1,5 +1,5 @@
 const NORMAL_SHELL = 250;
-const MISSLE = 800;
+const MISSLE = 700;
 const ULTRA_MISSLE = 585;
 
 class HitParticle {
