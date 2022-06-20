@@ -360,7 +360,7 @@ class PinkTank {
 			const ray = new Ray(new xy(this.tank.centerX, this.tank.centerY), shootCoordinates);
 
 			//pink tanks shoot up to 3 shells rapidly
-			if (this.shouldFire(ray) && this.shellDelay > 0.3 && this.shellShot < 3) {
+			if (this.shouldFire(ray) && this.shellDelay > 0.32 && this.shellShot < 3) {
 				//it found the ray to fire upon
 				this.shellShot++;
 				this.shellDelay = 0;
