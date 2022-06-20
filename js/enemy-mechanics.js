@@ -325,8 +325,8 @@ function getPlayerCollisions(ray, angle, predict) {
 	//if this tank is smart enough to predict where the player will be
 	if (predict) {
 		const playerClone = {...STAGE_CACHE.player.tank};
-		playerClone.x += 100000 * Math.cos(playerClone.angle);
-		playerClone.y += 100000 * Math.sin(playerClone.angle);
+		playerClone.x += 1000000 * Math.cos(playerClone.angle);
+		playerClone.y += 1000000 * Math.sin(playerClone.angle);
 
 		player = new Polygon(playerClone);
 	} else {

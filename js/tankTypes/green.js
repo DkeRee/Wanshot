@@ -14,7 +14,7 @@ class GreenTank {
 		this.noise = false;
 		this.noiseDelay = 0;
 		this.noiseAmount = 0.3;
-		this.turretRotation = 200 * deltaTime * Math.PI / 180;
+		this.turretRotation = 120 * deltaTime * Math.PI / 180;
 		this.tankRotationDelay = 0;
 		this.tankRotationCap = 0.08;
 		this.shellDelay = 0.1;
@@ -48,45 +48,42 @@ class GreenTank {
 				//if there was a wall collision, then continue normally
 			}
 
+			const playerCollision = getPlayerCollisions(ray, angle, true);
+
 			if (bouncesLeft > 0) {
-
-				//if there is a chance to hit the player with 1 bounce left then do it, if it didn't work then continue normally
-				if (bouncesLeft == 1) {
+				if (playerCollision.reflection) {
 					//check if any walls are in the way
-					const playerCollision = getPlayerCollisions(ray, angle, true);
+					const wallCollision = getWallCollisions(new Ray(ray.pointA, playerCollision.reflection.point), angle, collidedSideID);
 
-					if (playerCollision.reflection) {
-						const wallCollision = getWallCollisions(new Ray(ray.pointA, playerCollision.reflection.point), angle, collidedSideID);
-
-						if (!wallCollision.reflection) {
-							//no walls are in the way!
-							return {
-								detectPlayer: true,
-								noWalls: true
-							};
-						}
+					if (!wallCollision.reflection) {
+						//no walls are in the way!
+						return {
+							detectPlayer: true,
+							noWalls: true
+						};
+					} else {
+						//bounce off the wall we have detected!
+						return this.castToPlayer(wallCollision.reflection.newRay, wallCollision.reflection.newAngle, bouncesLeft - 1, false, wallCollision.id);
 					}
-				}
-
-				const wallCollision = getWallCollisions(ray, angle, collidedSideID);
-
-				if (wallCollision.reflection) {
-					return this.castToPlayer(wallCollision.reflection.newRay, wallCollision.reflection.newAngle, bouncesLeft - 1, false, wallCollision.id);
 				} else {
-					const borderCollision = getBorderCollisions(ray, angle, collidedSideID);
+					const wallCollision = getWallCollisions(ray, angle, collidedSideID);
 
-					//terminate
-					if (!borderCollision) return {
-						detectPlayer: false,
-						noWalls: false
-					};
+					if (wallCollision.reflection) {
+						return this.castToPlayer(wallCollision.reflection.newRay, wallCollision.reflection.newAngle, bouncesLeft - 1, false, wallCollision.id);
+					} else {
+						const borderCollision = getBorderCollisions(ray, angle, collidedSideID);
 
-					return this.castToPlayer(borderCollision.reflection.newRay, borderCollision.reflection.newAngle, bouncesLeft - 1, false, borderCollision.id);
+						//terminate
+						if (!borderCollision) return {
+							detectPlayer: false,
+							noWalls: false
+						};
+
+						return this.castToPlayer(borderCollision.reflection.newRay, borderCollision.reflection.newAngle, bouncesLeft - 1, false, borderCollision.id);
+					}
 				}
 			} else {
 				//must hit player on last round
-				const playerCollision = getPlayerCollisions(ray, angle, true);
-
 				if (playerCollision.reflection) {
 					//check if any walls are in the way
 					const wallCollision = getWallCollisions(new Ray(ray.pointA, playerCollision.reflection.point), angle, collidedSideID);

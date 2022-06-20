@@ -1,6 +1,6 @@
 const NORMAL_SHELL = 250;
 const MISSLE = 700;
-const ULTRA_MISSLE = 585;
+const ULTRA_MISSLE = 550;
 
 class HitParticle {
 	constructor(x, y) {
