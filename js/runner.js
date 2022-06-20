@@ -7,7 +7,7 @@
 	//init game
 	const BACKGROUND_COLOR_STRONG = "#C2995D";
 	const BACKGROUND_COLOR_WEAK = "#FFDFA8";
-	CURR_LEVEL = 17;
+	CURR_LEVEL = 1;
 	STAGE_CACHE = levelCloner(CURR_LEVEL);
 
 	function globalStep(time) {
