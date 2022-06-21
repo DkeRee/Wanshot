@@ -10,6 +10,15 @@
 	CURR_LEVEL = 1;
 	STAGE_CACHE = levelCloner(CURR_LEVEL);
 
+	const pauseButton = new PauseButton();
+
+	function mouseOnPause() {
+		if ((pauseButton.x <= MOUSE_POS.x && MOUSE_POS.x <= pauseButton.x + pauseButton.side) && (pauseButton.y <= MOUSE_POS.y && MOUSE_POS.y <= pauseButton.y + pauseButton.side)) {
+			return true;
+		}
+		return false;
+	}
+
 	function globalStep(time) {
 		accTime += (time - lastTime) / 1000;
 
@@ -30,134 +39,145 @@
 	//RUNNER CENTER//
 
 	function globalUpdate() {
-		if (INTERMISSION) {
-			intermissionUpdate();
-		}
+		//if the game isn't paused
+		if (!gamePaused) {
+			if (INTERMISSION) {
+				intermissionUpdate();
+			}
 
-		//set a bit of wait time before beginning the next round or repeating the same round after rendering mission (make sure level doesn't update during intermission)
-		if (maskFadeIn) {
-			//TRACK MANAGEMENT//
-			trackUpdate += deltaTime;
+			//set a bit of wait time before beginning the next round or repeating the same round after rendering mission (make sure level doesn't update during intermission)
+			if (maskFadeIn) {
+				//TRACK MANAGEMENT//
+				trackUpdate += deltaTime;
 
-			if (trackUpdate > 0.1) {
-				//ADD TRACK FOR EVERY TANK
-				if (STAGE_CACHE.tracks.length > 300) {
-					STAGE_CACHE.tracks.shift();
-				}
-
-				STAGE_CACHE.player.trackUpdate();
-
-				for (var i = 0; i < STAGE_CACHE.enemies.length; i++) {
+				if (trackUpdate > 0.1) {
+					//ADD TRACK FOR EVERY TANK
 					if (STAGE_CACHE.tracks.length > 300) {
 						STAGE_CACHE.tracks.shift();
 					}
 
-					const enemy = STAGE_CACHE.enemies[i];
+					STAGE_CACHE.player.trackUpdate();
 
-					//dont update tracks for tanks that don't move
-					if (enemy.tankType == BROWN_TANK || enemy.tankType == GREEN_TANK)  {
+					for (var i = 0; i < STAGE_CACHE.enemies.length; i++) {
+						if (STAGE_CACHE.tracks.length > 300) {
+							STAGE_CACHE.tracks.shift();
+						}
+
+						const enemy = STAGE_CACHE.enemies[i];
+
+						//dont update tracks for tanks that don't move
+						if (enemy.tankType == BROWN_TANK || enemy.tankType == GREEN_TANK)  {
+							continue;
+						}
+
+						enemy.trackUpdate();
+					}
+					trackUpdate = 0;
+				}
+
+				//UPDATE OBJECTS//
+				for (var i = 0; i < STAGE_CACHE.tracks.length; i++) {
+
+					const track = STAGE_CACHE.tracks[i];
+
+					if (track.explode) {
+						//DELETE TRACK
+						STAGE_CACHE.tracks.splice(i, 1);
+						continue
+					}
+
+					track.update();
+				}
+
+				//update individual block particles for performance sake
+				for (var i = 0; i < STAGE_CACHE.tileParticles.length; i++) {
+					const tileParticle = STAGE_CACHE.tileParticles[i];
+
+					if (tileParticle.explode) {
+						//DELETE PARTICLE
+						STAGE_CACHE.tileParticles.splice(i, 1);
 						continue;
 					}
 
-					enemy.trackUpdate();
-				}
-				trackUpdate = 0;
-			}
-
-			//UPDATE OBJECTS//
-			for (var i = 0; i < STAGE_CACHE.tracks.length; i++) {
-
-				const track = STAGE_CACHE.tracks[i];
-
-				if (track.explode) {
-					//DELETE TRACK
-					STAGE_CACHE.tracks.splice(i, 1);
-					continue
+					tileParticle.update();
 				}
 
-				track.update();
-			}
+				//no need to update blocks. for loop is here to keep track of tile deletion
+				for (var i = 0; i < STAGE_CACHE.tiles.length; i++) {
+					const tile = STAGE_CACHE.tiles[i];
 
-			//update individual block particles for performance sake
-			for (var i = 0; i < STAGE_CACHE.tileParticles.length; i++) {
-				const tileParticle = STAGE_CACHE.tileParticles[i];
-
-				if (tileParticle.explode) {
-					//DELETE PARTICLE
-					STAGE_CACHE.tileParticles.splice(i, 1);
-					continue;
-				}
-
-				tileParticle.update();
-			}
-
-			//no need to update blocks. for loop is here to keep track of tile deletion
-			for (var i = 0; i < STAGE_CACHE.tiles.length; i++) {
-				const tile = STAGE_CACHE.tiles[i];
-
-				if (tile.explode) {
-					//DELETE PARTICLE
-					STAGE_CACHE.tiles.splice(i, 1);
-				}
-			}
-
-			for (var i = 0; i < STAGE_CACHE.mines.length; i++) {
-				const mine = STAGE_CACHE.mines[i];
-
-				if (mine.explode) {
-					//update mine layed for tanks
-					if (mine.tankID == PLAYER_ID) {
-						STAGE_CACHE.player.mineLayed--;
+					if (tile.explode) {
+						//DELETE PARTICLE
+						STAGE_CACHE.tiles.splice(i, 1);
 					}
-
-					//DELETE MINE
-					STAGE_CACHE.mines.splice(i, 1);
-					continue;
 				}
 
-				mine.update();
-			}
+				for (var i = 0; i < STAGE_CACHE.mines.length; i++) {
+					const mine = STAGE_CACHE.mines[i];
 
-			for (var i = 0; i < STAGE_CACHE.shells.length; i++) {
-				const shell = STAGE_CACHE.shells[i];
-
-				if (shell.explode) {
-					//update shells shot for tanks
-					if (shell.tankID == PLAYER_ID) {
-						STAGE_CACHE.player.shellShot--;
-					}
-
-					for (var o = 0; o < STAGE_CACHE.enemies.length; o++) {
-						if (STAGE_CACHE.enemies[o].tankID == shell.tankID) {
-							STAGE_CACHE.enemies[o].shellShot--;
-							break;
+					if (mine.explode) {
+						//update mine layed for tanks
+						if (mine.tankID == PLAYER_ID) {
+							STAGE_CACHE.player.mineLayed--;
 						}
+
+						//DELETE MINE
+						STAGE_CACHE.mines.splice(i, 1);
+						continue;
 					}
 
-					//DELETE SHELL
-					STAGE_CACHE.shells.splice(i, 1);
-					continue;
+					mine.update();
 				}
 
-				shell.update();
-			}
+				for (var i = 0; i < STAGE_CACHE.shells.length; i++) {
+					const shell = STAGE_CACHE.shells[i];
 
-			STAGE_CACHE.player.update();
+					if (shell.explode) {
+						//update shells shot for tanks
+						if (shell.tankID == PLAYER_ID) {
+							STAGE_CACHE.player.shellShot--;
+						}
 
-			for (var i = 0; i < STAGE_CACHE.enemies.length; i++) {
-				const enemy = STAGE_CACHE.enemies[i];
-				enemy.update();
+						for (var o = 0; o < STAGE_CACHE.enemies.length; o++) {
+							if (STAGE_CACHE.enemies[o].tankID == shell.tankID) {
+								STAGE_CACHE.enemies[o].shellShot--;
+								break;
+							}
+						}
 
-				//if tanks are white, then turn them invisible
-				if (enemy.tankType == WHITE_TANK && !enemy.invisible) {
-					enemy.turnInvisible();
+						//DELETE SHELL
+						STAGE_CACHE.shells.splice(i, 1);
+						continue;
+					}
+
+					shell.update();
+				}
+
+				STAGE_CACHE.player.update();
+
+				for (var i = 0; i < STAGE_CACHE.enemies.length; i++) {
+					const enemy = STAGE_CACHE.enemies[i];
+					enemy.update();
+
+					//if tanks are white, then turn them invisible
+					if (enemy.tankType == WHITE_TANK && !enemy.invisible) {
+						enemy.turnInvisible();
+					}
+				}
+
+				//update start logo
+				if (startLogoShow) {
+					startLogoUpdate();
 				}
 			}
+		}
 
-			//update start logo
-			if (startLogoShow) {
-				startLogoUpdate();
-			}
+		//update pause button
+		pauseButton.update();
+
+		//update pause menu
+		if (gamePaused) {
+			pauseMenu.update();
 		}
 	}
 
@@ -174,6 +194,12 @@
 		//RENDER BACKGROUND//
 		ctx.fillStyle = grd;
 		ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+		//render level number in game
+		ctx.font = "100px UniSansHeavy";
+		ctx.textAlign = "center";
+		ctx.fillStyle = hexToRgbA("#FFC97A", 0.6);
+		ctx.fillText(CURR_LEVEL, 120, 150);
 
 		//RENDER OBJECT SHADOWS//
 		for (var i = 0; i < STAGE_CACHE.pits.length; i++) {
@@ -243,13 +269,28 @@
 		if (startLogoShow) {
 			startLogoRender();
 		}
+
+		//pause button will be on top of everything
+		pauseButton.render();
+
+		//pause menu will be on top of pause button
+		pauseMenu.render();
 	}
 
 	//KEYBOARD & MOUSE EVENTS//
 	canvas.addEventListener("mousedown", e => {
 		updateMousePos(e.clientX, e.clientY);
-		STAGE_CACHE.player.shoot();
-	})
+		holding = true;
+		
+		//if mouse is not on pause button and game is not paused
+		if (!mouseOnPause() && !gamePaused) {
+			STAGE_CACHE.player.shoot();	
+		}
+	});
+
+	canvas.addEventListener("mouseup", () => {
+		holding = false;
+	});
 
 	canvas.addEventListener("mousemove", e => {
 		updateMousePos(e.clientX, e.clientY);

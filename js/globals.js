@@ -71,6 +71,12 @@ const GREEN_TANK = 80;
 
 const SHADOW = "rgba(0, 0, 0, 0.3)";
 
+//GAME PAUSING//
+var gamePaused = false;
+const pauseMenu = new PauseMenu();
+
+//MOUSE//
+var holding = false;
 var MOUSE_POS = {
 	x: NaN,
 	y: NaN

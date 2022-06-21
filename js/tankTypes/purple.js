@@ -410,6 +410,7 @@ class PurpleTank {
 		//start intermission
 		//the last enemy tank has been killed, you win this match!
 		if (checkGameOver()) {
+			intermissionStatus = INTERMISSION_WON;
 			INTERMISSION = true;
 		}
 

@@ -101,6 +101,7 @@ class Player {
 		this.tank.explodeTank();
 
 		//start intermission
+		intermissionStatus = INTERMISSION_RETRY;
 		INTERMISSION = true;
 
 		//add grave

@@ -1,6 +1,13 @@
 //intermission screen info and constants
 //GOAL: make screen fade in, hold, and then fade out and start new round or restart
 
+const INTERMISSION_RETRY = 0;
+const INTERMISSION_WON = 1;
+const INTERMISSION_RESTART = 2;
+const INTERMISSION_QUIT = 3;
+
+var intermissionStatus = INTERMISSION_RETRY;
+
 var startLogoShow = false;
 var startLogoOpacity = 0;
 
@@ -47,6 +54,22 @@ function intermissionUpdate() {
 				maskHold = false;
 				maskWait = 0;
 				maskFadeIn = false;
+
+				//decide what to do after intermission
+				switch (intermissionStatus) {
+					case INTERMISSION_RETRY:
+						break;
+					case INTERMISSION_WON:
+						CURR_LEVEL++;
+						break;
+					case INTERMISSION_RESTART:
+						CURR_LEVEL = 1;
+						break;
+					case INTERMISSION_QUIT:
+						//will add later
+						break;
+				}
+
 				STAGE_CACHE = levelCloner(CURR_LEVEL);
 			}
 		}
