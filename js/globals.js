@@ -23,6 +23,8 @@ const redArtTank = new ArtTank(100, 80, 3, 0, 30, "#ED4245", "#9E2C2E");
 var playPortal; 
 
 //GAME OBJECT CONSTANTS FOR FINE TUNING PLACEMENTS//
+const CONFETTI_PARTICLE_SIDE = 40;
+
 const PORTAL_RADIUS = 100;
 const PORTAL_PARTICLE_SIDE = 30;
 

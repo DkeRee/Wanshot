@@ -179,6 +179,46 @@
 					}
 				}
 
+				//update win sign
+				if (STAGE_CACHE.winOpacity > 0) {
+					STAGE_CACHE.winOpacity -= 0.8 * deltaTime;
+				} else {
+					STAGE_CACHE.winOpacity = 0;
+				}
+
+				//if confetti particles are to be made
+				if (STAGE_CACHE.activateConfetti) {
+					STAGE_CACHE.confettiDelay += deltaTime;
+
+					if (STAGE_CACHE.confettiDelay > 0) {
+						//make 30 confetti particles to celebrate
+						for (var i = 0; i < 30; i++) {
+							STAGE_CACHE.confetti.push(new Confetti((CANVAS_WIDTH / 2) - CONFETTI_PARTICLE_SIDE / 2, (CANVAS_HEIGHT / 2) - CONFETTI_PARTICLE_SIDE / 2));
+						}
+						STAGE_CACHE.confettiRing++;
+						STAGE_CACHE.confettiDelay = 0;
+					}
+
+					if (STAGE_CACHE.confettiRing == 8) {
+						//stop explosion/rest
+						STAGE_CACHE.activateConfetti = false;
+						STAGE_CACHE.confettiRing = 0;
+						STAGE_CACHE.confettiDelay = 0;
+					}
+				}
+
+				for (var i = 0; i < STAGE_CACHE.confetti.length; i++) {
+					const confetti = STAGE_CACHE.confetti[i];
+
+					if (confetti.explode) {
+						//DELETE PARTICLE
+						STAGE_CACHE.confetti.splice(i, 1);
+						continue;
+					}
+
+					confetti.update();
+				}
+
 				//update start logo
 				if (startLogoShow) {
 					startLogoUpdate();
@@ -284,6 +324,21 @@
 		if (CURR_LEVEL == 0) {
 			playPortal.render();
 		}
+
+		for (var i = 0; i < STAGE_CACHE.confetti.length; i++) {
+			STAGE_CACHE.confetti[i].render();
+		}
+
+		ctx.font = "130px UniSansHeavy";
+		ctx.textAlign = "center";
+
+		ctx.lineWidth = 3;
+		ctx.strokeStyle = hexToRgbA("#ED4245", STAGE_CACHE.winOpacity);
+
+		ctx.fillStyle = hexToRgbA("#ffff80", STAGE_CACHE.winOpacity);
+
+		ctx.fillText("You Won", CANVAS_WIDTH / 2, (CANVAS_HEIGHT / 2) + 30);
+		ctx.strokeText("You Won", CANVAS_WIDTH / 2, (CANVAS_HEIGHT / 2) + 30);
 
 		//render intermission
 		if (INTERMISSION) {

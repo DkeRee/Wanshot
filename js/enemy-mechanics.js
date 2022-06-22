@@ -10,7 +10,16 @@ function checkGameOver() {
 		}
 	}
 
-	return true;
+	//if this is the final mission and it is completed
+	if (LEVEL[CURR_LEVEL + 1] == undefined) {
+		//set game to complete
+		STAGE_CACHE.winOpacity = 1;
+		STAGE_CACHE.activateConfetti = true;
+		STAGE_CACHE.gameComplete = true;
+		return false;
+	} else {
+		return true;
+	}
 }
 
 function getRayLength(pointA, pointB) {

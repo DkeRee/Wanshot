@@ -318,8 +318,8 @@ class Shell {
 	shellWithPlayer() {
 		const player = STAGE_CACHE.player;
 
-		//if player isn't dead but it is intermission, player has won. don't let player die. also don't die if level is lobby
-		if (!player.dead && !INTERMISSION && CURR_LEVEL !== 0) {
+		//if player isn't dead but it is intermission, player has won. don't let player die. also don't die if level is lobby. also don't die if the player completed the game
+		if (!player.dead && !INTERMISSION && CURR_LEVEL !== 0 && !STAGE_CACHE.gameComplete) {
 			const SATCollision = SAT_POLYGON(this, player.tank);
 
 			//wait for bullet to leave contact of tank then remove peace mode
