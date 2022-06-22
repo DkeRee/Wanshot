@@ -114,8 +114,8 @@ class Mine {
 	mineWithPlayer() {
 		const player = STAGE_CACHE.player;
 
-		//if player isn't dead but it is intermission, player has won. don't let player die
-		if (!player.dead && !INTERMISSION) {
+		//if player isn't dead but it is intermission, player has won. don't let player die. also don't let player die if level is lobby
+		if (!player.dead && !INTERMISSION && CURR_LEVEL !== 0) {
 			if (SAT_POLYGON_CIRCLE(player.tank, {
 				x: this.x,
 				y: this.y,

@@ -7,10 +7,14 @@
 	//init game
 	const BACKGROUND_COLOR_STRONG = "#C2995D";
 	const BACKGROUND_COLOR_WEAK = "#FFDFA8";
-	CURR_LEVEL = 1;
+	CURR_LEVEL = 0;
 	STAGE_CACHE = levelCloner(CURR_LEVEL);
 
+	//pause button
 	const pauseButton = new PauseButton();
+
+	//lobby portals
+	const playPortal = new Portal(CANVAS_WIDTH / 2, 155, "#2A5BFF", "PLAY");
 
 	function mouseOnPause() {
 		if ((pauseButton.x <= MOUSE_POS.x && MOUSE_POS.x <= pauseButton.x + pauseButton.side) && (pauseButton.y <= MOUSE_POS.y && MOUSE_POS.y <= pauseButton.y + pauseButton.side)) {
@@ -47,6 +51,11 @@
 
 			//set a bit of wait time before beginning the next round or repeating the same round after rendering mission (make sure level doesn't update during intermission)
 			if (maskFadeIn) {
+				//LOBBY PORTALS//
+				if (CURR_LEVEL == 0) {
+					playPortal.update();
+				}
+
 				//TRACK MANAGEMENT//
 				trackUpdate += deltaTime;
 
@@ -172,12 +181,15 @@
 			}
 		}
 
-		//update pause button
-		pauseButton.update();
+		//if the level isn't the lobby (where you don't need to pause)
+		if (CURR_LEVEL !== 0) {
+			//update pause button
+			pauseButton.update();
 
-		//update pause menu
-		if (gamePaused) {
-			pauseMenu.update();
+			//update pause menu
+			if (gamePaused) {
+				pauseMenu.update();
+			}
 		}
 	}
 
@@ -195,11 +207,14 @@
 		ctx.fillStyle = grd;
 		ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-		//render level number in game
-		ctx.font = "100px UniSansHeavy";
-		ctx.textAlign = "center";
-		ctx.fillStyle = hexToRgbA("#FFC97A", 0.8);
-		ctx.fillText(CURR_LEVEL, 120, 150);
+		//render level number in game if the level isn't the lobby
+
+		if (CURR_LEVEL !== 0) {
+			ctx.font = "100px UniSansHeavy";
+			ctx.textAlign = "center";
+			ctx.fillStyle = hexToRgbA("#FFC97A", 0.8);
+			ctx.fillText(CURR_LEVEL, 120, 150);
+		}
 
 		//RENDER OBJECT SHADOWS//
 		for (var i = 0; i < STAGE_CACHE.pits.length; i++) {
@@ -260,6 +275,11 @@
 			STAGE_CACHE.tiles[i].render();
 		}
 
+		//render portals
+		if (CURR_LEVEL == 0) {
+			playPortal.render();
+		}
+
 		//render intermission
 		if (INTERMISSION) {
 			intermissionRender();
@@ -270,11 +290,14 @@
 			startLogoRender();
 		}
 
-		//pause button will be on top of everything
-		pauseButton.render();
+		//if the level isn't the lobby (where you don't need to pause)
+		if (CURR_LEVEL !== 0) {
+			//pause button will be on top of everything
+			pauseButton.render();
 
-		//pause menu will be on top of pause button
-		pauseMenu.render();
+			//pause menu will be on top of pause button
+			pauseMenu.render();
+		}
 	}
 
 	//KEYBOARD & MOUSE EVENTS//

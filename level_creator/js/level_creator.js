@@ -82,7 +82,7 @@
 	}
 
 	function exportAssets() {
-		var levelExport = "0: {";
+		var levelExport = "1: {";
 
 		//set up exports
 		//temp hardcode

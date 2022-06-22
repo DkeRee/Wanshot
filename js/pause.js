@@ -135,7 +135,10 @@ class PauseMenu {
 						INTERMISSION = true;
 						break;
 					case QUIT:
-						//will add later
+						STAGE_CACHE.player.explode();
+						intermissionStatus = INTERMISSION_QUIT;
+						maskFadeIn = true;
+						INTERMISSION = true;
 						break;
 				}
 			}	
@@ -256,6 +259,13 @@ class PauseMenu {
 						}
 						canvas.style.cursor = "pointer";
 						detectedMouse = true;
+
+						if (holding) {
+							holding = false;
+							pauseMenu.swipeUp = true;
+
+							this.exitFunction = QUIT;
+						}
 					} else {
 						//glow down
 						if (this.quitBlur > 3) {

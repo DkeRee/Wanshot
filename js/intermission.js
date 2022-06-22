@@ -66,7 +66,7 @@ function intermissionUpdate() {
 						CURR_LEVEL = 1;
 						break;
 					case INTERMISSION_QUIT:
-						//will add later
+						CURR_LEVEL = 0;
 						break;
 				}
 
@@ -91,9 +91,11 @@ function intermissionUpdate() {
 				maskFadeIn = true;
 				INTERMISSION = false;
 
-				//display start logo
-				startLogoShow = true;
-				startLogoOpacity = 1;
+				//display start logo if the level isn't the lobby
+				if (CURR_LEVEL !== 0) {
+					startLogoShow = true;
+					startLogoOpacity = 1;
+				}
 
 				//reset intermissionDelay
 				intermissionDelay = 0;
