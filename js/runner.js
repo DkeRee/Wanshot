@@ -7,14 +7,11 @@
 	//init game
 	const BACKGROUND_COLOR_STRONG = "#C2995D";
 	const BACKGROUND_COLOR_WEAK = "#FFDFA8";
-	CURR_LEVEL = 1;
+	CURR_LEVEL = 0;
 	STAGE_CACHE = levelCloner(CURR_LEVEL);
 
 	//pause button
 	const pauseButton = new PauseButton();
-
-	//lobby portals
-	const playPortal = new Portal(CANVAS_WIDTH / 2, 155, "#2A5BFF", "PLAY");
 
 	function mouseOnPause() {
 		if ((pauseButton.x <= MOUSE_POS.x && MOUSE_POS.x <= pauseButton.x + pauseButton.side) && (pauseButton.y <= MOUSE_POS.y && MOUSE_POS.y <= pauseButton.y + pauseButton.side)) {
@@ -57,6 +54,8 @@
 
 					if (playPortal.isTouched()) {
 						//teleport
+
+						//move player outside of the stage
 						STAGE_CACHE.player.tank.x = 5000;
 						STAGE_CACHE.player.tank.y = 5000;
 					}

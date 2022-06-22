@@ -12,6 +12,11 @@ function levelCloner(CURR_LEVEL) {
 	};
 	const LOCATED_LEVEL = LEVEL[CURR_LEVEL];
 
+	//set portals on lobby
+	if (CURR_LEVEL == 0) {
+		playPortal = new Portal(CANVAS_WIDTH / 2, 155, "#2A5BFF", "PLAY");
+	}
+
 	for (asset in LOCATED_LEVEL) {
 		switch (asset) {
 			case "player":

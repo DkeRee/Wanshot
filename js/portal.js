@@ -1,7 +1,7 @@
 class PortalParticle {
-	constructor(x, y, color) {
+	constructor(x, y, color, portalRadius) {
 		//particle body (IT IS A SQUARE)
-		this.side = PORTAL_PARTICLE_SIDE;
+		this.side = PORTAL_PARTICLE_SIDE * (portalRadius / 110);
 
 		//particle info
 		this.x = x;
@@ -10,7 +10,7 @@ class PortalParticle {
 		this.centerY = this.y + this.side / 2;
 		this.angle = (Math.floor(Math.random() * 360)) * Math.PI / 180;
 		this.opacity = 1;
-		this.speed = 8000;
+		this.speed = 75 * portalRadius;
 		this.explode = false;
 
 		this.color = color;
@@ -60,6 +60,17 @@ class Portal {
 		this.color = color;
 		this.content = content;
 
+		this.radiusGrowth = 10;
+		this.portalSpeed = 25;
+
+		this.shrinkDelay = 0;
+		this.shrinkDelayCap = 0.5;
+
+		this.entering = false;
+		this.lerpCenter = false;
+		this.lerpShrink = false;
+		this.centerAngle = Math.atan2(this.y - CANVAS_HEIGHT / 2, this.x - CANVAS_WIDTH / 2);
+
 		this.bobForward = true;
 		this.bobCap = 0.5;
 		this.bob = 0;
@@ -77,37 +88,88 @@ class Portal {
 		if (SAT_POLYGON_CIRCLE(STAGE_CACHE.player.tank, this)) {
 			//produce 50 portal particles
 			for (var i = 0; i < 30; i++) {
-				this.particles.push(new PortalParticle(this.x - PORTAL_PARTICLE_SIDE / 2, this.y - PORTAL_PARTICLE_SIDE / 2, this.color));
+				this.particles.push(new PortalParticle(this.x - PORTAL_PARTICLE_SIDE / 2, this.y - PORTAL_PARTICLE_SIDE / 2, this.color, this.radius));
 			}
+
+			//start chain reaction
+			this.entering = true;
+			this.lerpCenter = true;
+
 			return true;
 		}
 		return false;
 	}
 
 	update() {
-		//make portal bob
-		if (this.bobForward) {
-			this.bob += deltaTime;
+		//shrink
+		if (this.lerpShrink) {
+			this.shrinkDelay += deltaTime;
 
-			if (this.bob > this.bobCap) {
-				this.bobForward = false;
-			}
-		} else {
-			this.bob -= deltaTime;
+			//if the delay timer has counted down, start the shrinking
+			if (this.shrinkDelay > this.shrinkDelayCap) {
+				this.radius -= this.radiusGrowth;
+				this.radiusGrowth /= 80 * deltaTime;
 
-			if (this.bob < -this.bobCap) {
-				this.bobForward = true;
+				if (this.radius < 0) {
+					this.radius = 0;
+					this.lerpShrink = false;
+
+					//start intermission
+					intermissionStatus = INTERMISSION_WON;
+					INTERMISSION = true;
+				}
 			}
 		}
 
-		this.y += this.bob;
+		//move to center
+		if (this.lerpCenter) {
+			//lerp grow
+			this.radius += this.radiusGrowth;
+			this.radiusGrowth /= 73 * deltaTime;
+
+			//lerp to center
+			this.x -= this.portalSpeed * Math.cos(this.centerAngle);
+			this.y -= this.portalSpeed * Math.sin(this.centerAngle);
+			this.portalSpeed /= 70 * deltaTime;
+
+			if (this.radiusGrowth <= 0.05) {
+				this.radiusGrowth = 40;
+				this.lerpCenter = false;
+
+				//produce 50 portal particles
+				for (var i = 0; i < 30; i++) {
+					this.particles.push(new PortalParticle(this.x - PORTAL_PARTICLE_SIDE / 2, this.y - PORTAL_PARTICLE_SIDE / 2, this.color, this.radius));
+				}
+
+				this.lerpShrink = true;
+			}
+		}
+
+		//make portal bob in idle animation
+		if (!this.entering) {
+			if (this.bobForward) {
+				this.bob += deltaTime;
+
+				if (this.bob > this.bobCap) {
+					this.bobForward = false;
+				}
+			} else {
+				this.bob -= deltaTime;
+
+				if (this.bob < -this.bobCap) {
+					this.bobForward = true;
+				}
+			}
+
+			this.y += this.bob;
+		}
 
 		//update particles
 		this.particleDelay += deltaTime;
 
 		if (this.particleDelay > this.particleDelayCap) {
 			this.particleDelay = 0;
-			this.particles.push(new PortalParticle(this.x - PORTAL_PARTICLE_SIDE / 2, this.y - PORTAL_PARTICLE_SIDE / 2, this.color));
+			this.particles.push(new PortalParticle(this.x - PORTAL_PARTICLE_SIDE / 2, this.y - PORTAL_PARTICLE_SIDE / 2, this.color, this.radius));
 		}
 
 		
@@ -143,7 +205,7 @@ class Portal {
 		ctx.font = `${0.7 * this.radius}px UniSansHeavy`;
 		ctx.textAlign = "center";
 		ctx.fillStyle = hexToRgbA("#505050", 0.6);
-		ctx.fillText(this.content, this.x, this.y + 20);
+		ctx.fillText(this.content, this.x, this.y + 20 * (this.radius / 80));
 
 		ctx.shadowBlur = 0;
 	}

@@ -19,9 +19,12 @@ var INTERMISSION = false;
 const blueArtTank = new ArtTank(800, 600, 3, 0, 210, "#224ACF", "#0101BA");
 const redArtTank = new ArtTank(100, 80, 3, 0, 30, "#ED4245", "#9E2C2E");
 
+//lobby portals
+var playPortal; 
+
 //GAME OBJECT CONSTANTS FOR FINE TUNING PLACEMENTS//
 const PORTAL_RADIUS = 100;
-const PORTAL_PARTICLE_SIDE = 20;
+const PORTAL_PARTICLE_SIDE = 30;
 
 const STATIONARY_RAY_OFFSET = 4;
 const MOBILE_RAY_OFFSET = 3;
