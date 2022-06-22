@@ -75,6 +75,10 @@ class Portal {
 	isTouched() {
 		//if it is touching the player
 		if (SAT_POLYGON_CIRCLE(STAGE_CACHE.player.tank, this)) {
+			//produce 50 portal particles
+			for (var i = 0; i < 30; i++) {
+				this.particles.push(new PortalParticle(this.x - PORTAL_PARTICLE_SIDE / 2, this.y - PORTAL_PARTICLE_SIDE / 2, this.color));
+			}
 			return true;
 		}
 		return false;
@@ -136,7 +140,7 @@ class Portal {
 		ctx.fill();
 
 		//render content
-		ctx.font = "70px UniSansHeavy";
+		ctx.font = `${0.7 * this.radius}px UniSansHeavy`;
 		ctx.textAlign = "center";
 		ctx.fillStyle = hexToRgbA("#505050", 0.6);
 		ctx.fillText(this.content, this.x, this.y + 20);

@@ -7,7 +7,7 @@
 	//init game
 	const BACKGROUND_COLOR_STRONG = "#C2995D";
 	const BACKGROUND_COLOR_WEAK = "#FFDFA8";
-	CURR_LEVEL = 0;
+	CURR_LEVEL = 1;
 	STAGE_CACHE = levelCloner(CURR_LEVEL);
 
 	//pause button
@@ -57,6 +57,8 @@
 
 					if (playPortal.isTouched()) {
 						//teleport
+						STAGE_CACHE.player.tank.x = 5000;
+						STAGE_CACHE.player.tank.y = 5000;
 					}
 				}
 
