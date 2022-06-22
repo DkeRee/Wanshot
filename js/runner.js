@@ -54,6 +54,10 @@
 				//LOBBY PORTALS//
 				if (CURR_LEVEL == 0) {
 					playPortal.update();
+
+					if (playPortal.isTouched()) {
+						//teleport
+					}
 				}
 
 				//TRACK MANAGEMENT//

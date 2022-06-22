@@ -72,6 +72,14 @@ class Portal {
 		this.angle = 0;
 	}
 
+	isTouched() {
+		//if it is touching the player
+		if (SAT_POLYGON_CIRCLE(STAGE_CACHE.player.tank, this)) {
+			return true;
+		}
+		return false;
+	}
+
 	update() {
 		//make portal bob
 		if (this.bobForward) {
@@ -126,6 +134,12 @@ class Portal {
 		ctx.beginPath();
 		ctx.arc(this.x, this.y, this.radius, 0, 2 * Math.PI, false);
 		ctx.fill();
+
+		//render content
+		ctx.font = "70px UniSansHeavy";
+		ctx.textAlign = "center";
+		ctx.fillStyle = hexToRgbA("#505050", 0.6);
+		ctx.fillText(this.content, this.x, this.y + 20);
 
 		ctx.shadowBlur = 0;
 	}
