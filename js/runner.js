@@ -198,7 +198,7 @@
 		//render level number in game
 		ctx.font = "100px UniSansHeavy";
 		ctx.textAlign = "center";
-		ctx.fillStyle = hexToRgbA("#FFC97A", 0.6);
+		ctx.fillStyle = hexToRgbA("#FFC97A", 0.8);
 		ctx.fillText(CURR_LEVEL, 120, 150);
 
 		//RENDER OBJECT SHADOWS//

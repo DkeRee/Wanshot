@@ -117,8 +117,8 @@ class PauseMenu {
 
 		//if the pause menu is supposed to fade out, fade out
 		if (this.fadeOut) {
-			if (this.opacity <= 0) {
-				this.opacity -= 1.5 * deltaTime;
+			if (this.opacity >= 0) {
+				this.opacity -= 3 * deltaTime;
 			} else {
 				this.opacity = 0;
 				this.fadeOut = false;
@@ -327,5 +327,7 @@ class PauseMenu {
 		ctx.strokeStyle = "#ED4245";
 		ctx.fillText("QUIT", this.quitX + this.buttonWidth / 2, (this.quitY + this.buttonHeight / 2) + 30);
 		ctx.strokeText("QUIT", this.quitX + this.buttonWidth / 2, (this.quitY + this.buttonHeight / 2) + 26);
+
+		ctx.shadowBlur = 0;
 	}
 }
