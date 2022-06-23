@@ -26,6 +26,9 @@ class PauseButton {
 			if (holding) {
 				gamePaused = true;
 				holding = false;
+
+				//make sure pause menu is default
+				pauseMenu = new PauseMenu(DEFAULT);
 				pauseMenu.fadeIn = true;
 			}
 
@@ -69,7 +72,7 @@ class PauseButton {
 }
 
 class PauseMenu {
-	constructor() {
+	constructor(variation) {
 		this.backgroundColor = "#EDBB72";
 		this.buttonColor = "#EDA05C";
 
@@ -99,6 +102,9 @@ class PauseMenu {
 		this.quitY = -400;
 		this.quitVelocity = 450;
 		this.quitBlur = 3;
+
+		//specifies the type of pause menu
+		this.variation = variation;
 
 		this.exitFunction = RESUME;
 	}
@@ -193,31 +199,35 @@ class PauseMenu {
 			switch (i) {
 				case 0:
 					//resume
-					if ((this.resumeX <= MOUSE_POS.x && MOUSE_POS.x <= this.resumeX + this.buttonWidth) && (this.resumeY <= MOUSE_POS.y && MOUSE_POS.y <= this.resumeY + this.buttonHeight) && gamePaused) {
-						//glow
-						if (this.resumeBlur < 10) {
-							this.resumeBlur += 50 * deltaTime;
-						} else {
-							this.resumeBlur = 10
-						}
-						canvas.style.cursor = "pointer";
-						detectedMouse = true;
-					
-						if (holding) {
-							holding = false;
-							pauseMenu.swipeUp = true;
 
-							this.exitFunction = RESUME;
-						}
+					//check for resume button ONLY if variation is default
+					if (this.variation == DEFAULT) {
+						if ((this.resumeX <= MOUSE_POS.x && MOUSE_POS.x <= this.resumeX + this.buttonWidth) && (this.resumeY <= MOUSE_POS.y && MOUSE_POS.y <= this.resumeY + this.buttonHeight) && gamePaused) {
+							//glow
+							if (this.resumeBlur < 10) {
+								this.resumeBlur += 50 * deltaTime;
+							} else {
+								this.resumeBlur = 10
+							}
+							canvas.style.cursor = "pointer";
+							detectedMouse = true;
+						
+							if (holding) {
+								holding = false;
+								pauseMenu.swipeUp = true;
 
-					} else {
-						//glow down
-						if (this.resumeBlur > 3) {
-							this.resumeBlur -= 50 * deltaTime;
+								this.exitFunction = RESUME;
+							}
+
 						} else {
-							this.resumeBlur = 3;
+							//glow down
+							if (this.resumeBlur > 3) {
+								this.resumeBlur -= 50 * deltaTime;
+							} else {
+								this.resumeBlur = 3;
+							}
+							canvas.style.cursor = "auto";
 						}
-						canvas.style.cursor = "auto";
 					}
 					break;
 				case 1:
@@ -289,22 +299,38 @@ class PauseMenu {
 		ctx.fillStyle = hexToRgbA(this.backgroundColor, this.opacity);
 		ctx.fillRect(0, 0, canvas.width, canvas.height);
 
+		if (this.variation == DEFAULT) {
+			//draw resume button ONLY if variation is default
+			ctx.shadowColor = "#FEE75C";
+			ctx.fillStyle = this.buttonColor;
 
-		//draw resume button
-		ctx.shadowColor = "#FEE75C";
-		ctx.fillStyle = this.buttonColor;
+			ctx.shadowBlur = this.resumeBlur;
+			ctx.fillRect(this.resumeX, this.resumeY, this.buttonWidth, this.buttonHeight);
 
-		ctx.shadowBlur = this.resumeBlur;
-		ctx.fillRect(this.resumeX, this.resumeY, this.buttonWidth, this.buttonHeight);
+			ctx.textAlign = "center";
+			ctx.font = "80px UniSansHeavy";
+			ctx.fillStyle = "#ffff80";
+			
+			ctx.lineWidth = 3;
+			ctx.strokeStyle = "#ED4245";
+			ctx.fillText("RESUME", this.resumeX + this.buttonWidth / 2, (this.resumeY + this.buttonHeight / 2) + 30);
+			ctx.strokeText("RESUME", this.resumeX + this.buttonWidth / 2, (this.resumeY + this.buttonHeight / 2) + 26);
+		} else {
+			//else draw win sign
+			ctx.font = "130px UniSansHeavy";
+			ctx.textAlign = "center";
 
-		ctx.textAlign = "center";
-		ctx.font = "80px UniSansHeavy";
-		ctx.fillStyle = "#ffff80";
-		
-		ctx.lineWidth = 3;
-		ctx.strokeStyle = "#ED4245";
-		ctx.fillText("RESUME", this.resumeX + this.buttonWidth / 2, (this.resumeY + this.buttonHeight / 2) + 30);
-		ctx.strokeText("RESUME", this.resumeX + this.buttonWidth / 2, (this.resumeY + this.buttonHeight / 2) + 26);
+			ctx.lineWidth = 3;
+			ctx.strokeStyle = "#ED4245";
+
+			ctx.fillStyle = "#ffff80";
+
+			ctx.shadowBlur = 10;
+			ctx.shadowColor = "#ED4245";
+
+			ctx.fillText("You Won", this.resumeX + this.buttonWidth / 2, (this.resumeY + this.buttonHeight / 2) + 70);
+			ctx.strokeText("You Won", this.resumeX + this.buttonWidth / 2, (this.resumeY + this.buttonHeight / 2) + 70);
+		}
 	
 		//draw restart button
 		ctx.shadowColor = "#FEE75C";

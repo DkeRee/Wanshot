@@ -1,7 +1,8 @@
 function levelCloner(CURR_LEVEL) {
 	const LEVEL_CACHE = {
 		gameComplete: false,
-		winOpacity: 0,
+		menuActivate: false,
+		menuDelay: 0,
 		confettiDelay: 0,
 		confettiRing: 0,
 		activateConfetti: false,

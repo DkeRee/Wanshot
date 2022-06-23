@@ -12,8 +12,8 @@ function checkGameOver() {
 
 	//if this is the final mission and it is completed
 	if (LEVEL[CURR_LEVEL + 1] == undefined) {
-		//set game to complete
-		STAGE_CACHE.winOpacity = 1;
+		//set game to complete and pause menu to win
+		pauseMenu = new PauseMenu(WIN_VARIATION);
 		STAGE_CACHE.activateConfetti = true;
 		STAGE_CACHE.gameComplete = true;
 		return false;

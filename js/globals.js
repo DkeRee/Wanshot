@@ -81,7 +81,11 @@ const SHADOW = "rgba(0, 0, 0, 0.3)";
 
 //GAME PAUSING//
 var gamePaused = false;
-const pauseMenu = new PauseMenu();
+
+//MENU TYPES//
+const DEFAULT = 0;
+const WIN_VARIATION = 1;
+var pauseMenu = new PauseMenu(DEFAULT);
 
 //MOUSE//
 var holding = false;

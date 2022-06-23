@@ -179,11 +179,19 @@
 					}
 				}
 
-				//update win sign
-				if (STAGE_CACHE.winOpacity > 0) {
-					STAGE_CACHE.winOpacity -= 0.8 * deltaTime;
-				} else {
-					STAGE_CACHE.winOpacity = 0;
+				//start main menu delay when game is won
+				if (STAGE_CACHE.menuActivate) {
+					STAGE_CACHE.menuDelay += deltaTime;
+
+					if (STAGE_CACHE.menuDelay > 0.4) {
+						STAGE_CACHE.menuActivate = false;
+						STAGE_CACHE.menuDelay = 0;
+
+						//drop down win menu
+						gamePaused = true;
+						holding = false;
+						pauseMenu.fadeIn = true;
+					}
 				}
 
 				//if confetti particles are to be made
@@ -199,11 +207,14 @@
 						STAGE_CACHE.confettiDelay = 0;
 					}
 
-					if (STAGE_CACHE.confettiRing == 8) {
+					if (STAGE_CACHE.confettiRing == 5) {
 						//stop explosion/rest
 						STAGE_CACHE.activateConfetti = false;
 						STAGE_CACHE.confettiRing = 0;
 						STAGE_CACHE.confettiDelay = 0;
+
+						//activate win menu delay
+						STAGE_CACHE.menuActivate = true;
 					}
 				}
 
@@ -328,17 +339,6 @@
 		for (var i = 0; i < STAGE_CACHE.confetti.length; i++) {
 			STAGE_CACHE.confetti[i].render();
 		}
-
-		ctx.font = "130px UniSansHeavy";
-		ctx.textAlign = "center";
-
-		ctx.lineWidth = 3;
-		ctx.strokeStyle = hexToRgbA("#ED4245", STAGE_CACHE.winOpacity);
-
-		ctx.fillStyle = hexToRgbA("#ffff80", STAGE_CACHE.winOpacity);
-
-		ctx.fillText("You Won", CANVAS_WIDTH / 2, (CANVAS_HEIGHT / 2) + 30);
-		ctx.strokeText("You Won", CANVAS_WIDTH / 2, (CANVAS_HEIGHT / 2) + 30);
 
 		//render intermission
 		if (INTERMISSION) {
