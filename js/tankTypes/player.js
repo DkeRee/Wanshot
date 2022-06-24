@@ -12,7 +12,7 @@ class Player {
 		this.tankShock = 0;
 
 		//delays shell spamming
-		this.shellDelay = 0.1;
+		this.shellDelay = 0.01;
 
 		//caps number of shells to be shot/keeps track of how many shells are shot by this tank
 		this.shellShot = 0;
@@ -110,7 +110,7 @@ class Player {
 
 	shoot() {
 		//delay shell fire rate && cap shell amount && isn't dead
-		if (this.shellDelay > 0.1 && this.shellShot < 5 && !this.dead) {
+		if (this.shellDelay > 0 && this.shellShot < 10 && !this.dead) {
 			this.tankShock = -0.1;
 			this.shellShot++;
 			this.shellDelay = 0;
