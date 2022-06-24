@@ -289,6 +289,8 @@ class Shell {
 					}
 				}
 
+				playSound(shellDink);
+
 				this.ricochet++;
 
 				//once a shell hits a tile on one hit, wait till next tick before checking collision again or double collisions could happen

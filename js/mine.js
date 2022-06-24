@@ -107,6 +107,7 @@ class Mine {
 	}
 
 	quickExplode() {
+		playSound(mineExplosion);
 		this.countdown = 0;
 		this.exploding = true;
 	}
@@ -185,8 +186,8 @@ class Mine {
 					radius: mineB.radius
 				};
 
-				if (CIRCLE_WITH_CIRCLE(thisMine, otherMine) && !otherMine.exploding) {
-					//MINE HAS COLLIDED WITH OTHER MINE RADIUS && OTHER MINE IS NOT IN THE MIDDLE OF EXPLODING
+				if (CIRCLE_WITH_CIRCLE(thisMine, otherMine) && !otherMine.exploding && this.id !== mineB.id) {
+					//MINE HAS COLLIDED WITH OTHER MINE RADIUS && OTHER MINE IS NOT IN THE MIDDLE OF EXPLODING && this mine is not looking at itself
 					mineB.quickExplode();
 				}
 			}
@@ -260,6 +261,7 @@ class Mine {
 				}
 			} else if (this.countdown <= 0) {
 				//execute explosion, countdown has ended
+				playSound(mineExplosion);
 				this.exploding = true;
 			}
 		}

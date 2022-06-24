@@ -15,6 +15,21 @@ var STAGE_CACHE;
 var CURR_LEVEL;
 var INTERMISSION = false;
 
+//SOUND FX//
+const normalShoot = new Audio("audio/normalShoot.wav");
+const missleShoot = new Audio("audio/missleShoot.mp3");
+const ultraMissleShoot = new Audio("audio/ultraMissleShoot.mp3");
+const shellDink = new Audio("audio/shellDink.wav");
+const tankDeath = new Audio("audio/tankDeath.mp3");
+const playerDeath = new Audio("audio/playerDeath.wav");
+const enemyDeath = new Audio("audio/enemyDeath.m4a");
+const mineExplosion = new Audio("audio/mineExplosion.wav");
+
+function playSound(sound) {
+	sound.play();
+	sound.currentTime = 0;
+}
+
 //loading screen art
 const blueArtTank = new ArtTank(800, 600, 3, 0, 210, "#224ACF", "#0101BA");
 const redArtTank = new ArtTank(100, 80, 3, 0, 30, "#ED4245", "#9E2C2E");

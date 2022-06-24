@@ -181,6 +181,16 @@ class Tank {
 
 	//tank death
 	explodeTank() {
+		playSound(tankDeath);
+
+		if (this.tankID == PLAYER_ID) {
+			//player death sound
+			playSound(playerDeath);
+		} else {
+			//enemy death sound
+			playSound(enemyDeath);
+		}
+
 		this.tankExplosion = true;
 	}
 
@@ -188,6 +198,21 @@ class Tank {
 	shoot(targetCoords, shellType, tankID) {
 		const angle = Math.atan2(targetCoords.y - this.centerY, targetCoords.x - this.centerX);
 		const initialBoost = 20;
+		
+		//play shell sound
+		switch(shellType) {
+			case NORMAL_SHELL:
+				playSound(normalShoot);
+				break;
+			case MISSLE:
+				playSound(missleShoot);
+				break;
+			case ULTRA_MISSLE:
+				playSound(ultraMissleShoot);
+				break;
+		}
+
+		//shoot
 		STAGE_CACHE.shells.push(new Shell(this.centerX - SHELL_WIDTH / 2 + (initialBoost * Math.cos(angle)), this.centerY - SHELL_HEIGHT / 2 + (initialBoost * Math.sin(angle)), shellType, angle, tankID));
 	}
 
