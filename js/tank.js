@@ -218,11 +218,27 @@ class Tank {
 
 	//lay mine
 	layMine(tankID) {
+		playSound(minePlace);
 		STAGE_CACHE.mines.push(new Mine(this.centerX, this.centerY, tankID));
 	}
 
 	//update track marks
 	trackUpdate() {
+		//only moving tanks get updated
+
+		if (this.tankID == PLAYER_ID) {
+			//player tank
+
+			if (STAGE_CACHE.player.moving && !INTERMISSION) {
+				playSound(tankMovement);
+			}
+		} else {
+			//moving enemy tanks (don't play if player is dead)
+			if (!STAGE_CACHE.player.dead) {
+				playSound(tankMovement);
+			}
+		}
+
 		STAGE_CACHE.tracks.push(new Track(this.centerX - TRACK_WIDTH / 2, this.centerY - TRACK_HEIGHT / 2, this.angle));
 	}
 

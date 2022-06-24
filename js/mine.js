@@ -161,7 +161,10 @@ class Mine {
 				for (var i = 0; i < 15; i++) {
 					STAGE_CACHE.tileParticles.push(new BlockParticle(tile.centerX - TILE_PARTICLE_SIDE / 2, tile.centerY - TILE_PARTICLE_SIDE / 2));
 				}
+				
 				tile.explode = true;
+
+				playSound(blockBreaking);
 
 				//do not delete more than one block at a tick
 				break;
@@ -186,9 +189,10 @@ class Mine {
 					radius: mineB.radius
 				};
 
-				if (CIRCLE_WITH_CIRCLE(thisMine, otherMine) && !otherMine.exploding && this.id !== mineB.id) {
+				if (CIRCLE_WITH_CIRCLE(thisMine, otherMine) && !mineB.exploding && this.id !== mineB.id) {
 					//MINE HAS COLLIDED WITH OTHER MINE RADIUS && OTHER MINE IS NOT IN THE MIDDLE OF EXPLODING && this mine is not looking at itself
 					mineB.quickExplode();
+					break;
 				}
 			}
 		}
@@ -221,9 +225,11 @@ class Mine {
 					//a little delay for flashing
 					this.colorCountdown = MINE_COLORCOUNTDOWN;
 
-					if (this.currentColor == this.color) {
+					if (this.currentColor == this.color && !this.exploding) {
+						playSound(bombTickOne);
 						this.currentColor = this.flashingColor;
 					} else {
+						playSound(bombTickTwo);
 						this.currentColor = this.color;
 					}
 				}

@@ -289,9 +289,27 @@ class Shell {
 					}
 				}
 
-				playSound(shellDink);
-
 				this.ricochet++;
+
+				switch (this.speed) {
+					case NORMAL_SHELL:
+						if (this.ricochet >= 2) {
+							playSound(shellOut);
+						} else {
+							playSound(shellDink);
+						}
+						break;
+					case MISSLE:
+						playSound(shellOut);
+						break;
+					case ULTRA_MISSLE:
+						if (this.ricochet >= 3) {
+							playSound(shellOut);
+						} else {
+							playSound(shellDink);
+						}
+						break;
+				}
 
 				//once a shell hits a tile on one hit, wait till next tick before checking collision again or double collisions could happen
 				break;
@@ -313,6 +331,8 @@ class Shell {
 				//explode other shell
 				this.diminish = true;
 				otherShell.diminish = true;
+
+				playSound(shellOut);
 			}
 		}
 	}
@@ -339,6 +359,8 @@ class Shell {
 
 				//explode player tank
 				player.explode();
+
+				playSound(shellOut);
 			}
 		}
 	}
@@ -363,8 +385,9 @@ class Shell {
 
 				//explode enemy tank
 				enemy.explode();
-			}
 
+				playSound(shellOut);
+			}
 		}
 	}
 

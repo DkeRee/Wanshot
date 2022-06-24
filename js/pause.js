@@ -7,6 +7,8 @@ class PauseButton {
 		this.side = 50;
 		this.x = CANVAS_WIDTH - this.side * 1.1;
 		this.y = 5;
+
+		this.hover = false;
 		
 		this.color = "#FFDFA8";
 		this.outerRingRadius = 23;
@@ -22,12 +24,18 @@ class PauseButton {
 		if ((this.x <= MOUSE_POS.x && MOUSE_POS.x <= this.x + this.side) && (this.y <= MOUSE_POS.y && MOUSE_POS.y <= this.y + this.side) && !gamePaused) {
 			canvas.style.cursor = "pointer";
 
+			if (!this.hover) {
+				playSound(hoverButton);
+				this.hover = true;
+			}
+
 			//clicked on pause button
 			if (holding) {
 				gamePaused = true;
 				holding = false;
 
 				//make sure pause menu is default
+				playSound(openPause);
 				pauseMenu = new PauseMenu(DEFAULT);
 				pauseMenu.fadeIn = true;
 			}
@@ -39,6 +47,8 @@ class PauseButton {
 			}
 		} else {
 			canvas.style.cursor = "auto";
+
+			this.hover = false;
 
 			if (this.shadowBlur > 2) {
 				this.shadowBlur -= 50 * deltaTime;
@@ -92,16 +102,19 @@ class PauseMenu {
 		this.resumeY = -400;
 		this.resumeVelocity = 210;
 		this.resumeBlur = 3;
+		this.resumeHover = false;
 
 		this.restartX = (canvas.width / 2) - (this.buttonWidth / 2);
 		this.restartY = -400;
 		this.restartVelocity = 330;
 		this.restartBlur = 3;
+		this.restartHover = false;
 
 		this.quitX = (canvas.width / 2) - (this.buttonWidth / 2);
 		this.quitY = -400;
 		this.quitVelocity = 450;
 		this.quitBlur = 3;
+		this.quitHover = false;
 
 		//specifies the type of pause menu
 		this.variation = variation;
@@ -147,6 +160,8 @@ class PauseMenu {
 						INTERMISSION = true;
 						break;
 				}
+
+				playSound(closePause);
 			}	
 		}
 
@@ -211,6 +226,11 @@ class PauseMenu {
 							}
 							canvas.style.cursor = "pointer";
 							detectedMouse = true;
+
+							if (!this.resumeHover) {
+								playSound(hoverButton);
+								this.resumeHover = true;
+							}
 						
 							if (holding) {
 								holding = false;
@@ -218,7 +238,6 @@ class PauseMenu {
 
 								this.exitFunction = RESUME;
 							}
-
 						} else {
 							//glow down
 							if (this.resumeBlur > 3) {
@@ -227,6 +246,7 @@ class PauseMenu {
 								this.resumeBlur = 3;
 							}
 							canvas.style.cursor = "auto";
+							this.resumeHover = false;
 						}
 					}
 					break;
@@ -242,6 +262,11 @@ class PauseMenu {
 						canvas.style.cursor = "pointer";
 						detectedMouse = true;
 
+						if (!this.restartHover) {
+							playSound(hoverButton);
+							this.restartHover = true;
+						}
+
 						if (holding) {
 							holding = false;
 							pauseMenu.swipeUp = true;
@@ -256,6 +281,7 @@ class PauseMenu {
 							this.restartBlur = 3;
 						}
 						canvas.style.cursor = "auto";
+						this.restartHover = false;
 					}
 					break;
 				case 2:
@@ -269,6 +295,11 @@ class PauseMenu {
 						}
 						canvas.style.cursor = "pointer";
 						detectedMouse = true;
+
+						if (!this.quitHover) {
+							playSound(hoverButton);
+							this.quitHover = true;
+						}
 
 						if (holding) {
 							holding = false;
@@ -284,6 +315,7 @@ class PauseMenu {
 							this.quitBlur = 3;
 						}
 						canvas.style.cursor = "auto";
+						this.quitHover = false;
 					}
 					break;
 			}

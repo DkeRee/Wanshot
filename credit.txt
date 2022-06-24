@@ -2,7 +2,16 @@ Sound Fx Source:
 Normal Shell Sound: Old sound pack I had. The original source is lost.
 Missle Sound: Slick
 Ultra Missle Sound: https://www.storyblocks.com/audio/stock/big-missile-launch-rgvxgl2n8wsk0wxsftb.html
-shellDink: https://mixkit.co/free-sound-effects/arcade/
+shellDink: https://www.pond5.com/sound-effects/item/56207986-bullet-ricochet-impact-03
+shellOut: https://pixabay.com/sound-effects/search/bullet/
 tankDeath: Slick
-playerDeath: https://mixkit.co/free-sound-effects/arcade/
+playerDeath: https://www.youtube.com/watch?v=Wi9HBl0VzVQ
+enemyDeath: https://mixkit.co/free-sound-effects/explosion/
 mineExplosion: https://mixkit.co/free-sound-effects/explosion/
+blockBreaking: https://www.pond5.com/sound-effects/item/50469586-matter-mayhem-blasts-rubble-rebel-01
+minePlace: https://mixkit.co/free-sound-effects/arcade/?page=2
+bombTicks: https://www.storyblocks.com/audio/stock/modern-ticking-loop-bb5xw_uqypik8p10zok.html
+openPause: https://mixkit.co/free-sound-effects/arcade/
+closePause: https://mixkit.co/free-sound-effects/arcade/
+hoverButton: Slick
+tankMovement: https://www.soundsnap.com/cranking_train_toy_ts_01_wav

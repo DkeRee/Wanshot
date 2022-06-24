@@ -19,15 +19,34 @@ var INTERMISSION = false;
 const normalShoot = new Audio("audio/normalShoot.wav");
 const missleShoot = new Audio("audio/missleShoot.mp3");
 const ultraMissleShoot = new Audio("audio/ultraMissleShoot.mp3");
-const shellDink = new Audio("audio/shellDink.wav");
+const shellDink = new Audio("audio/shellDink.m4a");
+const shellOut = new Audio("audio/shellOut.mp3");
 const tankDeath = new Audio("audio/tankDeath.mp3");
 const playerDeath = new Audio("audio/playerDeath.wav");
-const enemyDeath = new Audio("audio/enemyDeath.m4a");
+const enemyDeath = new Audio("audio/enemyDeath.wav");
 const mineExplosion = new Audio("audio/mineExplosion.wav");
+const blockBreaking = new Audio("audio/blockBreaking.mp3");
+const minePlace = new Audio("audio/minePlace.wav");
+const bombTickOne = new Audio("audio/bombTickOne.wav");
+const bombTickTwo = new Audio("audio/bombTickTwo.wav");
+const openPause = new Audio("audio/openPause.wav");
+const closePause = new Audio("audio/closePause.wav");
+const hoverButton = new Audio("audio/hoverButton.mp3");
+const tankMovement = new Audio("audio/tankMovement.wav");
+
+//adjust volume
+shellDink.volume = 0.2;
+shellOut.volume = 0.4;
+tankMovement.volume = 0.2;
 
 function playSound(sound) {
-	sound.play();
 	sound.currentTime = 0;
+	sound.play();
+}
+
+function pauseSound(sound) {
+	sound.currentTime = 0;
+	sound.pause();
 }
 
 //loading screen art
