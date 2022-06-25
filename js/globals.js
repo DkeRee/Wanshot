@@ -33,11 +33,15 @@ const openPause = new Audio("audio/openPause.wav");
 const closePause = new Audio("audio/closePause.wav");
 const hoverButton = new Audio("audio/hoverButton.mp3");
 const tankMovement = new Audio("audio/tankMovement.wav");
+const portalEnter = new Audio("audio/portalEnter.wav");
+const startWhistle = new Audio("audio/startWhistle.wav");
+const confettiPop = new Audio("audio/confettiPop.m4a");
+const confettiTrumpet = new Audio("audio/confettiTrumpet.mp3");
 
 //adjust volume
 shellDink.volume = 0.2;
 shellOut.volume = 0.4;
-tankMovement.volume = 0.2;
+tankMovement.volume = 0.1;
 
 function playSound(sound) {
 	sound.currentTime = 0;

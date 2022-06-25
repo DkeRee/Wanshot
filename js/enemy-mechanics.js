@@ -16,6 +16,9 @@ function checkGameOver() {
 		pauseMenu = new PauseMenu(WIN_VARIATION);
 		STAGE_CACHE.activateConfetti = true;
 		STAGE_CACHE.gameComplete = true;
+
+		playSound(confettiPop);
+		playSound(confettiTrumpet);
 		return false;
 	} else {
 		return true;

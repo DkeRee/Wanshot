@@ -95,6 +95,8 @@ function intermissionUpdate() {
 				if (CURR_LEVEL !== 0) {
 					startLogoShow = true;
 					startLogoOpacity = 1;
+
+					playSound(startWhistle);
 				}
 
 				//reset intermissionDelay

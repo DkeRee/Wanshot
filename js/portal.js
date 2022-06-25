@@ -95,6 +95,8 @@ class Portal {
 			this.entering = true;
 			this.lerpCenter = true;
 
+			playSound(portalEnter);
+
 			return true;
 		}
 		return false;
