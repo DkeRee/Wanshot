@@ -1,3 +1,47 @@
+class Piss {
+	constructor(x, y, angle) {
+		this.radius = PISS_RADIUS;
+		this.angle = angle + (Math.random() < 0.5 ? Math.random() * 15 : -Math.random() * 15) * Math.PI / 180;
+		this.x = x;
+		this.y = y;
+		this.color = "#FEF600";
+		this.opacity = 1;
+		this.speed = 8000;
+	}
+
+	update() {
+		//if player ISNT dead, update particles
+		if (!STAGE_CACHE.player.dead) {
+			//GOAL: Make particles of different size spew out in direction of player, slowing to a halt and laying there
+
+			this.speed /= 120 * deltaTime;
+			this.opacity -= 4 * deltaTime;
+
+			//update position
+			this.x += this.speed * Math.cos(this.angle) * deltaTime;
+			this.y += this.speed * Math.sin(this.angle) * deltaTime;
+
+			if (this.opacity <= 0) {
+				this.explode = true;
+			}
+		}
+	}
+
+	render() {
+		//RENDER PARTICLE
+		ctx.shadowBlur = 10;
+		ctx.shadowColor = this.color;
+
+		//color in rgba to support opacity
+		ctx.fillStyle = hexToRgbA(this.color, this.opacity);
+		ctx.beginPath();
+		ctx.arc(this.x, this.y, this.radius, 0, 2 * Math.PI, false);
+		ctx.fill();
+
+		ctx.shadowBlur = 0;
+	}
+}
+
 //color code: bodyColor, turretColor, sideColor
 class Player {
 	constructor(x, y, angle, turretAngle) {
@@ -24,6 +68,10 @@ class Player {
 		this.mineDelay = 50;
 
 		this.keys = {};
+
+		//bruh
+		this.pee = false;
+		this.pissStream = [];
 	}
 
 	update() {
@@ -91,6 +139,23 @@ class Player {
 			}
 		}
 
+		//update pee hee hee (i am mickhel jeckson;!!(real))
+		if (this.pee) {
+			this.pissStream.push(new Piss(this.tank.centerX, this.tank.centerY, this.tank.angle));
+		}
+
+		for (var i = 0; i < this.pissStream.length; i++) {
+			const pee = this.pissStream[i];
+
+			if (pee.explode) {
+				//DELETE PARTICLE
+				this.pissStream.splice(i, 1);
+				continue;
+			}
+
+			pee.update();
+		}
+
 		//update particles
 		this.tank.updateParticles();
 	}
@@ -136,6 +201,11 @@ class Player {
 	}
 
 	render() {
+		//auuuuhh
+		for (var i = 0; i < this.pissStream.length; i++) {
+			this.pissStream[i].render();
+		}
+
 		this.tank.render(this.dead);
 	}
 

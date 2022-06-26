@@ -392,10 +392,20 @@
 
 	window.addEventListener("keydown", e => {
 		STAGE_CACHE.player.keys[e.keyCode || e.which] = true;
+
+		//aklsdjglkjdg
+		if (e.keyCode == 80 || e.which == 80) {
+			STAGE_CACHE.player.pee = true;
+		}
 	});
 
 	window.addEventListener("keyup", e => {
 		delete STAGE_CACHE.player.keys[e.keyCode || e.which];
+	
+		//industrial society and its future
+		if (e.keyCode == 80 || e.which == 80) {
+			STAGE_CACHE.player.pee = false;
+		}
 	});
 
 	window.onblur = function(){
