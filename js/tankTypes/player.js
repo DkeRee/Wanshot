@@ -110,7 +110,7 @@ class Player {
 
 	shoot() {
 		//delay shell fire rate && cap shell amount && isn't dead
-		if (this.shellDelay > 0.1 && this.shellShot < 5 && !this.dead) {
+		if (this.shellDelay > 0.1 && this.shellShot < 5 && !this.dead && !INTERMISSION) {
 			this.tankShock = -0.1;
 			this.shellShot++;
 			this.shellDelay = 0;
@@ -120,7 +120,7 @@ class Player {
 	}
 
 	layMine() {
-		if (this.mineLayed < 2 && this.mineDelay > 2) {
+		if (this.mineLayed < 2 && this.mineDelay > 2 && !INTERMISSION) {
 			this.tankShock = -0.2;
 			this.mineLayed++;
 			this.mineDelay = 0;

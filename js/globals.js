@@ -44,6 +44,7 @@ const introClick = new Audio("audio/introClick.wav");
 const tutorial = new Audio("audio/tutorial.wav");
 const additionalInformation = new Audio("audio/additionalInformation.wav");
 const superpower = new Audio("audio/superpower.mp3");
+const uiClick = new Audio("audio/uiClick.mp3");
 
 //adjust volume
 portalEnter.volume = 0.6;
