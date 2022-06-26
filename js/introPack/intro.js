@@ -13,7 +13,7 @@ const buttonWidth = 230;
 const buttonHeight = 100;
 
 const tutorialTank = new ArtTank(CANVAS_WIDTH / 2, 240, 3, 0, 0, "#224ACF", "#0101BA");
-const disclaimerTank = new ArtTank(CANVAS_WIDTH / 2, 260, 3, 180, 180, "#ED4245", "#9E2C2E");
+const addTank = new ArtTank(CANVAS_WIDTH / 2, 260, 3, 180, 180, "#ED4245", "#9E2C2E");
 
 function introUpdate() {
 	//if not transitioning
@@ -70,7 +70,7 @@ function introUpdate() {
 				}
 			}
 		} else {
-			if (holding) {
+			if (holding && slide < 4) {
 				//click anywhere to move on
 				holding = false;
 				transition = true;
@@ -94,8 +94,8 @@ function introUpdate() {
 						playSound(tutorial);
 						break;
 					case 3:
-						//disclaimer:
-						playSound(disclaimer);
+						//additional information:
+						playSound(additionalInformation);
 						break;
 					case 4:
 						//start game
@@ -213,7 +213,7 @@ function introRender() {
 			ctx.shadowBlur = 0;
 			break;
 		case 3:
-			//disclaimer
+			//additional information
 
 			//header
 			ctx.font = "100px UniSansHeavy";
@@ -223,22 +223,22 @@ function introRender() {
 			ctx.strokeStyle = hexToRgbA("#ED4245", opacity);
 
 			ctx.textAlign = "center";
-			ctx.fillText("DISCLAIMER", canvas.width / 2, 130);
-			ctx.strokeText("DISCLAIMER", canvas.width / 2, 130);
+			ctx.fillText("OTHER INFO", canvas.width / 2, 130);
+			ctx.strokeText("OTHER INFO", canvas.width / 2, 130);
 
 			//tank
-			disclaimerTank.render(opacity);
+			addTank.render(opacity);
 
 			ctx.shadowBlur = 10;
 			ctx.shadowColor = "#ED4245";
 			ctx.font = "25px UniSansHeavy";
 
 			//disclaimer
-			ctx.fillText(disclaimerTextOne, canvas.width / 2, 420);
-			ctx.fillText(disclaimerTextTwo, canvas.width / 2, 420 + spacing);
-			ctx.fillText(disclaimerTextThree, canvas.width / 2, 420 + spacing * 2);
-			ctx.fillText(disclaimerTextFour, canvas.width / 2, 420 + spacing * 3);
-			ctx.fillText(disclaimerTextFive, canvas.width / 2, 420 + spacing * 4);
+			ctx.fillText(addTextOne, canvas.width / 2, 420);
+			ctx.fillText(addTextTwo, canvas.width / 2, 420 + spacing);
+			ctx.fillText(addTextThree, canvas.width / 2, 420 + spacing * 2);
+			ctx.fillText(addTextFour, canvas.width / 2, 420 + spacing * 3);
+			ctx.fillText(addTextFive, canvas.width / 2, 420 + spacing * 4);
 
 			//footer
 			ctx.fillText(endText, canvas.width / 2, CANVAS_HEIGHT - spacing * 2);

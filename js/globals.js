@@ -42,9 +42,10 @@ const confettiPop = new Audio("audio/confettiPop.m4a");
 const confettiTrumpet = new Audio("audio/confettiTrumpet.mp3");
 const introClick = new Audio("audio/introClick.wav");
 const tutorial = new Audio("audio/tutorial.wav");
-const disclaimer = new Audio("audio/disclaimer.wav");
+const additionalInformation = new Audio("audio/additionalInformation.wav");
 
 //adjust volume
+portalEnter.volume = 0.6;
 shellDink.volume = 0.2;
 shellOut.volume = 0.4;
 tankMovement.volume = 0.1;
