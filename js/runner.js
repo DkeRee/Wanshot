@@ -179,6 +179,7 @@
 
 						//if tanks are white, then turn them invisible
 						if (enemy.tankType == WHITE_TANK && !enemy.invisible) {
+							playSound(superpower);
 							enemy.turnInvisible();
 						}
 					}
