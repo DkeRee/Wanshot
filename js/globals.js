@@ -15,6 +15,9 @@ var STAGE_CACHE;
 var CURR_LEVEL;
 var INTERMISSION = false;
 
+//intro toggle
+var intro = true;
+
 //SOUND FX//
 const normalShoot = new Audio("audio/normalShoot.wav");
 const missleShoot = new Audio("audio/missleShoot.mp3");
@@ -37,6 +40,9 @@ const portalEnter = new Audio("audio/portalEnter.wav");
 const startWhistle = new Audio("audio/startWhistle.wav");
 const confettiPop = new Audio("audio/confettiPop.m4a");
 const confettiTrumpet = new Audio("audio/confettiTrumpet.mp3");
+const introClick = new Audio("audio/introClick.wav");
+const tutorial = new Audio("audio/tutorial.wav");
+const disclaimer = new Audio("audio/disclaimer.wav");
 
 //adjust volume
 shellDink.volume = 0.2;
@@ -51,6 +57,8 @@ function playSound(sound) {
 //loading screen art
 const blueArtTank = new ArtTank(800, 600, 3, 0, 210, "#224ACF", "#0101BA");
 const redArtTank = new ArtTank(100, 80, 3, 0, 30, "#ED4245", "#9E2C2E");
+const greenArtTank = new ArtTank(100, 600, 3, 0, 330, "#3AB02E", "#37A62B");
+const yellowArtTank = new ArtTank(800, 80, 3, 0, 140, "#DEC951", "#C4B248");
 
 //lobby portals
 var playPortal; 

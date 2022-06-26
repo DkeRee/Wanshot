@@ -1,6 +1,7 @@
 //intermission screen info and constants
 //GOAL: make screen fade in, hold, and then fade out and start new round or restart
 
+const INTERMISSION_INTRO = -1;
 const INTERMISSION_RETRY = 0;
 const INTERMISSION_WON = 1;
 const INTERMISSION_RESTART = 2;
@@ -67,6 +68,9 @@ function intermissionUpdate() {
 						break;
 					case INTERMISSION_QUIT:
 						CURR_LEVEL = 0;
+						break;
+					case INTERMISSION_INTRO:
+						intro = false;
 						break;
 				}
 

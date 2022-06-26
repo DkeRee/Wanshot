@@ -66,6 +66,8 @@ class ArtTank {
 function loadingArt(opacity) {
 	blueArtTank.render(opacity);
 	redArtTank.render(opacity);
+	greenArtTank.render(opacity);
+	yellowArtTank.render(opacity);
 
 	ctx.shadowBlur = 10;
 	ctx.shadowColor = hexToRgbA("#ED4245", opacity);
