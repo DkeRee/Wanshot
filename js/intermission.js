@@ -51,7 +51,7 @@ function intermissionUpdate() {
 			maskWait += deltaTime;
 
 			//if timer reaches, reset timer and start fade out process, once reached start new round or restart and stop intermission
-			if (maskWait > 2) {
+			if (maskWait > 1) {
 				maskHold = false;
 				maskWait = 0;
 				maskFadeIn = false;
