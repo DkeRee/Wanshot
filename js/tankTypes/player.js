@@ -140,7 +140,7 @@ class Player {
 		}
 
 		//update pee hee hee (i am mickhel jeckson;!!(real))
-		if (this.pee) {
+		if (this.pee && !this.dead) {
 			this.pissStream.push(new Piss(this.tank.centerX, this.tank.centerY, this.tank.angle));
 		}
 
