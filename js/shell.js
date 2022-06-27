@@ -311,6 +311,8 @@ class Shell {
 						break;
 				}
 
+				this.peace = false;
+
 				//once a shell hits a tile on one hit, wait till next tick before checking collision again or double collisions could happen
 				break;
 			}
