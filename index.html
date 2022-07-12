@@ -36,6 +36,10 @@
 		<script src = "js/sat.js"></script>
 	</head>
 	<body>
+		<div id = "game-container">
+			<canvas id = "game"></canvas>
+		</div>
+
 		<div class = "widget" id = "website-widget">
 			<img class = "img" src = "https://dkeree.repl.co/pfp.png">
 			<script>
@@ -54,16 +58,31 @@
 	    		});
 	    	</script>
 	    </div>
+	    <div class = "widget" id = "gear-widget">
+	    	<img class = "img" src = "icons/gear.png">
+	    </div>
 
 		<button id = "credits">Credits</button>
-		<div id = "game-container">
-			<canvas id = "game"></canvas>
-		</div>
-	    <div id = "iframe-div">
+
+	    <div id = "info-div">
 			<div id = "close-div">
 		    	<button id = "close">X</button>
 			</div>
-	      <iframe id = "iframe" src = "popup/credit.html"></iframe>
+			<div id = "settings">
+				<h1 id = "title">Settings</h1>
+				<h1 class = "settings-text">
+					Volume: 
+					<input type = "range" min = "0" max = "1" value = "1" class = "range-bar" step = "0.01" id = "volume-bar">
+				</h1>
+				<h1 class = "settings-text">
+					Headlights: 
+					<label class = "switch">
+						<input id = "headlight-toggle" class = "toggle" type = "checkbox">
+						<span class = "slider"></span>
+					</label>
+				</h1>
+			</div>
+	      	<iframe id = "iframe" src = "popup/credit.html"></iframe>
 	    </div>
 
 		<!--JS SCRIPTS-->
@@ -97,12 +116,17 @@
 		<script src = "js/tankTypes/green.js"></script>
 		<script src = "js/level.js"></script>
 		<script src = "js/levelCloner.js"></script>
+		<script src = "js/settings.js"></script>
 		<script src = "js/runner.js"></script>
 
 	    <script>
 	    	const creditButton = document.getElementById("credits");
+	    	const settingButton = document.getElementById("gear-widget");
 	    	const closeButton = document.getElementById("close");
-	    	const iframeDiv = document.getElementById("iframe-div");
+	    	const infoDiv = document.getElementById("info-div");
+
+	    	const iframe = document.getElementById("iframe");
+	    	const settings = document.getElementById("settings");
 
 	    	creditButton.addEventListener("click", e => {
 	    		//create ripple for decor
@@ -130,14 +154,26 @@
 				playSound(uiClick);
 
 				//do something bruh
-				iframeDiv.style.display = "block";
+				iframe.style.display = "block";
+				settings.style.display = "none";
+				infoDiv.style.display = "block";
+	    	});
+
+	    	settingButton.addEventListener("click", () => {
+	    		playSound(uiClick);
+
+	    		iframe.style.display = "none";
+	    		settings.style.display = "block";
+	    		infoDiv.style.display = "block";
 	    	});
 
 	    	closeButton.addEventListener("click", () => {
 	    		playSound(uiClick);
 
 	    		//aksjdghx
-	    		iframeDiv.style.display = "none";
+	    		iframe.style.display = "none";
+	    		settings.style.display = "none";
+	    		infoDiv.style.display = "none";
 	    	});
 	    </script>
 	</body>

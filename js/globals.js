@@ -57,11 +57,64 @@ function playSound(sound) {
 	sound.play();
 }
 
+function toggleVolume(newVolume) {
+	normalShoot.volume = newVolume;
+	missleShoot.volume = newVolume;
+	ultraMissleShoot.volume = newVolume;
+	shellDink.volume = newVolume * 0.2; //oddity
+	shellOut.volume = newVolume * 0.4; //oddity
+	tankDeath.volume = newVolume;
+	playerDeath.volume = newVolume;
+	enemyDeath.volume = newVolume;
+	mineExplosion.volume = newVolume;
+	blockBreaking.volume = newVolume;
+	minePlace.volume = newVolume;
+	bombTickOne.volume = newVolume;
+	bombTickTwo.volume = newVolume;
+	openPause.volume = newVolume;
+	closePause.volume = newVolume;
+	hoverButton.volume = newVolume;
+	tankMovement.volume = newVolume * 0.1; //oddity
+	portalEnter.volume = newVolume * 0.6; //oddity
+	startWhistle.volume = newVolume;
+	confettiPop.volume = newVolume;
+	introClick.volume = newVolume;
+	tutorial.volume = newVolume;
+	additionalInformation.volume = newVolume;
+	superpower.volume = newVolume;
+	uiClick.volume = newVolume;
+}
+
+//custom settings
+var SETTING_HEADLIGHTS = localStorage.getItem("headlights");
+var SETTING_VOLUME = localStorage.getItem("volume");
+
+//init custom settings
+
+//init headlights
+if (SETTING_HEADLIGHTS == null) {
+	localStorage.setItem("headlights", "false");
+	SETTING_HEADLIGHTS = false;
+} else {
+	//convert string to boolean
+	SETTING_HEADLIGHTS = (SETTING_HEADLIGHTS === "true");
+}
+
+//init volume
+if (SETTING_VOLUME == null) {
+	localStorage.setItem("volume", "1");
+	SETTING_VOLUME = 1;
+} else {
+	//convert string to number
+	SETTING_VOLUME = Number(SETTING_VOLUME);
+}
+toggleVolume(SETTING_VOLUME);
+
 //loading screen art
 const blueArtTank = new ArtTank(800, 600, 3, 0, 210, "#224ACF", "#0101BA");
 const redArtTank = new ArtTank(100, 80, 3, 0, 30, "#ED4245", "#9E2C2E");
 const greenArtTank = new ArtTank(100, 600, 3, 0, 330, "#3AB02E", "#37A62B");
-const yellowArtTank = new ArtTank(800, 80, 3, 0, 140, "#DEC951", "#C4B248");
+const yellowArtTank = new ArtTank(800, 80, 3, 0, 150, "#DEC951", "#C4B248");
 
 //lobby portals
 var playPortal; 

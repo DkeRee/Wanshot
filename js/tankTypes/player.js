@@ -206,6 +206,26 @@ class Player {
 			this.pissStream[i].render();
 		}
 
+		//render headlights if player isn't dead && player wants headlights
+		if (!this.dead && SETTING_HEADLIGHTS) {
+			ctx.shadowBlur = 100;
+
+			ctx.shadowColor = "#FEE75C";
+			ctx.fillStyle = hexToRgbA("#FEE75C", 0.13);
+
+			const heart = new xy(this.tank.centerX, this.tank.centerY);
+			const offset = 30 * Math.PI / 180;
+
+			ctx.beginPath();
+			ctx.moveTo(heart.x, heart.y);
+			ctx.arc(heart.x, heart.y, 70, this.tank.angle - offset, this.tank.angle + offset);
+			ctx.lineTo(heart.x, heart.y);
+			ctx.closePath();
+			ctx.fill();
+
+			ctx.shadowBlur = 0;
+		}
+
 		this.tank.render(this.dead);
 	}
 
