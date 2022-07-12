@@ -112,9 +112,9 @@ class Box {
 		}
 	}
 
-	render() {
+	render(ctx) {
 		if (this.content) {
-			this.content.render();
+			this.content.render(ctx);
 		}
 
 		if (this.marked && this.hovered && !this.clicked) {

@@ -14,7 +14,7 @@ class Splotch {
 		}
 	}
 
-	render(opacity) {
+	render(opacity, ctx) {
 		ctx.shadowBlur = 10;
 		ctx.shadowColor = hexToRgbA(this.color, opacity);
 		ctx.fillStyle = hexToRgbA(this.color, opacity);
@@ -46,7 +46,7 @@ class Block {
 		}
 	}
 
-	render() {
+	render(ctx) {
 		//fill in block
 		ctx.shadowBlur = 1;
 		ctx.shadowColor = SHADOW;
@@ -56,7 +56,7 @@ class Block {
 
 		//render splotches
 		for (var i = 0; i < this.splotches.length; i++) {
-			this.splotches[i].render(this.opacity);
+			this.splotches[i].render(this.opacity, ctx);
 		}
 	}
 }
@@ -79,7 +79,7 @@ class Pit {
 		this.color = "#3D3D3D";
 	}
 
-	render() {
+	render(ctx) {
 		//render pit
 		ctx.shadowBlur = 5;
 		ctx.shadowColor = hexToRgbA(this.color, this.opacity);

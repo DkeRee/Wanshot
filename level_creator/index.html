@@ -2,6 +2,10 @@
 <html>
 	<head>
 		<title>Wankle Level Creator</title>
+		<link rel = "icon" href = "../icons/favicon.png">
+		<meta property = "og:title" content = "Wankle Level Creator">
+    	<meta property = "og:image" content = "https://wankle.dkeree.repl.co/icons/favicon.png">
+    	<meta property = "og:description" content = "Create the most devious stages to punish yourself and your friends! Let none be spared from the wrath of Wankle...">
 		<link href = "style.css" rel = "stylesheet" type = "text/css">
 		<link rel="preconnect" href="https://fonts.gstatic.com">
 		<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300&display=swap" rel="stylesheet">
@@ -29,7 +33,53 @@
 	</head>
 	<body>
 		<div id = "container">
+			<div class = "section">
+				<h1 class = "section-header">Tiles</h1>
+				<div class = "section-wrapper">
+					<div class = "section-widget">
+						<canvas id = "solid-block" class = "widget-canvas"></canvas>
+					</div>
+					<div class = "section-widget">
+						<canvas id = "breakable-block" class = "widget-canvas"></canvas>
+					</div>
+					<div class = "section-widget">
+						<canvas id = "pit" class = "widget-canvas"></canvas>
+					</div>
+				</div>
+			</div>
 			<canvas id = "canvas"></canvas>
+			<div class = "section">
+				<h1 class = "section-header">Tanks</h1>
+				<div class = "section-wrapper">
+					<div class = "section-widget">
+						<canvas id = "Player" class = "widget-canvas"></canvas>
+					</div>
+					<div class = "section-widget">
+						<canvas id = "BrownTank" class = "widget-canvas"></canvas>
+					</div>
+					<div class = "section-widget">
+						<canvas id = "GreyTank" class = "widget-canvas"></canvas>
+					</div>
+					<div class = "section-widget">
+						<canvas id = "TealTank" class = "widget-canvas"></canvas>
+					</div>
+					<div class = "section-widget">
+						<canvas id = "YellowTank" class = "widget-canvas"></canvas>
+					</div>
+					<div class = "section-widget">
+						<canvas id = "PinkTank" class = "widget-canvas"></canvas>
+					</div>
+					<div class = "section-widget">
+						<canvas id = "PurpleTank" class = "widget-canvas"></canvas>
+					</div>
+					<div class = "section-widget">
+						<canvas id = "GreenTank" class = "widget-canvas"></canvas>
+					</div>
+					<div class = "section-widget">
+						<canvas id = "WhiteTank" class = "widget-canvas"></canvas>
+					</div>
+				</div>
+			</div>
 		</div>
 		<script>
 			//GLOBAL CANVAS CONSTANTS//
@@ -40,6 +90,7 @@
 		<script src = "js/assets.js"></script>
 		<script src = "js/box.js"></script>
 		<script src = "js/floatingAssets.js"></script>
-		<script src = "js/level_creator.js" ></script>
+		<script src = "js/canvasUI.js"></script>
+		<script src = "js/level_creator.js"></script>
 	</body>
 </html>

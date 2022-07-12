@@ -67,7 +67,7 @@
 
 		//render grid items
 		for (var i = 0; i < grid.length; i++) {
-			grid[i].render();
+			grid[i].render(ctx);
 		}
 
 		renderFloatingAssets();
@@ -200,65 +200,15 @@
 	});
 
 	window.addEventListener("keydown", e => {
-		switch (e.keyCode) {
-			case 49:
-				currAsset = REGULAR_BLOCK;
-				switchEditing(true);
-				break;
-			case 50:
-				currAsset = LOOSE_BLOCK;
-				switchEditing(true);
-				break;
-			case 51:
-				currAsset = PIT;
-				switchEditing(true);
-				break;
-			case 52:
-				currAsset = PLAYER;
-				switchEditing(false);
-				break;
-			case 53:
-				currAsset = BROWN_TANK;
-				switchEditing(false);
-				break;
-			case 54:
-				currAsset = GREY_TANK;
-				switchEditing(false);
-				break;
-			case 55:
-				currAsset = YELLOW_TANK;
-				switchEditing(false);
-				break;
-			case 56:
-				currAsset = PINK_TANK;
-				switchEditing(false);
-				break;
-			case 57:
-				currAsset = TEAL_TANK;
-				switchEditing(false);
-				break;
-			case 48:
-				currAsset = PURPLE_TANK;
-				switchEditing(false);
-				break;
-			case 80:
-				currAsset = WHITE_TANK;
-				switchEditing(false);
-				break;
-			case 76:
-				currAsset = GREEN_TANK;
-				switchEditing(false);
-				break;
-			case 82:
-				//rotate the floating cache
-				if (!editingBlocks) {
-					if (floating_cache.content.tank.angle - (90 * Math.PI / 180) >= 2 * Math.PI) {
-						floating_cache.content.tank.angle = 0;
-					} else {
-						floating_cache.content.tank.angle -= 90 * Math.PI / 180;
-					}
+		if (e.keyCode == 82) {
+			//rotate the floating cache
+			if (!editingBlocks) {
+				if (floating_cache.content.tank.angle - (90 * Math.PI / 180) >= 2 * Math.PI) {
+					floating_cache.content.tank.angle = 0;
+				} else {
+					floating_cache.content.tank.angle -= 90 * Math.PI / 180;
 				}
-				break;
+			}		
 		}
 	});
 })();

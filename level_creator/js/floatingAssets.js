@@ -162,7 +162,7 @@ class Tank {
 		this.centerY = this.y + this.height / 2;
 	}
 
-	render() {
+	render(ctx) {
 		ctx.shadowBlur = 3;
 		ctx.shadowColor = this.color;
 
@@ -226,7 +226,7 @@ class Tank {
 		ctx.shadowBlur = 0;
 	}
 
-	renderShadow() {
+	renderShadow(ctx) {
 		ctx.save();
 
 		ctx.translate(this.centerX - 5, this.centerY + 5);
@@ -416,20 +416,20 @@ function updateFloatingAssets() {
 
 function renderFloatingAssets() {
 	if (player) {
-		player.tank.renderShadow();
-		player.tank.render();
+		player.tank.renderShadow(ctx);
+		player.tank.render(ctx);
 	}
 
 	for (var i = 0; i < exportedEnemies.length; i++) {
-		exportedEnemies[i].tank.renderShadow();
-		exportedEnemies[i].tank.render();
+		exportedEnemies[i].tank.renderShadow(ctx);
+		exportedEnemies[i].tank.render(ctx);
 	}
 
 	//only render floating cache if it exists and it isn't paused. this also means that you are not editing blocks.
 	if (floating_cache.content) {
 		if (!floating_cache.pause) {
-			floating_cache.content.tank.renderShadow();
-			floating_cache.content.tank.render();
+			floating_cache.content.tank.renderShadow(ctx);
+			floating_cache.content.tank.render(ctx);
 		}
 	}
 }
