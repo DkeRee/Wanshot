@@ -139,6 +139,26 @@ class Player {
 			}
 		}
 
+		//update RGB if toggled
+		if (SETTING_RGB) {
+			const rate = deltaTime * 900;
+
+			if (rgb.r > 0 && rgb.b == 0) {
+				rgb.r -= rate;
+				rgb.g += rate;
+			}
+
+			if (rgb.g > 0 && rgb.r == 0) {
+				rgb.g -= rate;
+				rgb.b += rate;
+			}
+
+			if (rgb.b > 0 && rgb.g == 0) {
+				rgb.r += rate;
+				rgb.b -= rate;
+			}
+		}
+
 		//update pee hee hee (i am mickhel jeckson;!!(real))
 		if (this.pee && !this.dead) {
 			this.pissStream.push(new Piss(this.tank.centerX, this.tank.centerY, this.tank.angle));
@@ -170,7 +190,11 @@ class Player {
 		INTERMISSION = true;
 
 		//add grave
-		STAGE_CACHE.graves.push(new Grave(this.tank.centerX - GRAVE_WIDTH / 2, this.tank.centerY - GRAVE_HEIGHT / 2, this.tank.color));
+		if (SETTING_RGB) {
+			STAGE_CACHE.graves.push(new Grave(this.tank.centerX - GRAVE_WIDTH / 2, this.tank.centerY - GRAVE_HEIGHT / 2, `rgb(${rgb.r}, ${rgb.g}, ${rgb.b})`));
+		} else {
+			STAGE_CACHE.graves.push(new Grave(this.tank.centerX - GRAVE_WIDTH / 2, this.tank.centerY - GRAVE_HEIGHT / 2, this.tank.color));
+		}
 	}
 
 	shoot() {
@@ -226,7 +250,11 @@ class Player {
 			ctx.shadowBlur = 0;
 		}
 
-		this.tank.render(this.dead);
+		if (SETTING_RGB) {
+			this.tank.renderRGB(this.dead);
+		} else {
+			this.tank.render(this.dead);			
+		}
 	}
 
 	renderShadow() {

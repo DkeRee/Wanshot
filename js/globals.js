@@ -78,6 +78,7 @@ function toggleVolume(newVolume) {
 	portalEnter.volume = newVolume * 0.6; //oddity
 	startWhistle.volume = newVolume;
 	confettiPop.volume = newVolume;
+	confettiTrumpet.volume = newVolume;
 	introClick.volume = newVolume;
 	tutorial.volume = newVolume;
 	additionalInformation.volume = newVolume;
@@ -88,6 +89,14 @@ function toggleVolume(newVolume) {
 //custom settings
 var SETTING_HEADLIGHTS = localStorage.getItem("headlights");
 var SETTING_VOLUME = localStorage.getItem("volume");
+var SETTING_RGB = localStorage.getItem("rgb");
+
+//rgb
+const rgb = {
+	r: 255,
+	g: 0,
+	b: 0
+};
 
 //init custom settings
 
@@ -109,6 +118,15 @@ if (SETTING_VOLUME == null) {
 	SETTING_VOLUME = Number(SETTING_VOLUME);
 }
 toggleVolume(SETTING_VOLUME);
+
+//init rgb
+if (SETTING_RGB == null) {
+	localStorage.setItem("rgb", "false");
+	SETTING_RGB = false;
+} else {
+	//convert string to boolean
+	SETTING_RGB = (SETTING_RGB === "true");
+}
 
 //loading screen art
 const blueArtTank = new ArtTank(800, 600, 3, 0, 210, "#224ACF", "#0101BA");

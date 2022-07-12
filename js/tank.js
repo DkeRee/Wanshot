@@ -1,5 +1,5 @@
 class TankParticle {
-	constructor(x, y, tankColor) {
+	constructor(x, y, tankColor, isRGB) {
 		//particle body (IT IS A SQUARE)
 		this.side = TANK_PARTICLE_SIDE;
 
@@ -13,8 +13,14 @@ class TankParticle {
 		this.speed = 400;
 		this.explode = false;
 
-		//RED, ORANGE, GREY, TANK COLOR
-		this.possibleColors = ["#ED4245", "#FFA500", "#808080", tankColor];
+		if (!isRGB) {
+			//RED, ORANGE, GREY, TANK COLOR
+			this.possibleColors = ["#ED4245", "#FFA500", "#808080", tankColor];
+		} else {
+			//RED, ORANGE, YELLOW, GREEN, BLUE, PURPLE
+			this.possibleColors = ["#ED4245", "#FFA500", "#DEC951", "#3AB02E", "#224ACF", "#934A9E"];
+		}
+		
 		this.color = this.possibleColors[Math.floor(Math.random() * this.possibleColors.length)];
 	}
 
@@ -338,7 +344,13 @@ class Tank {
 			if (this.explosionParticleDelay > 0) {
 				//push new ring of 50 particles
 				for (var i = 0; i < 50; i++) {
-					this.explosionParticles.push(new TankParticle(this.centerX - TANK_PARTICLE_SIDE / 2, this.centerY - TANK_PARTICLE_SIDE / 2, this.color));	
+					if (this.tankID == PLAYER_ID && SETTING_RGB) {
+						//rgb
+						this.explosionParticles.push(new TankParticle(this.centerX - TANK_PARTICLE_SIDE / 2, this.centerY - TANK_PARTICLE_SIDE / 2, this.color, true));	
+					} else {
+						//non rgb
+						this.explosionParticles.push(new TankParticle(this.centerX - TANK_PARTICLE_SIDE / 2, this.centerY - TANK_PARTICLE_SIDE / 2, this.color, false));	
+					}
 				}
 				this.explosionRingCount++;
 				this.explosionParticleDelay = 0;
@@ -363,6 +375,67 @@ class Tank {
 			}
 
 			particle.update();
+		}
+	}
+
+	renderRGB(isDead) {
+		//RENDER RGB WOOOO
+		if (!isDead) {
+			const rgbColor = `rgb(${rgb.r}, ${rgb.g}, ${rgb.b})`;
+
+			ctx.shadowBlur = 3;
+			ctx.lineWidth = 2;
+			ctx.shadowColor = rgbColor;
+
+			//draw tank
+			ctx.save();
+
+			ctx.translate(this.centerX, this.centerY);
+			ctx.rotate(this.angle);
+
+			//DRAW TANK BASE//		
+			ctx.strokeStyle = rgbColor;
+			ctx.strokeRect(this.width / -2, this.height / -2, this.width, this.height);
+
+			//DRAW TANK SIDES//
+			
+			//WHEELS
+			ctx.strokeStyle = rgbColor;
+
+			//left wheel
+			ctx.strokeRect(this.width / -2, this.height / -2, this.width, this.height / 5);
+
+			//right wheel
+			ctx.strokeRect(this.width / -2, this.height / 3, this.width, this.height / 5);
+
+			ctx.restore();
+
+			ctx.save();
+
+			//DRAW TURRET//
+			ctx.translate(this.centerX, this.centerY);
+			ctx.rotate(this.turretAngle);
+
+			ctx.strokeStyle = rgbColor;
+
+			ctx.shadowBlur = 20;
+			ctx.shadowColor = rgbColor;
+
+			//turret base
+			ctx.strokeStyle = rgbColor;
+			ctx.strokeRect(this.turretBaseSide / -2, this.turretBaseSide / -2, this.turretBaseSide, this.turretBaseSide);
+
+			//turret nozzle
+			ctx.strokeStyle = rgbColor;
+			ctx.strokeRect(this.turretNozzleWidth / 2, this.turretNozzleHeight / -2, this.turretNozzleWidth, this.turretNozzleHeight);
+
+			ctx.restore();
+			ctx.shadowBlur = 0;
+		}
+
+		//RENDER TANK EXPLOSION PARTICLES
+		for (var i = 0; i < this.explosionParticles.length; i++) {
+			this.explosionParticles[i].render();
 		}
 	}
 

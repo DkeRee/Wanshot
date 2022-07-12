@@ -14,7 +14,6 @@ html, body {
 	font-size: 40px;
 	font-weight: bold;
 	color: white;
-	text-decoration: underline;
 	font-family: 'Poppins', sans-serif;
 }
 
@@ -86,6 +85,11 @@ html, body {
 	background-color: white;
 	-webkit-transition: .4s;
 	transition: .4s;
+}
+
+.locked-toggle {
+	opacity: 0.5;
+	cursor: auto;
 }
 
 .toggle:checked + .slider {

@@ -17,6 +17,13 @@ function checkGameOver() {
 		STAGE_CACHE.activateConfetti = true;
 		STAGE_CACHE.gameComplete = true;
 
+		//ongg you won the game (rgb time)
+		const rgbToggle = document.getElementById("rgb-toggle");
+		rgbToggle.onclick = "";
+		rgbToggle.classList.add("toggle");
+		document.getElementsByClassName("slider")[1].classList.remove("locked-toggle");
+		localStorage.setItem("beaten-game", "true");
+
 		playSound(confettiPop);
 		playSound(confettiTrumpet);
 		return false;
