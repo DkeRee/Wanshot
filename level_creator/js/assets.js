@@ -32,9 +32,10 @@ class Block {
 		this.height = boxSize
 		this.x = x;
 		this.y = y;
+		this.kind = kind;
 		this.opacity = opacity;
 
-		if (kind == REGULAR_BLOCK) {
+		if (this.kind == REGULAR_BLOCK) {
 			this.color = "#967748";
 		} else {
 			this.color = "#B54B44";

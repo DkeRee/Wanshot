@@ -12,13 +12,23 @@ html, body {
 
 #container {
 	position: absolute;
-	display: flex;
-	justify-content: center;
 	width: 100%;
 	top: 50%;
 	left: 50%;
 	-ms-transform: translate(-50%, -50%);
 	transform: translate(-50%, -50%);
+}
+
+.outer-wrapper {
+	display: flex;
+	justify-content: center;
+}
+
+#inner-bottom-wrapper {
+	width: 900px;
+	margin-top: 15px;
+	display: flex;
+	justify-content: center;
 }
 
 #canvas {
@@ -54,12 +64,12 @@ html, body {
 	margin: auto;
 	margin-top: 15px;
 	border-radius: 8px;
+	cursor: pointer;
 	width: 100px;
 	height: 100px;
 	padding: 10px;
 	display: flex;
 	justify-content: center;
-	cursor: pointer;
 	-webkit-transition: background-color 0.25s ease-out;
 	-moz-transition: background-color 0.25s ease-out;
 	-o-transition: background-color 0.25s ease-out;
@@ -69,6 +79,47 @@ html, body {
 
 .section-widget:hover {
 	background-color: rgba(216, 176, 119, 0.5);
+}
+
+.img {
+	border-radius: 50%;
+	user-select: none;
+	width: 70px;
+	height: 70px;
+}
+
+#upload {
+	display: none;
+}
+
+.bottom-widget {
+	margin: auto;
+	color: white;
+	padding: 10px;
+	user-select: none;
+	font-family: "UniSansHeavy";
+	font-size: 30px;
+	border-radius: 8px;
+	display: flex;
+	justify-content: center;
+	background-color: #C2995D;
+	border: 2px solid #C2995D;
+	box-shadow: 0px 0px 10px #C2995D;
+    -webkit-transition: all 0.5s ease-in-out;
+    -moz-transition: all 0.5s ease-in-out;
+    -ms-transition: all 0.5s ease-in-out;
+    -o-transition: all 0.5s ease-in-out;
+    transition: all 0.5s ease-in-out;
+}
+
+.locked-bottom-widget {
+	opacity: 0.5;
+}
+
+.clickable-bottom-widget:hover {
+	cursor: pointer;
+	background-color: #BA9359;
+	-webkit-tap-highlight-color: #BA9359;
 }
 
 .widget-canvas {

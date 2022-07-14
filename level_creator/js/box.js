@@ -61,16 +61,13 @@ class Box {
 
 								switch (this.blockType) {
 									case REGULAR_BLOCK:
-										exportString = `new Block(${this.x}, ${this.y}, ${REGULAR_BLOCK})`;
-										exportedBlocks[this.id] = exportString;
+										exportedBlocks[this.id] = this;
 										break;
 									case LOOSE_BLOCK:
-										exportString = `new Block(${this.x}, ${this.y}, ${LOOSE_BLOCK})`;
-										exportedBlocks[this.id] = exportString;
+										exportedBlocks[this.id] = this;
 										break;
 									case PIT:
-										exportString = `new Pit(${this.x}, ${this.y})`;
-										exportedPits[this.id] = exportString;
+										exportedPits[this.id] = this;
 										break;
 								}
 							} else {

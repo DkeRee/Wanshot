@@ -1,4 +1,123 @@
 (function() {
+	const fileReader = new FileReader();
+
+	fileReader.onload = function() {
+		const data = JSON.parse(fileReader.result);
+
+		//reset
+		switchEditing(true);
+
+		//init grid once again
+		var x = 0;
+		var y = 0;
+
+		grid = [];
+
+		for (var i = 0; i < AREA; i++) {
+			grid.push(new Box(x, y, boxSize, i));
+
+			if (x + boxSize == CANVAS_WIDTH) {
+				x = 0;
+				y += boxSize;
+			} else {
+				x += boxSize;
+			}
+		}
+
+		player = null;
+		exportedEnemies = [];
+		exportedBlocks = [];
+		exportPits = [];
+		holding = false;
+
+		//player
+		mouse = {
+			x: data.player.tank.centerX,
+			y: data.player.tank.centerY
+		};
+		player = new Player(1, data.player.angle);
+		
+		//enemies
+		console.log(data)
+		for (var i = 0; i < data.enemies.length; i++) {
+			mouse = {
+				x: data.enemies[i].tank.centerX,
+				y: data.enemies[i].tank.centerY
+			};
+
+			switch (data.enemies[i].content) {
+				case BROWN_TANK:
+					exportedEnemies.push(new BrownTank(1, data.enemies[i].tank.angle));
+					break;
+				case GREY_TANK:
+					exportedEnemies.push(new GreyTank(1, data.enemies[i].tank.angle))
+					break;
+				case YELLOW_TANK:
+					exportedEnemies.push(new YellowTank(1, data.enemies[i].tank.angle))
+					break;
+				case PINK_TANK:
+					exportedEnemies.push(new PinkTank(1, data.enemies[i].tank.angle))
+					break;
+				case TEAL_TANK:
+					exportedEnemies.push(new TealTank(1, data.enemies[i].tank.angle))
+					break;
+				case PURPLE_TANK:
+					exportedEnemies.push(new PurpleTank(1, data.enemies[i].tank.angle))
+					break;
+				case WHITE_TANK:
+					exportedEnemies.push(new WhiteTank(1, data.enemies[i].tank.angle))
+					break;
+				case GREEN_TANK:
+					exportedEnemies.push(new GreenTank(1, data.enemies[i].tank.angle))
+					break;					
+			}
+		}
+		
+		//no need to worry about null in the static assets!
+
+		//blocks
+		
+		for (var i = 0; i < data.blocks.length; i++) {
+			//update export
+
+			if (data.blocks[i].content.kind == REGULAR_BLOCK) {
+				const regularBlock = new Block(data.blocks[i].x, data.blocks[i].y, 1, REGULAR_BLOCK);
+				
+				//update display
+				grid[data.blocks[i].id].marked = true;
+				grid[data.blocks[i].id].blockType = REGULAR_BLOCK;
+				grid[data.blocks[i].id].content = regularBlock;
+
+				exportedBlocks[data.blocks[i].id] = grid[data.blocks[i].id];
+			} else {
+				const looseBlock = new Block(data.blocks[i].x, data.blocks[i].y, 1, LOOSE_BLOCK);
+				
+				//update display
+				grid[data.blocks[i].id].marked = true;
+				grid[data.blocks[i].id].blockType = LOOSE_BLOCK;
+				grid[data.blocks[i].id].content = looseBlock;
+
+				exportedBlocks[data.blocks[i].id] = grid[data.blocks[i].id];
+			}
+		}
+
+		//pits
+		for (var i = 0; i < data.pits.length; i++) {
+			//update export
+			const pit = new Pit(data.pits[i].x, data.pits[i].y, 1);
+
+			//update display
+			grid[data.pits[i].id].marked = true;
+			grid[data.pits[i].id].blockType = PIT;
+			grid[data.pits[i].id].content = pit;
+
+			exportedPits[data.pits[i].id] = grid[data.pits[i].id];
+		}
+	};
+
+	const exportButton = document.getElementById("save");
+	const uploadButton = document.getElementById("upload");
+
 	const BACKGROUND_COLOR_STRONG = "#C2995D";
 	const BACKGROUND_COLOR_WEAK = "#FFDFA8";
 
@@ -23,7 +142,7 @@
 			box.marked = true;
 			box.blockType = REGULAR_BLOCK;
 			box.content = new Block(box.x, box.y, 1, REGULAR_BLOCK);
-			exportedBlocks[box.id] = `new Block(${box.x}, ${box.y}, ${REGULAR_BLOCK})`;
+			exportedBlocks[box.id] = box;
 		}
 
 		if (x + boxSize == CANVAS_WIDTH) {
@@ -47,6 +166,15 @@
 		//update grid items
 		for (var i = 0; i < grid.length; i++) {
 			grid[i].update();
+		}
+
+		//level not complete, grey out export button
+		if (!player || exportedEnemies.length == 0) {
+			exportButton.classList.remove("clickable-bottom-widget");
+			exportButton.classList.add("locked-bottom-widget");
+		} else {
+			exportButton.classList.add("clickable-bottom-widget");
+			exportButton.classList.remove("locked-bottom-widget");		
 		}
 
 		updateFloatingAssets();
@@ -81,13 +209,14 @@
 		}
 	}
 
+	function uploadLevel() {
+		//filter out bad requests
+		if (uploadButton.files.length == 1) {
+			fileReader.readAsText(uploadButton.files[0]);
+		}
+	}
+
 	function exportAssets() {
-		var levelExport = "1: {";
-
-		//set up exports
-		//temp hardcode
-		var playerExport = "player: ";
-
 		if (!player) {
 			console.log("You MUST have a player in the game");
 			return;
@@ -98,83 +227,25 @@
 			return;
 		}
 
-		playerExport += `new Player(${player.tank.x}, ${player.tank.y}, ${player.tank.angle}, ${player.tank.angle})`;
+		const levelExport = {
+			player: player,
+			enemies: exportedEnemies,
+			blocks: [],
+			pits: []
+		};
 
-		playerExport += ",";
-
-		//temp hardcode
-		var enemyExport = "enemies: [";
-
-		for (var i = 0; i < exportedEnemies.length; i++) {
-			switch (exportedEnemies[i].content) {
-				case BROWN_TANK:
-					enemyExport += `new BrownTank(${exportedEnemies[i].tank.x}, ${exportedEnemies[i].tank.y}, ${exportedEnemies[i].tank.angle}, ${exportedEnemies[i].tank.angle})`;
-					break;
-				case GREY_TANK:
-					enemyExport += `new GreyTank(${exportedEnemies[i].tank.x}, ${exportedEnemies[i].tank.y}, ${exportedEnemies[i].tank.angle}, ${exportedEnemies[i].tank.angle})`;
-					break;
-				case YELLOW_TANK:
-					enemyExport += `new YellowTank(${exportedEnemies[i].tank.x}, ${exportedEnemies[i].tank.y}, ${exportedEnemies[i].tank.angle}, ${exportedEnemies[i].tank.angle})`;
-					break;
-				case PINK_TANK:
-					enemyExport += `new PinkTank(${exportedEnemies[i].tank.x}, ${exportedEnemies[i].tank.y}, ${exportedEnemies[i].tank.angle}, ${exportedEnemies[i].tank.angle})`;
-					break;
-				case TEAL_TANK:
-					enemyExport += `new TealTank(${exportedEnemies[i].tank.x}, ${exportedEnemies[i].tank.y}, ${exportedEnemies[i].tank.angle}, ${exportedEnemies[i].tank.angle})`;
-					break;
-				case PURPLE_TANK:
-					enemyExport += `new PurpleTank(${exportedEnemies[i].tank.x}, ${exportedEnemies[i].tank.y}, ${exportedEnemies[i].tank.angle}, ${exportedEnemies[i].tank.angle})`;
-					break;
-				case WHITE_TANK:
-					enemyExport += `new WhiteTank(${exportedEnemies[i].tank.x}, ${exportedEnemies[i].tank.y}, ${exportedEnemies[i].tank.angle}, ${exportedEnemies[i].tank.angle})`;
-					break;
-				case GREEN_TANK:
-					enemyExport += `new GreenTank(${exportedEnemies[i].tank.x}, ${exportedEnemies[i].tank.y}, ${exportedEnemies[i].tank.angle}, ${exportedEnemies[i].tank.angle})`;
-					break;					
-			}
-
-			if (i !== exportedEnemies.length - 1) {
-				enemyExport += ", ";
-			}
-		}
-
-		enemyExport += "],";
-
-		var blockExport = "tiles: [";
-
+		//eliminate null values to diminish json file size
 		for (var blockID in exportedBlocks) {
-			blockExport += exportedBlocks[blockID];
-
-			if (Number(blockID) !== exportedBlocks.length - 1) {
-				blockExport += ", ";
-			}
+			levelExport.blocks.push(exportedBlocks[blockID]);
 		}
-
-		blockExport += "],";
-
-		var pitExport = "pits: [";
 
 		for (var pitID in exportedPits) {
-			pitExport += exportedPits[pitID];
-
-			if (Number(pitID) !== exportedPits.length - 1) {
-				pitExport += ", ";
-			}
+			levelExport.pits.push(exportedPits[pitID]);
 		}
 
-		pitExport += "],";
-
-		//append them to level export
-		levelExport += playerExport;
-		levelExport += enemyExport;
-		levelExport += blockExport;
-		levelExport += pitExport;
-
-		levelExport += "},";
-
-		var blob = new Blob([levelExport],
-			{type: "text/plain;charset=utf-8"});
-		saveAs(blob, "level.txt");
+		var blob = new Blob([JSON.stringify(levelExport)],
+			{type: "application/json"});
+		saveAs(blob, "level.json");
 	}
 
 	//KEYBOARD & MOUSE EVENTS//
@@ -192,13 +263,6 @@
 		holding = false;
 	});
 
-	//temporary keybinds before I add UI
-	window.addEventListener("keydown", e => {
-		if (e.keyCode == 13) {
-			exportAssets();
-		}
-	});
-
 	window.addEventListener("keydown", e => {
 		if (e.keyCode == 82) {
 			//rotate the floating cache
@@ -210,5 +274,13 @@
 				}
 			}		
 		}
+	});
+
+	uploadButton.addEventListener("change", () => {
+		uploadLevel();
+	});
+
+	exportButton.addEventListener("click", () => {
+		exportAssets();
 	});
 })();

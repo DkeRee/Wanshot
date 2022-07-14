@@ -1,7 +1,7 @@
 //MAIN GRID
 const CANVAS_WIDTH = 910;
 const CANVAS_HEIGHT = 700;
-const grid = [];
+var grid = [];
 
 //MOUSE COORDS
 var mouse = {
@@ -20,9 +20,9 @@ var floating_cache = {
 
 const boxSize = 35;
 var player = null;
-const exportedEnemies = [];
-const exportedBlocks = [];
-const exportedPits = [];
+var exportedEnemies = [];
+var exportedBlocks = [];
+var exportedPits = [];
 var holding = false;
 
 //ASSETS//
