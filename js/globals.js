@@ -15,6 +15,12 @@ var STAGE_CACHE;
 var CURR_LEVEL;
 var INTERMISSION = false;
 
+const NORMAL_CAMPAIGN = 1;
+const CHALLENGE_CAMPAIGN = 2;
+const CUSTOM_CAMPAIGN = 3;
+
+var CURR_CAMPAIGN = NORMAL_CAMPAIGN;
+
 //intro toggle
 var intro = true;
 
@@ -45,6 +51,7 @@ const tutorial = new Audio("audio/tutorial.wav");
 const additionalInformation = new Audio("audio/additionalInformation.wav");
 const superpower = new Audio("audio/superpower.mp3");
 const uiClick = new Audio("audio/uiClick.mp3");
+const importCustom = new Audio("audio/importCustom.wav");
 
 //adjust volume
 portalEnter.volume = 0.6;
@@ -58,6 +65,7 @@ function playSound(sound) {
 }
 
 function toggleVolume(newVolume) {
+	importCustom.volume = newVolume;
 	normalShoot.volume = newVolume;
 	missleShoot.volume = newVolume;
 	ultraMissleShoot.volume = newVolume;
@@ -136,6 +144,8 @@ const yellowArtTank = new ArtTank(800, 80, 3, 0, 150, "#DEC951", "#C4B248");
 
 //lobby portals
 var playPortal; 
+var challengePortal;
+var customPortal;
 
 //GAME OBJECT CONSTANTS FOR FINE TUNING PLACEMENTS//
 const CONFETTI_PARTICLE_SIDE = 40;
@@ -185,14 +195,14 @@ const TILE_PARTICLE_SIDE = 20;
 const REGULAR_BLOCK = 1;
 const LOOSE_BLOCK = 2;
 
-const BROWN_TANK = 10;
-const GREY_TANK = 20;
-const YELLOW_TANK = 30;
-const PINK_TANK = 40;
-const TEAL_TANK = 50;
-const PURPLE_TANK = 60;
-const WHITE_TANK = 70;
-const GREEN_TANK = 80;
+const BROWN_TANK = 5;
+const GREY_TANK = 6;
+const YELLOW_TANK = 7;
+const PINK_TANK = 8;
+const TEAL_TANK = 9;
+const PURPLE_TANK = 10;
+const WHITE_TANK = 11;
+const GREEN_TANK = 12;
 
 const SHADOW = "rgba(0, 0, 0, 0.3)";
 

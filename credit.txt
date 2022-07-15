@@ -24,3 +24,4 @@ additionalInformation: https://mixkit.co/free-sound-effects/arcade/
 introClick: https://mixkit.co/free-sound-effects/arcade/
 superpower: https://www.soundsnap.com/steam_release_04_wav
 uiClick: slick
+importCustom: https://mixkit.co/free-sound-effects/arcade/

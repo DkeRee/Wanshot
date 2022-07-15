@@ -17,6 +17,37 @@ html, body {
 	font-family: 'Poppins', sans-serif;
 }
 
+#game-container {
+	position: absolute;
+	width: 100%;
+	top: 50%;
+	left: 50%;
+	-ms-transform: translate(-50%, -50%);
+	transform: translate(-50%, -50%);
+}
+
+#upload {
+	display: none;
+}
+
+#game {
+	border: 3px solid #967748;
+	box-shadow: 0px 0px 100px #967748;
+}
+
+#footer-wrapper {
+	position: absolute;
+	width: 900px;
+	margin-top: 13px;
+	display: flex;
+	justify-content: center;
+}
+
+.outer-wrapper {
+	display: flex;
+	justify-content: center;
+}
+
 .settings-text {
 	font-size: 20px;
 	color: white;
@@ -215,6 +246,30 @@ html, body {
 	left: 35px;
 }
 
+.clickable {
+	cursor: pointer;
+}
+
+.locked {
+	opacity: 0.5;
+	cursor: auto;
+}
+
+.footer-widget {
+	margin-left: 50px;
+	margin-right: 50px;
+	border: 2px solid #C2995D;
+	border-radius: 8px;
+	padding: 10px;
+	display: flex;
+	justify-content: center;
+	-webkit-transition: background-color 0.25s ease-out;
+	-moz-transition: background-color 0.25s ease-out;
+	-o-transition: background-color 0.25s ease-out;
+	transition: background-color 0.25s ease-out;
+	-webkit-tap-highlight-color: rgba(255, 255, 255, 0);
+}
+
 .widget {
 	position: absolute;
 	border: 2px solid #C2995D;
@@ -230,24 +285,12 @@ html, body {
 	-webkit-tap-highlight-color: rgba(255, 255, 255, 0);
 }
 
-.widget:hover {
+.footer-widget:hover {
 	background-color: rgba(194, 153, 93, 0.3);
 }
 
-#game-container {
-	position: absolute;
-	display: flex;
-	justify-content: center;
-	width: 100%;
-	top: 50%;
-	left: 50%;
-	-ms-transform: translate(-50%, -50%);
-	transform: translate(-50%, -50%);
-}
-
-#game {
-	border: 3px solid #967748;
-	box-shadow: 0px 0px 100px #967748;
+.widget:hover {
+	background-color: rgba(194, 153, 93, 0.3);
 }
 
 .ripple {

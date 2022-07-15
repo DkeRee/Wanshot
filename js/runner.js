@@ -1,5 +1,7 @@
 (function() {
 	//essential globals and constants//
+	const uploadDisplay = document.getElementById("upload-display");
+	const importButton = document.getElementById("upload");
 
 	//GLOBAL GAME TIMERS//
 	var trackUpdate = 0;
@@ -41,6 +43,20 @@
 
 	function globalUpdate() {
 		//if the game isn't paused
+
+		//forbid changing levels during gameplay
+		if (CURR_LEVEL !== 0) {
+			importButton.setAttribute("disabled", "");
+
+			uploadDisplay.classList.remove("clickable");
+			uploadDisplay.classList.add("locked");
+		} else {
+			importButton.removeAttribute("disabled", "");
+
+			uploadDisplay.classList.add("clickable");
+			uploadDisplay.classList.remove("locked");
+		}
+
 		if (!gamePaused) {
 			if (INTERMISSION) {
 				intermissionUpdate();
@@ -56,12 +72,30 @@
 					if (CURR_LEVEL == 0) {
 						playPortal.update();
 
+						//only make portal sparkle if custom level is loaded in
+						if (CUSTOM_LEVEL[1]) {
+							customPortal.update();
+						}
+
 						if (playPortal.isTouched()) {
-							//teleport
+							//teleport to normal campaign
+							CURR_CAMPAIGN = NORMAL_CAMPAIGN;
 
 							//move player outside of the stage
 							STAGE_CACHE.player.tank.x = 5000;
 							STAGE_CACHE.player.tank.y = 5000;
+						}
+
+						//only make portal accept player if custom level is loaded in
+						if (CUSTOM_LEVEL[1]) {
+							if (customPortal.isTouched()) {
+								//teleport to custom campaign
+								CURR_CAMPAIGN = CUSTOM_CAMPAIGN;
+
+								//move player outside of the stage
+								STAGE_CACHE.player.tank.x = 5000;
+								STAGE_CACHE.player.tank.y = 5000;
+							}							
 						}
 					}
 
@@ -344,6 +378,8 @@
 			//render portals
 			if (CURR_LEVEL == 0) {
 				playPortal.render();
+				challengePortal.render();
+				customPortal.render();
 			}
 
 			for (var i = 0; i < STAGE_CACHE.confetti.length; i++) {
@@ -377,8 +413,15 @@
 		holding = true;
 		
 		//if mouse is not on pause button and game is not paused
-		if (!mouseOnPause() && !gamePaused) {
-			STAGE_CACHE.player.shoot();	
+		if (!gamePaused) {
+			//fine adjustments
+			if (CURR_LEVEL == 0) {
+				STAGE_CACHE.player.shoot();	
+			} else {
+				if (!mouseOnPause()) {
+					STAGE_CACHE.player.shoot();		
+				}
+			}
 		}
 	});
 

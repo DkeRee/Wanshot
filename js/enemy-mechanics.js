@@ -11,7 +11,7 @@ function checkGameOver() {
 	}
 
 	//if this is the final mission and it is completed
-	if (LEVEL[CURR_LEVEL + 1] == undefined) {
+	if (getCampaign(CURR_CAMPAIGN, CURR_LEVEL + 1) == undefined) {
 		//set game to complete and pause menu to win
 		pauseMenu = new PauseMenu(WIN_VARIATION);
 		STAGE_CACHE.activateConfetti = true;
@@ -22,7 +22,10 @@ function checkGameOver() {
 		rgbToggle.onclick = "";
 		rgbToggle.classList.add("toggle");
 		document.getElementsByClassName("slider")[1].classList.remove("locked-toggle");
-		localStorage.setItem("beaten-game", "true");
+
+		if (CURR_CAMPAIGN == NORMAL_CAMPAIGN) {
+			localStorage.setItem("beaten-game", "true");			
+		}
 
 		playSound(confettiPop);
 		playSound(confettiTrumpet);
@@ -409,12 +412,3 @@ function getForeignCollisions(tank) {
 
 	return false;
 }
-
-
-
-
-
-
-
-
-

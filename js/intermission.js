@@ -67,6 +67,7 @@ function intermissionUpdate() {
 						CURR_LEVEL = 1;
 						break;
 					case INTERMISSION_QUIT:
+						CURR_CAMPAIGN = NORMAL_CAMPAIGN;
 						CURR_LEVEL = 0;
 						break;
 					case INTERMISSION_INTRO:

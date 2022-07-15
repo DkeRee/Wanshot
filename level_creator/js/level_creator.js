@@ -35,10 +35,9 @@
 			x: data.player.tank.centerX,
 			y: data.player.tank.centerY
 		};
-		player = new Player(1, data.player.angle);
+		player = new Player(1, data.player.tank.angle);
 		
 		//enemies
-		console.log(data)
 		for (var i = 0; i < data.enemies.length; i++) {
 			mouse = {
 				x: data.enemies[i].tank.centerX,
@@ -76,7 +75,6 @@
 		//no need to worry about null in the static assets!
 
 		//blocks
-		
 		for (var i = 0; i < data.blocks.length; i++) {
 			//update export
 
@@ -218,12 +216,12 @@
 
 	function exportAssets() {
 		if (!player) {
-			console.log("You MUST have a player in the game");
+			//console.log("You MUST have a player in the game");
 			return;
 		}
 
 		if (exportedEnemies.length == 0) {
-			console.log("You MUST have at least one enemy tank in the game");
+			//console.log("You MUST have at least one enemy tank in the game");
 			return;
 		}
 

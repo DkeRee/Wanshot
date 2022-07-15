@@ -37,7 +37,20 @@
 	</head>
 	<body>
 		<div id = "game-container">
-			<canvas id = "game"></canvas>
+			<div class = "outer-wrapper">
+				<canvas id = "game"></canvas>
+			</div>
+			<div class = "outer-wrapper">
+				<div id = "footer-wrapper">
+					<div class = "clickable footer-widget" id = "level-editor">
+						<img class = "img" src = "icons/editor.png">
+					</div>
+					<label class = "locked footer-widget" for = "upload" id = "upload-display">
+						<img class = "img" src = "icons/upload.png">
+					</label>
+					<input type = "file" name = "upload" id = "upload">
+				</div>
+			</div>
 		</div>
 
 		<div class = "widget" id = "website-widget">
@@ -123,15 +136,18 @@
 		<script src = "js/tankTypes/purple.js"></script>
 		<script src = "js/tankTypes/white.js"></script>
 		<script src = "js/tankTypes/green.js"></script>
-		<script src = "js/level.js"></script>
+		<script src = "js/campaign.js"></script>
 		<script src = "js/levelCloner.js"></script>
 		<script src = "js/settings.js"></script>
+		<script src = "js/customLoader.js"></script>
 		<script src = "js/runner.js"></script>
 
 	    <script>
 	    	const creditButton = document.getElementById("credits");
 	    	const settingButton = document.getElementById("gear-widget");
 	    	const closeButton = document.getElementById("close");
+	    	const editorButton = document.getElementById("level-editor");
+	    	const uploadButton = document.getElementById("upload");
 	    	const infoDiv = document.getElementById("info-div");
 
 	    	const iframe = document.getElementById("iframe");
@@ -166,6 +182,23 @@
 				iframe.style.display = "block";
 				settings.style.display = "none";
 				infoDiv.style.display = "block";
+	    	});
+
+	    	editorButton.addEventListener("click", () => {
+	    		playSound(uiClick);
+
+	    		window.open("level_creator/index.html", "_target");
+	    	});
+
+	    	uploadButton.addEventListener("click", () => {
+	    		playSound(uiClick);
+	    	});
+
+	    	uploadButton.addEventListener("change", () => {
+				//filter out bad requests
+				if (uploadButton.files.length == 1 && CURR_LEVEL == 0) {
+					fileReader.readAsText(uploadButton.files[0]);
+				}
 	    	});
 
 	    	settingButton.addEventListener("click", () => {

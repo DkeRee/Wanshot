@@ -1,3 +1,14 @@
+function getCampaign(CURR_CAMPAIGN, CURR_LEVEL) {
+	switch (CURR_CAMPAIGN) {
+		case NORMAL_CAMPAIGN:
+			return NORMAL_LEVEL[CURR_LEVEL];
+		case CHALLENGE_CAMPAIGN:
+			return CHALLENGE_LEVEL[CURR_LEVEL];
+		case CUSTOM_CAMPAIGN:
+			return CUSTOM_LEVEL[CURR_LEVEL];
+	}
+}
+
 function levelCloner(CURR_LEVEL) {
 	const LEVEL_CACHE = {
 		gameComplete: false,
@@ -17,11 +28,15 @@ function levelCloner(CURR_LEVEL) {
 		tileParticles: [],
 		mines: []
 	};
-	const LOCATED_LEVEL = LEVEL[CURR_LEVEL];
+	
+	//find desired level based on campaign selected
+	const LOCATED_LEVEL = getCampaign(CURR_CAMPAIGN, CURR_LEVEL);	
 
 	//set portals on lobby
 	if (CURR_LEVEL == 0) {
-		playPortal = new Portal(CANVAS_WIDTH / 2, 155, "#2A5BFF", "PLAY");
+		playPortal = new Portal(CANVAS_WIDTH / 2, 155, "#2A5BFF", "PLAY", 2.4, 25);
+		challengePortal = new Portal(CANVAS_WIDTH / 4.3, 155, "#A62314", "COMING SOON", 0.9, 45);
+		customPortal = new Portal(CANVAS_WIDTH / 1.3, 155, "#95FC81", "CUSTOM", 1.5, 45);
 	}
 
 	for (asset in LOCATED_LEVEL) {
@@ -41,6 +56,7 @@ function levelCloner(CURR_LEVEL) {
 				for (var i = 0; i < pits.length; i++) {
 					LEVEL_CACHE.pits.push(new Pit(pits[i].x, pits[i].y));
 				}
+				break;
 			case "enemies":
 				const enemies = LOCATED_LEVEL[asset];
 				for (var i = 0; i < enemies.length; i++) {

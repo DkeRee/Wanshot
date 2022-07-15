@@ -53,15 +53,16 @@ class PortalParticle {
 }
 
 class Portal {
-	constructor(x, y, color, content) {
+	constructor(x, y, color, content, fontSize, portalSpeed) {
 		this.radius = PORTAL_RADIUS;
+		this.fontSize = fontSize;
 		this.x = x;
 		this.y = y;
 		this.color = color;
 		this.content = content;
 
 		this.radiusGrowth = 10;
-		this.portalSpeed = 25;
+		this.portalSpeed = portalSpeed;
 
 		this.shrinkDelay = 0;
 		this.shrinkDelayCap = 0.5;
@@ -81,6 +82,13 @@ class Portal {
 
 		//for SAT collision
 		this.angle = 0;
+	}
+
+	fizz() {
+		//produce 50 portal particles
+		for (var i = 0; i < 30; i++) {
+			this.particles.push(new PortalParticle(this.x - PORTAL_PARTICLE_SIDE / 2, this.y - PORTAL_PARTICLE_SIDE / 2, this.color, this.radius));
+		}
 	}
 
 	isTouched() {
@@ -138,10 +146,7 @@ class Portal {
 				this.radiusGrowth = 40;
 				this.lerpCenter = false;
 
-				//produce 50 portal particles
-				for (var i = 0; i < 30; i++) {
-					this.particles.push(new PortalParticle(this.x - PORTAL_PARTICLE_SIDE / 2, this.y - PORTAL_PARTICLE_SIDE / 2, this.color, this.radius));
-				}
+				this.fizz();
 
 				this.lerpShrink = true;
 			}
@@ -204,10 +209,10 @@ class Portal {
 		ctx.fill();
 
 		//render content
-		ctx.font = `${0.7 * this.radius}px UniSansHeavy`;
+		ctx.font = `${this.fontSize * this.radius * 0.3}px UniSansHeavy`;
 		ctx.textAlign = "center";
 		ctx.fillStyle = hexToRgbA("#505050", 0.6);
-		ctx.fillText(this.content, this.x, this.y + 20 * (this.radius / 80));
+		ctx.fillText(this.content, this.x, this.y + 20 * ((this.radius * this.fontSize) / 160));
 
 		ctx.shadowBlur = 0;
 	}
