@@ -11,12 +11,12 @@ class GreenTank {
 		this.shellDetectionRadius = 100;
 
 		//turret update
+		this.noiseMax = 0.8;
+		this.noiseMin = 0.1;
 		this.noise = false;
 		this.noiseDelay = 0;
-		this.noiseAmount = 0.3;
-		this.turretRotation = 120 * deltaTime * Math.PI / 180;
-		this.tankRotationDelay = 0;
-		this.tankRotationCap = 0.08;
+		this.noiseAmount = ((Math.random() * (this.noiseMax - this.noiseMin) + this.noiseMin));
+		this.turretRotation = 80 * deltaTime * Math.PI / 180;
 		this.shellDelay = 0.1;
 		this.shellShot = 0;
 	}
@@ -174,6 +174,10 @@ class GreenTank {
 				this.noiseDelay += deltaTime;
 
 				if (this.noiseDelay > this.noiseAmount) {
+
+					//RNG noise amount
+					this.noiseAmount = ((Math.random() * (this.noiseMax - this.noiseMin) + this.noiseMin));
+
 					this.noiseDelay = 0;
 					this.turretRotation *= -1;
 					this.noise = false;
@@ -201,7 +205,7 @@ class GreenTank {
 
 			//check if ray hits player after exhausting all ricochetes
 			//green tank shoots 2 very fast missles that ricochet twice
-			if (this.shouldFire(ray) && this.shellDelay > 0.2 && this.shellShot < 2) {
+			if (this.shouldFire(ray) && this.shellDelay > 0.2 && this.shellShot < 3) {
 				//it found the ray to fire upon
 				this.shellDelay = 0;
 				this.shellShot++;

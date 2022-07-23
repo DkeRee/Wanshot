@@ -271,21 +271,33 @@ class Shell {
 				const crossWidth = width * dy;
 				const crossHeight = height * dx;
 
+				//only check sides that are supposed to be hit based on shell direction
+				const xDir = Math.sign(Math.cos(this.angle));
+				const yDir = Math.sign(Math.sin(this.angle));
+
 				if (crossWidth > crossHeight) {
 					if (crossWidth > -crossHeight) {
 						//bottom
-						this.bounceY();
+						if (yDir == -1) {
+							this.bounceY();
+						}
 					} else {
 						//left
-						this.bounceX();
+						if (xDir == 1) {
+							this.bounceX();
+						}
 					}
 				} else {
 					if (crossWidth > -crossHeight) {
 						//right
-						this.bounceX();
+						if (xDir == -1) {
+							this.bounceX();
+						}
 					} else {
 						//top
-						this.bounceY();
+						if (yDir == 1) {
+							this.bounceY();
+						}
 					}
 				}
 
