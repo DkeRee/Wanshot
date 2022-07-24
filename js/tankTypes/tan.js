@@ -1,12 +1,13 @@
-class OrangeTank {
+class TanTank {
 	constructor(x, y, angle, turretAngle) {
 		//ID
 		this.tankID = Math.floor(Math.random() * 100000);
 
-		this.tankType = ORANGE_TANK;
-		this.tank = new Tank(x, y, angle, turretAngle, "#FF8A14", "#D47311", "#B0896B", 30, 1, this.tankID, this.tankType);
+		this.tankType = TAN_TANK;
+		this.tank = new Tank(x, y, angle, turretAngle, "#D2B48C", "#B89D7A", "#B0896B", 120, 1, this.tankID, this.tankType);
 		this.bounces = 0;
 		this.dead = false;
+
 
 		//movement update
 
@@ -18,7 +19,7 @@ class OrangeTank {
 		this.tankRotation = 0;
 		this.uTurning = false;
 		this.tankRotationDelay = 0;
-		this.tankRotationCap = 0.06;
+		this.tankRotationCap = 0.05;
 
 		//turret update
 		this.shellDetectionRadius = 250;
@@ -26,16 +27,13 @@ class OrangeTank {
 		//lock on to player
 		this.goalRot = turretAngle * Math.PI / 180;
 
-		//special orange tank move
-		this.burst = false;
-		this.burstCount = 0;
-		this.burstDelay = 0;
-
+		//(60 * deltaTime) == 1 deg
 		this.noise = false;
 		this.noiseDelay = 0;
-		this.noiseAmount = 0.08;
-		this.turretRotation = 100 * deltaTime * Math.PI / 180;
-		this.shellDelay = 1;
+		this.noiseAmount = 0.2;
+		this.turretRotation = 180 * deltaTime * Math.PI / 180;
+		this.shellDelay = 0.4;
+		this.shellShot = 0;
 	}
 
 	//cast a ray to player
@@ -224,10 +222,10 @@ class OrangeTank {
 					if (intersection.reflection) {
 						if (intersection.side == 0 || intersection.side == 3) {
 							//sharp turn left, left or bottom
-							this.tankRotation = 1400 * deltaTime * this.tank.rotationSpeed * Math.PI / 180;
+							this.tankRotation = 1100 * deltaTime * this.tank.rotationSpeed * Math.PI / 180;
 						} else {
 							//sharp turn right, right or top
-							this.tankRotation = -1400 * deltaTime * this.tank.rotationSpeed * Math.PI / 180;
+							this.tankRotation = -1100 * deltaTime * this.tank.rotationSpeed * Math.PI / 180;
 						}
 
 						return true;
@@ -239,9 +237,8 @@ class OrangeTank {
 
 	getRandomBodyRot() {
 		//return a random rotation for the tank to travel with in radians
-		//degree difference from -10 to 10
-		const max = 200;
-		const min = -200;
+		const max = 500;
+		const min = -500;
 		return ((Math.random() * (max - min) + min) * deltaTime * this.tank.rotationSpeed) * Math.PI / 180;
 	}
 
@@ -249,6 +246,7 @@ class OrangeTank {
 		if (!STAGE_CACHE.player.dead && !this.dead) {
 			//update limiters
 			this.shellDelay += deltaTime;
+			this.mineDelay += deltaTime;
 
 			//update tankShock
 			this.tankShock += deltaTime;
@@ -270,7 +268,7 @@ class OrangeTank {
 						//about to collide, don't idle
 						switch (foreignCollision) {
 							case U_TURN:
-								this.tankRotation = -1400 * deltaTime * this.tank.rotationSpeed * Math.PI / 180;
+								this.tankRotation = -2400 * deltaTime * this.tank.rotationSpeed * Math.PI / 180;
 								if (!this.uTurning) {
 									this.uTurning = true;
 									this.tank.speed /= 2;
@@ -278,7 +276,7 @@ class OrangeTank {
 								break;
 							case TURN_LEFT:
 								//5 degrees
-								this.tankRotation = 480 * deltaTime * this.tank.rotationSpeed * Math.PI / 180;
+								this.tankRotation = 300 * deltaTime * this.tank.rotationSpeed * Math.PI / 180;
 								if (this.uTurning) {
 									this.uTurning = false;
 									this.tank.speed *= 2;
@@ -286,7 +284,7 @@ class OrangeTank {
 								break;
 							case TURN_RIGHT:
 								//-5 degrees
-								this.tankRotation = -480 * deltaTime * this.tank.rotationSpeed * Math.PI / 180;
+								this.tankRotation = -300 * deltaTime * this.tank.rotationSpeed * Math.PI / 180;
 								if (this.uTurning) {
 									this.uTurning = false;
 									this.tank.speed *= 2;
@@ -302,6 +300,7 @@ class OrangeTank {
 						this.tankRotation = this.getRandomBodyRot();
 					}
 				}
+
 				this.dodgeMines();
 			}
 
@@ -360,43 +359,26 @@ class OrangeTank {
 
 			const ray = new Ray(new xy(this.tank.centerX, this.tank.centerY), shootCoordinates);
 
-			if (this.shellDelay > 0.02) {
-				//burst!
+			//tan tank can shoot up to 5 shots of 3 shells each
+			if (this.shouldFire(ray) && this.shellDelay > 0.4 && this.shellShot < 3) {
+				const offset = 20 * Math.PI / 180;
 
-				//if burst isn't ongoing then make it burst!
-				if (!this.burst) {
-					if (this.shouldFire(ray)) {
-						//start burst!
-						this.burst = true;
-						this.noiseAmount = 0.1;
-						this.tankShock = -0.5;
-						this.turretRotation = 200 * deltaTime * Math.PI / 180;
-					}
-				} else {
-					//bursting! Fire N bursts based on distance from player!
-					const distPlayer = getRayLength(new xy(this.tank.centerX, this.tank.centerY), new xy(STAGE_CACHE.player.tank.centerX, STAGE_CACHE.player.tank.centerY));
+				const leftShot = new xy(1500 * Math.cos(this.tank.turretAngle + offset) + this.tank.centerX, 1500 * Math.sin(this.tank.turretAngle + offset) + this.tank.centerY);
+				const rightShot = new xy(1500 * Math.cos(this.tank.turretAngle - offset) + this.tank.centerX, 1500 * Math.sin(this.tank.turretAngle - offset) + this.tank.centerY);
 
-					if (this.burstCount !== Math.floor(30 / (distPlayer / 50))) {
-						//keep on bursting
-						this.burstDelay += deltaTime;
+				const leftRay = new Ray(new xy(this.tank.centerX, this.tank.centerY), leftShot);
+				const rightRay = new Ray(new xy(this.tank.centerX, this.tank.centerY), rightShot);
 
-						//make sure tank is not open firing on teamates
-						if (this.burstDelay > 0.05 && !getComradeCollisions(ray, this.tank.turretAngle, true, this.tankID).reflection) {
-							this.burstDelay = 0;
-							this.burstCount++;
-
-							//fire!
-							this.tank.shoot(shootCoordinates, MISSLE, this.tankID);
-						}
-					} else {
-						//finished burst! Cooldown! Reset!
-						this.shellDelay = 0;
-						this.burstCount = 0;
-						this.burstDelay = 0;
-						this.burst = false;
-						this.turretRotation = 100 * deltaTime * Math.PI / 180;
-						this.noiseAmount = 0.08;
-					}
+				//make sure it's safe to shoot
+				if (!getComradeCollisions(leftRay, this.tank.turretAngle + offset, true, this.tankID).intersection && !getComradeCollisions(rightRay, this.tank.turretAngle - offset, true, this.tankID).intersection) {
+					//it found the ray to fire upon
+					this.shellShot++;
+					this.shellDelay = 0;
+					this.tankShock = -0.15;
+				
+					this.tank.shoot(shootCoordinates, MISSLE, this.tankID);
+					this.tank.shoot(leftShot, MISSLE, this.tankID);
+					this.tank.shoot(rightShot, MISSLE, this.tankID);
 				}
 			}
 		}

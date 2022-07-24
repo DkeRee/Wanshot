@@ -68,7 +68,22 @@
 					break;
 				case GREEN_TANK:
 					exportedEnemies.push(new GreenTank(1, data.enemies[i].tank.angle))
-					break;					
+					break;
+				case BLACK_TANK:
+					exportedEnemies.push(new BlackTank(1, data.enemies[i].tank.angle))
+					break;
+				case ORANGE_TANK:
+					exportedEnemies.push(new OrangeTank(1, data.enemies[i].tank.angle))
+					break;
+				case BLURPLE_TANK:
+					exportedEnemies.push(new BlurpleTank(1, data.enemies[i].tank.angle))
+					break;
+				case VIOLET_TANK:
+					exportedEnemies.push(new VioletTank(1, data.enemies[i].tank.angle))
+					break;
+				case TAN_TANK:
+					exportedEnemies.push(new TanTank(1, data.enemies[i].tank.angle))
+					break;						
 			}
 		}
 		

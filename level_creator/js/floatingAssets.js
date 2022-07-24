@@ -311,6 +311,46 @@ class GreenTank {
 	}
 }
 
+class BlackTank {
+	constructor(opacity, angle) {
+		this.tank = new Tank(mouse.x - TANK_WIDTH / 2, mouse.y - TANK_HEIGHT / 2, angle, "#000000", "#000000", "#B0896B", opacity);
+		this.hovering = false;
+		this.content = BLACK_TANK;
+	}
+}
+
+class OrangeTank {
+	constructor(opacity, angle) {
+		this.tank = new Tank(mouse.x - TANK_WIDTH / 2, mouse.y - TANK_HEIGHT / 2, angle, "#FF8A14", "#D47311", "#B0896B", opacity);
+		this.hovering = false;
+		this.content = ORANGE_TANK;
+	}
+}
+
+class BlurpleTank {
+	constructor(opacity, angle) {
+		this.tank = new Tank(mouse.x - TANK_WIDTH / 2, mouse.y - TANK_HEIGHT / 2, angle, "#7481F7", "#6A76E3", "#B0896B", opacity);
+		this.hovering = false;
+		this.content = BLURPLE_TANK;
+	}
+}
+
+class VioletTank {
+	constructor(opacity, angle) {
+		this.tank = new Tank(mouse.x - TANK_WIDTH / 2, mouse.y - TANK_HEIGHT / 2, angle, "#FF19F8", "#B512B0", "#B0896B", opacity);
+		this.hovering = false;
+		this.content = VIOLET_TANK;
+	}
+}
+
+class TanTank {
+	constructor(opacity, angle) {
+		this.tank = new Tank(mouse.x - TANK_WIDTH / 2, mouse.y - TANK_HEIGHT / 2, angle, "#D2B48C", "#B89D7A", "#B0896B", opacity);
+		this.hovering = false;
+		this.content = TAN_TANK;
+	}
+}
+
 var placed = false;
 function updateFloatingAssets() {
 	//only update floating assets if you are not editing blocks
@@ -397,6 +437,21 @@ function updateFloatingAssets() {
 									break;
 								case GREEN_TANK:
 									exportedEnemies.push(new GreenTank(1, floating_cache.content.tank.angle));
+									break;
+								case BLACK_TANK:
+									exportedEnemies.push(new BlackTank(1, floating_cache.content.tank.angle));
+									break;
+								case ORANGE_TANK:
+									exportedEnemies.push(new OrangeTank(1, floating_cache.content.tank.angle));
+									break;
+								case BLURPLE_TANK:
+									exportedEnemies.push(new BlurpleTank(1, floating_cache.content.tank.angle));
+									break;		
+								case VIOLET_TANK:
+									exportedEnemies.push(new VioletTank(1, floating_cache.content.tank.angle));
+									break;			
+								case TAN_TANK:
+									exportedEnemies.push(new TanTank(1, floating_cache.content.tank.angle));
 									break;
 							}
 						}

@@ -217,6 +217,7 @@ const BLACK_TANK = 13;
 const ORANGE_TANK = 14;
 const BLURPLE_TANK = 15;
 const VIOLET_TANK = 16;
+const TAN_TANK = 17;
 
 const SHADOW = "rgba(0, 0, 0, 0.3)";
 

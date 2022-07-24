@@ -101,7 +101,10 @@ function levelCloner(CURR_LEVEL) {
 
 							//initiate protection zone for violet tank!
 							LEVEL_CACHE.violetProtection.push(new ProtectionBubble(violetTank.tank.centerX, violetTank.tank.centerY, violetTank.tankID));
-							break;						
+							break;
+						case "TanTank":
+							LEVEL_CACHE.enemies.push(new TanTank(enemies[i].tank.x, enemies[i].tank.y, enemies[i].tank.angle, enemies[i].tank.turretAngle));
+							break;				
 					}
 				}
 				break;

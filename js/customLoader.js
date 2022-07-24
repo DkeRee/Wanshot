@@ -57,6 +57,21 @@ fileReader.onload = function() {
 						case GREEN_TANK:
 							LEVEL_CACHE.enemies.push(new GreenTank(enemies[i].tank.x, enemies[i].tank.y, enemies[i].tank.angle, enemies[i].tank.angle));
 							break;
+						case BLACK_TANK:
+							LEVEL_CACHE.enemies.push(new BlackTank(enemies[i].tank.x, enemies[i].tank.y, enemies[i].tank.angle, enemies[i].tank.angle));
+							break;
+						case ORANGE_TANK:
+							LEVEL_CACHE.enemies.push(new OrangeTank(enemies[i].tank.x, enemies[i].tank.y, enemies[i].tank.angle, enemies[i].tank.angle));
+							break;
+						case BLURPLE_TANK:
+							LEVEL_CACHE.enemies.push(new BlurpleTank(enemies[i].tank.x, enemies[i].tank.y, enemies[i].tank.angle, enemies[i].tank.angle));
+							break;
+						case VIOLET_TANK:
+							LEVEL_CACHE.enemies.push(new VioletTank(enemies[i].tank.x, enemies[i].tank.y, enemies[i].tank.angle, enemies[i].tank.angle));
+							break;
+						case TAN_TANK:
+							LEVEL_CACHE.enemies.push(new TanTank(enemies[i].tank.x, enemies[i].tank.y, enemies[i].tank.angle, enemies[i].tank.angle));
+							break;																
 					}
 				}
 				break;

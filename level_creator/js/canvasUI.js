@@ -127,5 +127,55 @@ for (var i = 0; i < canvasUIS.length; i++) {
 				switchEditing(false);
 			});
 			break;
+		case "BlurpleTank":
+			const blurpleTank = new Tank(38 - TANK_WIDTH / 2, 40 - TANK_HEIGHT / 2, 0, "#7481F7", "#6A76E3", "#B0896B", 1);
+			blurpleTank.renderShadow(cvs_ctx);
+			blurpleTank.render(cvs_ctx);
+
+			document.getElementsByClassName("section-widget")[i].addEventListener("click", () => {
+				currAsset = BLURPLE_TANK;
+				switchEditing(false);
+			});	
+			break;
+		case "VioletTank":
+			const violetTank = new Tank(38 - TANK_WIDTH / 2, 40 - TANK_HEIGHT / 2, 0, "#FF19F8", "#B512B0", "#B0896B", 1);
+			violetTank.renderShadow(cvs_ctx);
+			violetTank.render(cvs_ctx);
+
+			document.getElementsByClassName("section-widget")[i].addEventListener("click", () => {
+				currAsset = VIOLET_TANK;
+				switchEditing(false);
+			});
+			break;
+		case "OrangeTank":
+			const orangeTank = new Tank(38 - TANK_WIDTH / 2, 40 - TANK_HEIGHT / 2, 0, "#FF8A14", "#D47311", "#B0896B", 1);
+			orangeTank.renderShadow(cvs_ctx);
+			orangeTank.render(cvs_ctx);
+
+			document.getElementsByClassName("section-widget")[i].addEventListener("click", () => {
+				currAsset = ORANGE_TANK;
+				switchEditing(false);
+			});
+			break;	
+		case "TanTank":
+			const tanTank = new Tank(38 - TANK_WIDTH / 2, 40 - TANK_HEIGHT / 2, 0, "#D2B48C", "#B89D7A", "#B0896B", 1);
+			tanTank.renderShadow(cvs_ctx);
+			tanTank.render(cvs_ctx);
+
+			document.getElementsByClassName("section-widget")[i].addEventListener("click", () => {
+				currAsset = TAN_TANK;
+				switchEditing(false);
+			});
+			break;
+		case "BlackTank":
+			const blackTank = new Tank(38 - TANK_WIDTH / 2, 40 - TANK_HEIGHT / 2, 0, "#000000", "#000000", "#B0896B", 1);
+			blackTank.renderShadow(cvs_ctx);
+			blackTank.render(cvs_ctx);
+
+			document.getElementsByClassName("section-widget")[i].addEventListener("click", () => {
+				currAsset = BLACK_TANK;
+				switchEditing(false);
+			});
+			break;
 	}
 }

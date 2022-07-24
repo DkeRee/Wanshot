@@ -38,6 +38,11 @@ const TEAL_TANK = 9;
 const PURPLE_TANK = 10;
 const WHITE_TANK = 11;
 const GREEN_TANK = 12;
+const BLACK_TANK = 13;
+const ORANGE_TANK = 14;
+const BLURPLE_TANK = 15;
+const VIOLET_TANK = 16;
+const TAN_TANK = 17;
 
 var currAsset = REGULAR_BLOCK;
 
@@ -77,6 +82,21 @@ function switchEditing(isEditingBlocks) {
 				break;
 			case GREEN_TANK:
 				floating_cache.content = new GreenTank(0.5, 0);
+				break;
+			case BLACK_TANK:
+				floating_cache.content = new BlackTank(0.5, 0);
+				break;
+			case TAN_TANK:
+				floating_cache.content = new TanTank(0.5, 0);
+				break;
+			case BLURPLE_TANK:
+				floating_cache.content = new BlurpleTank(0.5, 0);
+				break;			
+			case ORANGE_TANK:
+				floating_cache.content = new OrangeTank(0.5, 0);
+				break;
+			case VIOLET_TANK:
+				floating_cache.content = new VioletTank(0.5, 0);
 				break;
 		}
 	}
