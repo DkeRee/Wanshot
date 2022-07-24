@@ -3,8 +3,8 @@ class PurpleTank {
 		//ID
 		this.tankID = Math.floor(Math.random() * 100000);
 
-		this.tank = new Tank(x, y, angle, turretAngle, "#934A9E", "#80408A", "#B0896B", 180, 1, this.tankID);
 		this.tankType = PURPLE_TANK;
+		this.tank = new Tank(x, y, angle, turretAngle, "#934A9E", "#80408A", "#B0896B", 180, 1, this.tankID, this.tankType);
 		this.bounces = 1;
 		this.dead = false;
 
@@ -220,24 +220,7 @@ class PurpleTank {
 					const intersection = singleShellCollision(new Ray(shellCoord, shellEndPoint), tankClone);
 
 					if (intersection.reflection) {
-						//adjust angles to stay with bounds
-						const shellClone = {...shell};
-
-						if (Math.sign(tankClone.angle) !== 1) {
-							tankClone.angle += 2 * Math.PI;
-						}
-
-						if (Math.sign(shellClone.angle) !== 1) {
-							shellClone.angle += 2 * Math.PI;
-						}
-
-						tankClone.angle %= 2 * Math.PI;
-						shellClone.angle %= 2 * Math.PI;
-
-						const tankQuadrant = tankClone.angle - (tankClone.angle / (2 * Math.PI) * 2 * Math.PI);
-						const shellQuadrant = shellClone.angle - (shellClone.angle / (2 * Math.PI) * 2 * Math.PI);
-
-						if (tankQuadrant !== shellQuadrant) {
+						if (intersection.dist < 50) {
 							//hit a 180 babyyy
 							this.tankRotation = 10800 * deltaTime * this.tank.rotationSpeed * Math.PI / 180;
 						} else {

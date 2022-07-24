@@ -3,8 +3,8 @@ class TealTank {
 		//ID
 		this.tankID = Math.floor(Math.random() * 100000);
 
-		this.tank = new Tank(x, y, angle, turretAngle, "#154734", "#0E4732", "#B0896B", 65, 1, this.tankID);
 		this.tankType = TEAL_TANK;
+		this.tank = new Tank(x, y, angle, turretAngle, "#154734", "#0E4732", "#B0896B", 65, 1, this.tankID, this.tankType);
 		this.bounces = 0;
 		this.dead = false;
 

@@ -1,82 +1,46 @@
-class SuperpowerParticles {
-	constructor(x, y) {
-		//particle body (IT IS A SQUARE)
-		this.maxSide = SUPERPOWER_PARTICLE_SIDE;
-		this.side = 0;
+class ProtectionBubble {
+	constructor(x, y, tankID) {
+		//violet tank's protection bubble :D
 
 		this.x = x;
 		this.y = y;
-		this.centerX = this.x + this.side / 2;
-		this.centerY = this.y + this.side / 2;
-		this.angle = (Math.floor(Math.random() * 360)) * Math.PI / 180;
-		this.opacity = 1;
-		this.speed = 150;
-		this.explode = false;
-
-		this.color = "#DBDBDB";
+		this.tankID = tankID;
+		this.color = "#FF19F8";
+		this.radius = VIOLET_PROTECTION_RADIUS;
 	}
 
-	update() {
-		//GOAL: move particle in random angle while it slowly fades and slows
-
-		//update position
-		this.x += this.speed * Math.cos(this.angle) * deltaTime;
-		this.y += this.speed * Math.sin(this.angle) * deltaTime;
-
-		this.centerX = this.x + this.side / 2;
-		this.centerY = this.y + this.side / 2;
-
-		//update side (make it slowly expand from 0)
-		this.maxSide /= 2;
-		this.side += this.maxSide;
-
-		//update opacity and speed
-		this.opacity -= 0.5 * deltaTime;
-		this.speed -= 1 * deltaTime;
-
-		//check for deletion
-		if (this.opacity <= 0) {
-			this.explode = true;
-		}
+	update(x, y) {
+		//move zone with tank!
+		this.x = x;
+		this.y = y;
 	}
 
 	render() {
-		//RENDER PARTICLE
-		ctx.shadowBlur = 5;
-		ctx.shadowColor = this.color;
-		ctx.save();
-
-		ctx.translate(this.centerX, this.centerY);
-		ctx.rotate(this.angle);
-
-		//color in rgba to support opacity
-		ctx.fillStyle = hexToRgbA(this.color, this.opacity);
-		ctx.fillRect(this.side / -2, this.side / -2, this.side, this.side);
-
-		ctx.restore();
+		ctx.shadowBlur = 10;
+		ctx.shadowColor = hexToRgbA(this.color, 0.1);
+		ctx.fillStyle = hexToRgbA(this.color, 0.1);
+		ctx.beginPath();
+		ctx.arc(this.x, this.y, this.radius, 0, 2 * Math.PI, false);
+		ctx.fill();
 		ctx.shadowBlur = 0;
 	}
 }
 
-class WhiteTank {
+class VioletTank {
 	constructor(x, y, angle, turretAngle) {
 		//ID
 		this.tankID = Math.floor(Math.random() * 100000);
 
-		this.tankType = WHITE_TANK;
-		this.tank = new Tank(x, y, angle, turretAngle, "#DBDBDB", "#CFCFCF", "#B0896B", 130, 1, this.tankID, this.tankType);
+		this.tankType = VIOLET_TANK;
+		this.tank = new Tank(x, y, angle, turretAngle, "#FF19F8", "#B512B0", "#B0896B", 120, 1, this.tankID, this.tankType);
 		this.bounces = 1;
 		this.dead = false;
-
-		//special power! Invisibility!
-		this.invisible = false;
-		this.invisibleParticles = [];
 
 		//movement update
 
 		//mines that are remembered
 		this.mineMemory = [];
-		this.mineDelay = 5;
+		this.mineDelay = 7;
 		this.mineDelayCap = 7;
 
 		//makes tank "shock" aka pause for a split second due to recoil from shot or mine
@@ -87,27 +51,10 @@ class WhiteTank {
 		this.tankRotationCap = 0.05;
 
 		//turret update
-		this.shellDetectionRadius = 250;
+		this.shellDetectionRadius = 600;
 
-		//lock on to player
-		this.goalRot = turretAngle * Math.PI / 180;
-
-		//(60 * deltaTime) == 1 deg
-		this.noise = false;
-		this.noiseDelay = 0;
-		this.noiseAmount = 0.2;
-		this.turretRotation = 200 * deltaTime * Math.PI / 180;
-		this.shellDelay = 0.35;
-		this.shellShot = 0;
-	}
-
-	turnInvisible() {
-		this.invisible = true;
-
-		//make 15 invisible particles
-		for (var i = 0; i < 15; i++) {
-			this.invisibleParticles.push(new SuperpowerParticles(this.tank.centerX - SUPERPOWER_PARTICLE_SIDE / 2, this.tank.centerY - SUPERPOWER_PARTICLE_SIDE / 2));
-		}
+		this.turretRotation = 150 * deltaTime * Math.PI / 180;
+		this.shellDelay = 8;
 	}
 
 	//cast a ray to player
@@ -326,10 +273,10 @@ class WhiteTank {
 					if (intersection.reflection) {
 						if (intersection.side == 0 || intersection.side == 3) {
 							//sharp turn left, left or bottom
-							this.tankRotation = 1100 * deltaTime * this.tank.rotationSpeed * Math.PI / 180;
+							this.tankRotation = 1200 * deltaTime * this.tank.rotationSpeed * Math.PI / 180;
 						} else {
 							//sharp turn right, right or top
-							this.tankRotation = -1100 * deltaTime * this.tank.rotationSpeed * Math.PI / 180;
+							this.tankRotation = -1200 * deltaTime * this.tank.rotationSpeed * Math.PI / 180;
 						}
 
 						return true;
@@ -360,6 +307,16 @@ class WhiteTank {
 
 			//update tankbody
 			this.tank.updateBody();
+
+			//update protection zone
+			for (var i = 0; i < STAGE_CACHE.violetProtection.length; i++) {
+				const bubble = STAGE_CACHE.violetProtection[i];
+
+				//found this violet tank's protection bubble :)
+				if (bubble.tankID == this.tankID) {
+					bubble.update(this.tank.centerX, this.tank.centerY);
+				}
+			}
 
 			if (this.tankRotationDelay > this.tankRotationCap) {
 				this.tankRotationDelay = 0;
@@ -417,82 +374,27 @@ class WhiteTank {
 				this.tank.y += yInc;
 			}
 
-			//update turret
-			this.goalRot = Math.atan2(STAGE_CACHE.player.tank.y - this.tank.y, STAGE_CACHE.player.tank.x - this.tank.x);
-
-			//adjust angles to stay with bounds
-			if (Math.sign(this.goalRot) !== 1) {
-				this.goalRot += 2 * Math.PI;
-			}
-
 			if (Math.sign(this.tank.turretAngle) !== 1) {
 				this.tank.turretAngle += 2 * Math.PI;
 			}
 
-			this.goalRot %= 2 * Math.PI;
 			this.tank.turretAngle %= 2 * Math.PI;
 
 			this.tank.turretAngle += this.turretRotation;
-
-			//noise to make turret swing
-			if (this.noise) {
-				this.noiseDelay += deltaTime;
-
-				if (this.noiseDelay > this.noiseAmount) {
-					this.noiseDelay = 0;
-					this.turretRotation *= -1;
-					this.noise = false;
-				}
-			} else {
-				//check if goalRot has been met :)
-				if (this.tank.turretAngle < this.goalRot) {
-					//if this used to be under...
-					if (this.tank.turretAngle + (5 * Math.PI / 180) >= this.goalRot) {
-						this.noise = true;
-					}
-				} else {
-					//if this used to be over...
-					if (this.tank.turretAngle - (5 * Math.PI / 180) <= this.goalRot) {
-						this.noise = true;
-					}
-				}
-			}
-
-			//update mine laying if the mine delay is bigger than the cap and if we are not close to any other enemy tanks
-			if (this.mineDelay > this.mineDelayCap && !this.checkIfClose()) {
-				this.tankShock = -0.1;
-				this.mineDelay = 0;
-
-				this.tank.layMine(this.tankID);
-			}
 
 			//update shooting
 			const shootCoordinates = new xy(1500 * Math.cos(this.tank.turretAngle) + this.tank.centerX, 1500 * Math.sin(this.tank.turretAngle) + this.tank.centerY);
 
 			const ray = new Ray(new xy(this.tank.centerX, this.tank.centerY), shootCoordinates);
 
-			//white tanks shoot up to 5 shells rapidly
-			if (this.shouldFire(ray) && this.shellDelay > 0.3 && this.shellShot < 5) {
+			//not offensive tank. support!
+			if (this.shouldFire(ray) && this.shellDelay > 9) {
 				//it found the ray to fire upon
-				this.shellShot++;
 				this.shellDelay = 0;
 				this.tankShock = -0.1;
+				this.turretRotation *= -1;
 				this.tank.shoot(shootCoordinates, NORMAL_SHELL, this.tankID);
 			}
-			
-		}
-
-		//update superpower particles
-		for (var i = 0; i < this.invisibleParticles.length; i++) {
-			const particle = this.invisibleParticles[i];
-
-			if (particle.explode) {
-				//DELETE PARTICLE
-				this.invisibleParticles.splice(i, 1);
-				continue;
-			}
-
-			particle.update();
 		}
 
 		//update particles
@@ -510,6 +412,15 @@ class WhiteTank {
 		this.dead = true;
 		this.tank.explodeTank();
 
+		//remove this violet tank's protection bubble :(
+		for (var i = 0; i < STAGE_CACHE.violetProtection.length; i++) {
+			const bubble = STAGE_CACHE.violetProtection[i];
+
+			if (bubble.tankID == this.tankID) {
+				STAGE_CACHE.violetProtection.splice(i, 1);
+			}
+		}
+
 		//start intermission
 		//the last enemy tank has been killed, you win this match!
 		if (checkGameOver()) {
@@ -522,26 +433,10 @@ class WhiteTank {
 	}
 
 	render() {
-		//if tank isn't invisible
-		if (!this.invisible) {
-			this.tank.render(this.dead);
-		} else {
-			//render explosion particles
-			for (var i = 0; i < this.tank.explosionParticles.length; i++) {
-				this.tank.explosionParticles[i].render();
-			}
-		}
-
-		//render superpower particles
-		for (var i = 0; i < this.invisibleParticles.length; i++) {
-			this.invisibleParticles[i].render();
-		}
+		this.tank.render(this.dead);
 	}
 
 	renderShadow() {
-		//if tank isn't invisible
-		if (!this.invisible) {
-			this.tank.renderShadow(this.dead);	
-		}
+		this.tank.renderShadow(this.dead);
 	}
 }

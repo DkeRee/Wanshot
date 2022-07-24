@@ -35,6 +35,16 @@ function checkGameOver() {
 	}
 }
 
+function getEnemy(tankID) {
+	for (var i = 0; i < STAGE_CACHE.enemies.length; i++) {
+		const enemy = STAGE_CACHE.enemies[i];
+
+		if (enemy.tankID == tankID) {
+			return enemy;
+		}
+	}
+}
+
 function getRayLength(pointA, pointB) {
 	return Math.sqrt(Math.pow(pointA.x - pointB.x, 2) + Math.pow(pointA.y - pointB.y, 2));
 }

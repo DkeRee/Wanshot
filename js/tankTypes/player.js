@@ -48,7 +48,7 @@ class Player {
 		//ID
 		this.tankID = PLAYER_ID;
 
-		this.tank = new Tank(x, y, angle, turretAngle, "#224ACF", "#1E42B8", "#0101BA", 100, 3, this.tankID);
+		this.tank = new Tank(x, y, angle, turretAngle, "#224ACF", "#1E42B8", "#0101BA", 100, 3, this.tankID, PLAYER_ID);
 		this.moving = false;
 		this.dead = false;
 

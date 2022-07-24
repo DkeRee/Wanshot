@@ -1,6 +1,7 @@
 const NORMAL_SHELL = 250;
 const MISSLE = 700;
 const ULTRA_MISSLE = 550;
+const TELE_SHELL = 450;
 
 class HitParticle {
 	constructor(x, y) {
@@ -200,6 +201,9 @@ class Shell {
 		} else if (this.speed == ULTRA_MISSLE) {
 			this.color = "#FFBF00";
 			this.trailParticleCap = 0.02;
+		} else if (this.speed == TELE_SHELL) {
+			this.color = "#5865F2";
+			this.trailParticleCap = 0.06;
 		} else {
 			this.color = "#D3D3D3";
 			this.trailParticleCap = 0.09;
@@ -314,6 +318,13 @@ class Shell {
 					case MISSLE:
 						playSound(shellOut);
 						break;
+					case TELE_SHELL:
+						if (this.ricochet >= 2) {
+							playSound(shellOut);
+						} else {
+							playSound(shellDink);
+						}
+						break;
 					case ULTRA_MISSLE:
 						if (this.ricochet >= 3) {
 							playSound(shellOut);
@@ -365,14 +376,34 @@ class Shell {
 				}
 			}
 
-			if (SATCollision.collision && !player.dead && !this.peace) {
-				//SHELL COLLIDED WITH PLAYER && PLAYER IS NOT DEAD && SHELL IS NOT IN PEACE MODE
+			if (SATCollision.collision && !player.dead && !this.peace && !this.diminish) {
+				//SHELL COLLIDED WITH PLAYER && PLAYER IS NOT DEAD && SHELL IS NOT IN PEACE MODE && IS NOT DIMINISHING
 
 				//explode this shell
 				this.diminish = true;
 
-				//explode player tank
-				player.explode();
+				//explode player tank ONLY IF it is not a tele shell
+				if (this.speed == TELE_SHELL) {
+					//find the tank responsible for this shell
+					const enemy = getEnemy(this.tankID);
+
+					const playerX = player.tank.x;
+					const playerY = player.tank.y;
+
+					//swap positions!
+					player.tank.x = enemy.tank.x;
+					player.tank.y = enemy.tank.y;
+
+					enemy.tank.x = playerX;
+					enemy.tank.y = playerY;
+
+					player.tank.teleportExplosion();
+					enemy.tank.teleportExplosion();
+
+					playSound(hitByTele);
+				} else {
+					player.explode();
+				}
 
 				playSound(shellOut);
 			}
@@ -391,16 +422,42 @@ class Shell {
 				}
 			}
 
-			if (SATCollision.collision && !enemy.dead && !this.peace) {
-				//SHELL COLLIDED WITH ENEMY && ENEMY IS NOT DEAD && SHELL IS NOT IN PEACE MOD
+			if (SATCollision.collision && !enemy.dead && !this.peace && !this.diminish) {
+				//SHELL COLLIDED WITH ENEMY && ENEMY IS NOT DEAD && SHELL IS NOT IN PEACE MODE && ISNT DIMINISHING
 
 				//explode this shell
 				this.diminish = true;
 
-				//explode enemy tank
-				enemy.explode();
+				//only allow death if the victim enemy tank is NOT in a violet protection bubble!
+				if (!enemy.tank.inVioletShield) {
+					//explode explode enemy tank ONLY IF it is not a tele shell
+					if (this.speed == TELE_SHELL) {
+						const thisEnemy = getEnemy(this.tankID);
+						const otherEnemy = getEnemy(enemy.tankID);
 
-				playSound(shellOut);
+						const thisEnemyX = thisEnemy.tank.x;
+						const thisEnemyY = thisEnemy.tank.y;
+
+						//swap positions!
+						thisEnemy.tank.x = otherEnemy.tank.x;
+						thisEnemy.tank.y = otherEnemy.tank.y;
+
+						otherEnemy.tank.x = thisEnemyX;
+						otherEnemy.tank.y = thisEnemyY;
+
+						thisEnemy.tank.teleportExplosion();
+						otherEnemy.tank.teleportExplosion();
+
+						playSound(hitByTele);
+					} else {
+						enemy.explode();
+					}
+
+					playSound(shellOut);
+				} else {
+					this.makeHitParticles();
+					playSound(shieldHit);
+				}
 			}
 		}
 	}
@@ -484,6 +541,11 @@ class Shell {
 					this.diminish = true;
 				}
 
+				if (this.speed == TELE_SHELL && this.ricochet >= 2) {
+					this.makeHitParticles();
+					this.diminish = true;
+				}
+
 				if (this.speed == MISSLE && this.ricochet >= 1) {
 					this.makeHitParticles();
 					this.diminish = true;
@@ -513,7 +575,7 @@ class Shell {
 			//RENDER SHELL
 			ctx.shadowBlur = 3;
 
-			if (this.speed == MISSLE || this.speed == ULTRA_MISSLE) {
+			if (this.speed == MISSLE || this.speed == ULTRA_MISSLE || this.speed == TELE_SHELL) {
 				ctx.shadowColor = this.color;
 			} else {
 				ctx.shadowColor = "black";

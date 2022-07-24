@@ -352,6 +352,11 @@
 			for (var i = 0; i < STAGE_CACHE.pits.length; i++) {
 				STAGE_CACHE.pits[i].render();
 			}
+
+			//special placement for violet tank protection bubbles :D
+			for (var i = 0; i < STAGE_CACHE.violetProtection.length; i++) {
+				STAGE_CACHE.violetProtection[i].render();
+			}
 			
 			for (var i = 0; i < STAGE_CACHE.tileParticles.length; i++) {
 				STAGE_CACHE.tileParticles[i].render();

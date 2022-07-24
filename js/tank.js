@@ -62,6 +62,50 @@ class TankParticle {
 	}
 }
 
+//TELEPORTATION PARTICLE
+class TeleportationParticle {
+	constructor(x, y) {
+		//particle body (IT IS A CIRCLE)
+		
+		//body
+		this.x = x;
+		this.y = y;
+
+		//particle info
+		this.radius = TELEPORTATION_PARTICLE_RADIUS;
+		this.angle = (Math.floor(Math.random() * 360)) * Math.PI / 180;
+		this.color = "#5081F2";
+		this.opacity = 1;
+		this.speed = 8000;
+		this.explode = false;
+	}
+
+	update() {
+		//GOAL: Make particles of different size spew out in random directions, slowing to a halt and laying there
+
+		this.speed /= 120 * deltaTime;
+		this.opacity -= deltaTime;
+
+		//update position
+		this.x += this.speed * Math.cos(this.angle) * deltaTime;
+		this.y += this.speed * Math.sin(this.angle) * deltaTime;
+
+		if (this.opacity <= 0) {
+			this.explode = true;
+		}
+	}
+
+	render() {
+		ctx.shadowBlur = 10;
+		ctx.shadowColor = hexToRgbA(this.color, this.opacity);
+		ctx.fillStyle = hexToRgbA(this.color, this.opacity);
+		ctx.beginPath();
+		ctx.arc(this.x, this.y, this.radius, 0, 2 * Math.PI, false);
+		ctx.fill();
+		ctx.shadowBlur = 0;
+	}
+}
+
 //TANK TRACKS
 class Track {
 	constructor(x, y, angle) {
@@ -154,9 +198,12 @@ class Grave {
 
 //TANK CONSTRUCTOR
 class Tank {
-	constructor(x, y, angle, turretAngle, color, turretColor, sideColor, speed, rotationSpeed, tankID) {
+	constructor(x, y, angle, turretAngle, color, turretColor, sideColor, speed, rotationSpeed, tankID, tankType) {
 		//ID
 		this.tankID = tankID;
+
+		//tankType
+		this.tankType = tankType;
 
 		//body
 		this.width = TANK_WIDTH;
@@ -171,6 +218,8 @@ class Tank {
 		this.explosionParticleDelay = 0;
 		this.explosionParticles = [];
 
+		this.teleportParticles = [];
+
 		//tank info
 		this.x = x
 		this.y = y;
@@ -183,6 +232,36 @@ class Tank {
 		this.color = color;
 		this.turretColor = turretColor;
 		this.sideColor = sideColor;
+		this.inVioletShield = false;
+	}
+
+	isInVioletShield() {
+		for (var i = 0; i < STAGE_CACHE.violetProtection.length; i++) {
+			if (SAT_POLYGON_CIRCLE(this, STAGE_CACHE.violetProtection[i])) {
+				this.inVioletShield = true;
+
+				//return because you don't need to check more violet shields (it's already in one!)
+				return;
+			} else {
+				this.inVioletShield = false;
+			}
+		}
+
+		//this will be hard set if there are no shields to check (no violet tanks active in level)
+		this.inVioletShield = false;
+	}
+
+	teleportExplosion() {
+		//update centerX and centerY
+		this.centerX = this.x + this.width / 2;
+		this.centerY = this.y + this.height / 2;
+
+		if (!this.dead) {
+			//only create 30 teleportation particles if the tank isn't dead
+			for (var i = 0; i < 30; i++) {
+				this.teleportParticles.push(new TeleportationParticle(this.centerX, this.centerY));
+			}
+		}
 	}
 
 	//tank death
@@ -215,6 +294,9 @@ class Tank {
 				break;
 			case ULTRA_MISSLE:
 				playSound(ultraMissleShoot);
+				break;
+			case TELE_SHELL:
+				playSound(teleShot);
 				break;
 		}
 
@@ -331,6 +413,11 @@ class Tank {
 			this.tankWithTank();
 			this.tankWithTile();
 			this.tankWithPit();
+
+			//update shield collision for tanks other than violet and player
+			if (this.tankType !== VIOLET_TANK && this.id !== PLAYER_ID) {
+				this.isInVioletShield();
+			}
 		}
 	}
 
@@ -364,12 +451,24 @@ class Tank {
 				this.explosionParticleDelay = 0;
 			}
 		}
+
+		for (var i = 0; i < this.teleportParticles.length; i++) {
+			const particle = this.teleportParticles[i];
+
+			//DELETE PARTICLE
+			if (particle.explode) {
+				this.teleportParticles.splice(i, 1);
+				continue;
+			}
+
+			particle.update();
+		}
 		
 		for (var i = 0; i < this.explosionParticles.length; i++) {
 			const particle = this.explosionParticles[i];
 
 			//DELETE PARTICLE
-			if (particle.opacity <= 0) {
+			if (particle.explode) {
 				this.explosionParticles.splice(i, 1);
 				continue;
 			}
@@ -451,6 +550,18 @@ class Tank {
 			ctx.translate(this.centerX, this.centerY);
 			ctx.rotate(this.angle);
 
+			//render violet tank shield for enemy tanks that are within a shield
+			if (this.tankID !== PLAYER_ID && this.tankType !== VIOLET_TANK && this.inVioletShield) {
+				ctx.shadowBlur = 50;
+				ctx.shadowColor = "#FF19F8";
+				ctx.strokeStyle = "#FF19F8";
+				ctx.lineWidth = 2;
+				ctx.strokeRect(this.width / -2, this.height / -2, this.width, this.height);
+
+				ctx.fillStyle = hexToRgbA("#FF19F8", 0.4);
+				ctx.fillRect(this.width / -2, this.height / -2, this.width, this.height);
+			}
+
 			//DRAW TANK BASE//		
 			ctx.fillStyle = this.color;
 			ctx.fillRect(this.width / -2, this.height / -2, this.width, this.height);
@@ -494,6 +605,11 @@ class Tank {
 		}
 
 		//RENDER THIS IF TANK IS STILL ALIVE OR DEAD//
+
+		//RENDER TANK TELEPORTATION PARTICLES//
+		for (var i = 0; i < this.teleportParticles.length; i++) {
+			this.teleportParticles[i].render();
+		}
 
 		//RENDER TANK EXPLOSION PARTICLES
 		for (var i = 0; i < this.explosionParticles.length; i++) {

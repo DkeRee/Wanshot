@@ -134,15 +134,18 @@ class Mine {
 		for (var i = 0; i < STAGE_CACHE.enemies.length; i++) {
 			const enemy = STAGE_CACHE.enemies[i];
 
-			if (SAT_POLYGON_CIRCLE(enemy.tank, {
-				x: this.x,
-				y: this.y,
-				radius: this.explosionRadius
-			}) && !enemy.dead) {
-				//MINE EXPLODED NEAR ENEMY && ENEMY ISNT DEAD
+			//only let enemy tank die if it's not in a protection bubble!
+			if (!enemy.tank.inVioletShield) {
+				if (SAT_POLYGON_CIRCLE(enemy.tank, {
+					x: this.x,
+					y: this.y,
+					radius: this.explosionRadius
+				}) && !enemy.dead) {
+					//MINE EXPLODED NEAR ENEMY && ENEMY ISNT DEAD
 
-				//explode enemy tank
-				enemy.explode();
+					//explode enemy tank
+					enemy.explode();
+				}
 			}
 		}
 	}

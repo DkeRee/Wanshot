@@ -3,8 +3,8 @@ class GreyTank {
 		//ID
 		this.tankID = Math.floor(Math.random() * 100000);
 
-		this.tank = new Tank(x, y, angle, turretAngle, "#4A4A4A", "#4D4D4D", "#B0896B", 80, 1, this.tankID);
 		this.tankType = GREY_TANK;
+		this.tank = new Tank(x, y, angle, turretAngle, "#4A4A4A", "#4D4D4D", "#B0896B", 80, 1, this.tankID, this.tankType);
 		this.bounces = 1;
 		this.dead = false;
 

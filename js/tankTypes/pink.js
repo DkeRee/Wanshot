@@ -3,8 +3,8 @@ class PinkTank {
 		//ID
 		this.tankID = Math.floor(Math.random() * 100000);
 
-		this.tank = new Tank(x, y, angle, turretAngle, "#B82A55", "#B02951", "#B0896B", 120, 1, this.tankID);
 		this.tankType = PINK_TANK;
+		this.tank = new Tank(x, y, angle, turretAngle, "#B82A55", "#B02951", "#B0896B", 120, 1, this.tankID, this.tankType);
 		this.bounces = 1;
 		this.dead = false;
 

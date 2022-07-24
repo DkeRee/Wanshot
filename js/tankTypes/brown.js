@@ -3,8 +3,8 @@ class BrownTank {
 		//ID
 		this.tankID = Math.floor(Math.random() * 100000);
 
-		this.tank = new Tank(x, y, angle, turretAngle, "#966A4B", "#8C6346", "#B0896B", 0, 0, this.tankID);
 		this.tankType = BROWN_TANK;
+		this.tank = new Tank(x, y, angle, turretAngle, "#966A4B", "#8C6346", "#B0896B", 0, 0, this.tankID, this.tankType);
 		this.bounces = 1;
 		this.dead = false;
 

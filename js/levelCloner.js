@@ -19,6 +19,7 @@ function levelCloner(CURR_LEVEL) {
 		activateConfetti: false,
 		confetti: [],
 		player: null,
+		violetProtection: [],
 		enemies: [],
 		shells: [],
 		graves: [],
@@ -85,6 +86,22 @@ function levelCloner(CURR_LEVEL) {
 						case "GreenTank":
 							LEVEL_CACHE.enemies.push(new GreenTank(enemies[i].tank.x, enemies[i].tank.y, enemies[i].tank.angle, enemies[i].tank.turretAngle));
 							break;
+						case "BlackTank":
+							LEVEL_CACHE.enemies.push(new BlackTank(enemies[i].tank.x, enemies[i].tank.y, enemies[i].tank.angle, enemies[i].tank.turretAngle));
+							break;
+						case "OrangeTank":
+							LEVEL_CACHE.enemies.push(new OrangeTank(enemies[i].tank.x, enemies[i].tank.y, enemies[i].tank.angle, enemies[i].tank.turretAngle));
+							break;
+						case "BlurpleTank":
+							LEVEL_CACHE.enemies.push(new BlurpleTank(enemies[i].tank.x, enemies[i].tank.y, enemies[i].tank.angle, enemies[i].tank.turretAngle));
+							break;
+						case "VioletTank":
+							const violetTank = new VioletTank(enemies[i].tank.x, enemies[i].tank.y, enemies[i].tank.angle, enemies[i].tank.turretAngle);
+							LEVEL_CACHE.enemies.push(violetTank);
+
+							//initiate protection zone for violet tank!
+							LEVEL_CACHE.violetProtection.push(new ProtectionBubble(violetTank.tank.centerX, violetTank.tank.centerY, violetTank.tankID));
+							break;						
 					}
 				}
 				break;

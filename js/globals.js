@@ -52,6 +52,9 @@ const additionalInformation = new Audio("audio/additionalInformation.wav");
 const superpower = new Audio("audio/superpower.mp3");
 const uiClick = new Audio("audio/uiClick.mp3");
 const importCustom = new Audio("audio/importCustom.wav");
+const teleShot = new Audio("audio/teleShot.mp3");
+const hitByTele = new Audio("audio/hitByTele.wav");
+const shieldHit = new Audio("audio/shieldHit.mp3");
 
 //adjust volume
 portalEnter.volume = 0.6;
@@ -92,6 +95,9 @@ function toggleVolume(newVolume) {
 	additionalInformation.volume = newVolume;
 	superpower.volume = newVolume;
 	uiClick.volume = newVolume;
+	teleShot.volume = newVolume;
+	hitByTele.volume = newVolume;
+	shieldHit.volume = newVolume;
 }
 
 //custom settings
@@ -152,11 +158,15 @@ const CONFETTI_PARTICLE_SIDE = 40;
 
 const PISS_RADIUS = 8;
 
+const VIOLET_PROTECTION_RADIUS = 350;
+
 const PORTAL_RADIUS = 100;
 const PORTAL_PARTICLE_SIDE = 30;
 
 const STATIONARY_RAY_OFFSET = 4;
 const MOBILE_RAY_OFFSET = 3;
+
+const TELEPORTATION_PARTICLE_RADIUS = 15;
 
 const TANK_PARTICLE_SIDE = 20;
 
@@ -203,6 +213,10 @@ const TEAL_TANK = 9;
 const PURPLE_TANK = 10;
 const WHITE_TANK = 11;
 const GREEN_TANK = 12;
+const BLACK_TANK = 13;
+const ORANGE_TANK = 14;
+const BLURPLE_TANK = 15;
+const VIOLET_TANK = 16;
 
 const SHADOW = "rgba(0, 0, 0, 0.3)";
 

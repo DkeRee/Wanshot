@@ -1,90 +1,24 @@
-class SuperpowerParticles {
-	constructor(x, y) {
-		//particle body (IT IS A SQUARE)
-		this.maxSide = SUPERPOWER_PARTICLE_SIDE;
-		this.side = 0;
-
-		this.x = x;
-		this.y = y;
-		this.centerX = this.x + this.side / 2;
-		this.centerY = this.y + this.side / 2;
-		this.angle = (Math.floor(Math.random() * 360)) * Math.PI / 180;
-		this.opacity = 1;
-		this.speed = 150;
-		this.explode = false;
-
-		this.color = "#DBDBDB";
-	}
-
-	update() {
-		//GOAL: move particle in random angle while it slowly fades and slows
-
-		//update position
-		this.x += this.speed * Math.cos(this.angle) * deltaTime;
-		this.y += this.speed * Math.sin(this.angle) * deltaTime;
-
-		this.centerX = this.x + this.side / 2;
-		this.centerY = this.y + this.side / 2;
-
-		//update side (make it slowly expand from 0)
-		this.maxSide /= 2;
-		this.side += this.maxSide;
-
-		//update opacity and speed
-		this.opacity -= 0.5 * deltaTime;
-		this.speed -= 1 * deltaTime;
-
-		//check for deletion
-		if (this.opacity <= 0) {
-			this.explode = true;
-		}
-	}
-
-	render() {
-		//RENDER PARTICLE
-		ctx.shadowBlur = 5;
-		ctx.shadowColor = this.color;
-		ctx.save();
-
-		ctx.translate(this.centerX, this.centerY);
-		ctx.rotate(this.angle);
-
-		//color in rgba to support opacity
-		ctx.fillStyle = hexToRgbA(this.color, this.opacity);
-		ctx.fillRect(this.side / -2, this.side / -2, this.side, this.side);
-
-		ctx.restore();
-		ctx.shadowBlur = 0;
-	}
-}
-
-class WhiteTank {
+class OrangeTank {
 	constructor(x, y, angle, turretAngle) {
 		//ID
 		this.tankID = Math.floor(Math.random() * 100000);
 
-		this.tankType = WHITE_TANK;
-		this.tank = new Tank(x, y, angle, turretAngle, "#DBDBDB", "#CFCFCF", "#B0896B", 130, 1, this.tankID, this.tankType);
-		this.bounces = 1;
+		this.tankType = ORANGE_TANK;
+		this.tank = new Tank(x, y, angle, turretAngle, "#FF8A14", "#D47311", "#B0896B", 30, 1, this.tankID, this.tankType);
+		this.bounces = 0;
 		this.dead = false;
-
-		//special power! Invisibility!
-		this.invisible = false;
-		this.invisibleParticles = [];
 
 		//movement update
 
 		//mines that are remembered
 		this.mineMemory = [];
-		this.mineDelay = 5;
-		this.mineDelayCap = 7;
 
 		//makes tank "shock" aka pause for a split second due to recoil from shot or mine
 		this.tankShock = 0;
 		this.tankRotation = 0;
 		this.uTurning = false;
 		this.tankRotationDelay = 0;
-		this.tankRotationCap = 0.05;
+		this.tankRotationCap = 0.06;
 
 		//turret update
 		this.shellDetectionRadius = 250;
@@ -92,22 +26,16 @@ class WhiteTank {
 		//lock on to player
 		this.goalRot = turretAngle * Math.PI / 180;
 
-		//(60 * deltaTime) == 1 deg
+		//special orange tank move
+		this.burst = false;
+		this.burstCount = 0;
+		this.burstDelay = 0;
+
 		this.noise = false;
 		this.noiseDelay = 0;
-		this.noiseAmount = 0.2;
-		this.turretRotation = 200 * deltaTime * Math.PI / 180;
-		this.shellDelay = 0.35;
-		this.shellShot = 0;
-	}
-
-	turnInvisible() {
-		this.invisible = true;
-
-		//make 15 invisible particles
-		for (var i = 0; i < 15; i++) {
-			this.invisibleParticles.push(new SuperpowerParticles(this.tank.centerX - SUPERPOWER_PARTICLE_SIDE / 2, this.tank.centerY - SUPERPOWER_PARTICLE_SIDE / 2));
-		}
+		this.noiseAmount = 0.08;
+		this.turretRotation = 100 * deltaTime * Math.PI / 180;
+		this.shellDelay = 1;
 	}
 
 	//cast a ray to player
@@ -272,36 +200,6 @@ class WhiteTank {
 		}
 	}
 
-	checkIfClose() {
-		//check if we're too close to another tank
-		for (var i = 0; i < STAGE_CACHE.enemies.length; i++) {
-			const enemy = STAGE_CACHE.enemies[i];
-
-			//if we're not looking at the same tank
-			if (enemy.tankID !== this.tankID) {
-				const thisCoord = new xy(this.tank.centerX, this.tank.centerY);
-				const comradeCoord = new xy(enemy.tank.centerX, enemy.tank.centerY);
-				if (getRayLength(thisCoord, comradeCoord) <= MINE_EXPLOSION_RADIUS * 1.8) {
-					return true;
-				}
-			}
-		}
-
-		//check if we're too cloe to another mine
-		for (var i = 0; i < STAGE_CACHE.mines.length; i++) {
-			const mine = STAGE_CACHE.mines[i];
-
-			const thisCoord = new xy(this.tank.centerX, this.tank.centerY);
-			const mineCoord = new xy(mine.x, mine.y);
-
-			if (getRayLength(thisCoord, mineCoord) <= MINE_EXPLOSION_RADIUS * 2) {
-				return true;
-			}
-		}
-
-		return false;
-	}
-
 	dodgeShells() {
 		for (var i = 0; i < STAGE_CACHE.shells.length; i++) {
 			const shell = STAGE_CACHE.shells[i];
@@ -326,10 +224,10 @@ class WhiteTank {
 					if (intersection.reflection) {
 						if (intersection.side == 0 || intersection.side == 3) {
 							//sharp turn left, left or bottom
-							this.tankRotation = 1100 * deltaTime * this.tank.rotationSpeed * Math.PI / 180;
+							this.tankRotation = 1400 * deltaTime * this.tank.rotationSpeed * Math.PI / 180;
 						} else {
 							//sharp turn right, right or top
-							this.tankRotation = -1100 * deltaTime * this.tank.rotationSpeed * Math.PI / 180;
+							this.tankRotation = -1400 * deltaTime * this.tank.rotationSpeed * Math.PI / 180;
 						}
 
 						return true;
@@ -341,8 +239,9 @@ class WhiteTank {
 
 	getRandomBodyRot() {
 		//return a random rotation for the tank to travel with in radians
-		const max = 500;
-		const min = -500;
+		//degree difference from -10 to 10
+		const max = 200;
+		const min = -200;
 		return ((Math.random() * (max - min) + min) * deltaTime * this.tank.rotationSpeed) * Math.PI / 180;
 	}
 
@@ -350,7 +249,6 @@ class WhiteTank {
 		if (!STAGE_CACHE.player.dead && !this.dead) {
 			//update limiters
 			this.shellDelay += deltaTime;
-			this.mineDelay += deltaTime;
 
 			//update tankShock
 			this.tankShock += deltaTime;
@@ -372,7 +270,7 @@ class WhiteTank {
 						//about to collide, don't idle
 						switch (foreignCollision) {
 							case U_TURN:
-								this.tankRotation = -2400 * deltaTime * this.tank.rotationSpeed * Math.PI / 180;
+								this.tankRotation = -1400 * deltaTime * this.tank.rotationSpeed * Math.PI / 180;
 								if (!this.uTurning) {
 									this.uTurning = true;
 									this.tank.speed /= 2;
@@ -380,7 +278,7 @@ class WhiteTank {
 								break;
 							case TURN_LEFT:
 								//5 degrees
-								this.tankRotation = 300 * deltaTime * this.tank.rotationSpeed * Math.PI / 180;
+								this.tankRotation = 480 * deltaTime * this.tank.rotationSpeed * Math.PI / 180;
 								if (this.uTurning) {
 									this.uTurning = false;
 									this.tank.speed *= 2;
@@ -388,7 +286,7 @@ class WhiteTank {
 								break;
 							case TURN_RIGHT:
 								//-5 degrees
-								this.tankRotation = -300 * deltaTime * this.tank.rotationSpeed * Math.PI / 180;
+								this.tankRotation = -480 * deltaTime * this.tank.rotationSpeed * Math.PI / 180;
 								if (this.uTurning) {
 									this.uTurning = false;
 									this.tank.speed *= 2;
@@ -404,7 +302,6 @@ class WhiteTank {
 						this.tankRotation = this.getRandomBodyRot();
 					}
 				}
-
 				this.dodgeMines();
 			}
 
@@ -458,41 +355,50 @@ class WhiteTank {
 				}
 			}
 
-			//update mine laying if the mine delay is bigger than the cap and if we are not close to any other enemy tanks
-			if (this.mineDelay > this.mineDelayCap && !this.checkIfClose()) {
-				this.tankShock = -0.1;
-				this.mineDelay = 0;
-
-				this.tank.layMine(this.tankID);
-			}
-
 			//update shooting
 			const shootCoordinates = new xy(1500 * Math.cos(this.tank.turretAngle) + this.tank.centerX, 1500 * Math.sin(this.tank.turretAngle) + this.tank.centerY);
 
 			const ray = new Ray(new xy(this.tank.centerX, this.tank.centerY), shootCoordinates);
 
-			//white tanks shoot up to 5 shells rapidly
-			if (this.shouldFire(ray) && this.shellDelay > 0.3 && this.shellShot < 5) {
-				//it found the ray to fire upon
-				this.shellShot++;
-				this.shellDelay = 0;
-				this.tankShock = -0.1;
-				this.tank.shoot(shootCoordinates, NORMAL_SHELL, this.tankID);
+			if (this.shellDelay > 0.02) {
+				//burst!
+
+				//if burst isn't ongoing then make it burst!
+				if (!this.burst) {
+					if (this.shouldFire(ray)) {
+						//start burst!
+						this.burst = true;
+						this.noiseAmount = 0.1;
+						this.tankShock = -0.5;
+						this.turretRotation = 400 * deltaTime * Math.PI / 180;
+					}
+				} else {
+					//bursting! Fire N bursts based on distance from player!
+					const distPlayer = getRayLength(new xy(this.tank.centerX, this.tank.centerY), new xy(STAGE_CACHE.player.tank.centerX, STAGE_CACHE.player.tank.centerY));
+
+					if (this.burstCount !== Math.floor(30 / (distPlayer / 50))) {
+						//keep on bursting
+						this.burstDelay += deltaTime;
+
+						//make sure tank is not open firing on teamates
+						if (this.burstDelay > 0.05 && !getComradeCollisions(ray, this.tank.turretAngle, true, this.tankID).reflection) {
+							this.burstDelay = 0;
+							this.burstCount++;
+
+							//fire!
+							this.tank.shoot(shootCoordinates, MISSLE, this.tankID);
+						}
+					} else {
+						//finished burst! Cooldown! Reset!
+						this.shellDelay = 0;
+						this.burstCount = 0;
+						this.burstDelay = 0;
+						this.burst = false;
+						this.turretRotation = 100 * deltaTime * Math.PI / 180;
+						this.noiseAmount = 0.08;
+					}
+				}
 			}
-			
-		}
-
-		//update superpower particles
-		for (var i = 0; i < this.invisibleParticles.length; i++) {
-			const particle = this.invisibleParticles[i];
-
-			if (particle.explode) {
-				//DELETE PARTICLE
-				this.invisibleParticles.splice(i, 1);
-				continue;
-			}
-
-			particle.update();
 		}
 
 		//update particles
@@ -522,26 +428,10 @@ class WhiteTank {
 	}
 
 	render() {
-		//if tank isn't invisible
-		if (!this.invisible) {
-			this.tank.render(this.dead);
-		} else {
-			//render explosion particles
-			for (var i = 0; i < this.tank.explosionParticles.length; i++) {
-				this.tank.explosionParticles[i].render();
-			}
-		}
-
-		//render superpower particles
-		for (var i = 0; i < this.invisibleParticles.length; i++) {
-			this.invisibleParticles[i].render();
-		}
+		this.tank.render(this.dead);
 	}
 
 	renderShadow() {
-		//if tank isn't invisible
-		if (!this.invisible) {
-			this.tank.renderShadow(this.dead);	
-		}
+		this.tank.renderShadow(this.dead);
 	}
 }
