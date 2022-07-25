@@ -36,7 +36,7 @@ function levelCloner(CURR_LEVEL) {
 	//set portals on lobby
 	if (CURR_LEVEL == 0) {
 		playPortal = new Portal(CANVAS_WIDTH / 2, 155, "#2A5BFF", "PLAY", 2.4, 25);
-		challengePortal = new Portal(CANVAS_WIDTH / 4.3, 155, "#A62314", "COMING SOON", 0.9, 45);
+		challengePortal = new Portal(CANVAS_WIDTH / 4.3, 155, "#A62314", "CHALLENGE", 1.1, 45);
 		customPortal = new Portal(CANVAS_WIDTH / 1.3, 155, "#95FC81", "CUSTOM", 1.5, 45);
 	}
 

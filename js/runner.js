@@ -72,9 +72,32 @@
 					if (CURR_LEVEL == 0) {
 						playPortal.update();
 
+						//only make challenge portal sparkle if player has beaten normal campaign
+						if (localStorage.getItem("beaten-game") == "true") {
+							challengePortal.update();
+
+							if (challengePortal.isTouched()) {
+								//teleport to challenge campaign
+								CURR_CAMPAIGN = CHALLENGE_CAMPAIGN;
+
+								//move player outside of the stage
+								STAGE_CACHE.player.tank.x = 5000;
+								STAGE_CACHE.player.tank.y = 5000;							
+							}
+						}
+
 						//only make portal sparkle if custom level is loaded in
 						if (CUSTOM_LEVEL[1]) {
 							customPortal.update();
+
+							if (customPortal.isTouched()) {
+								//teleport to custom campaign
+								CURR_CAMPAIGN = CUSTOM_CAMPAIGN;
+
+								//move player outside of the stage
+								STAGE_CACHE.player.tank.x = 5000;
+								STAGE_CACHE.player.tank.y = 5000;
+							}
 						}
 
 						if (playPortal.isTouched()) {
@@ -84,18 +107,6 @@
 							//move player outside of the stage
 							STAGE_CACHE.player.tank.x = 5000;
 							STAGE_CACHE.player.tank.y = 5000;
-						}
-
-						//only make portal accept player if custom level is loaded in
-						if (CUSTOM_LEVEL[1]) {
-							if (customPortal.isTouched()) {
-								//teleport to custom campaign
-								CURR_CAMPAIGN = CUSTOM_CAMPAIGN;
-
-								//move player outside of the stage
-								STAGE_CACHE.player.tank.x = 5000;
-								STAGE_CACHE.player.tank.y = 5000;
-							}							
 						}
 					}
 
