@@ -12,6 +12,9 @@ const buttonY = ((CANVAS_HEIGHT / 2) + 160) - 80;
 const buttonWidth = 230;
 const buttonHeight = 100;
 
+const background = new Image();
+background.src = "icons/background.png";
+
 const tutorialTank = new ArtTank(CANVAS_WIDTH / 2, 240, 3, 0, 0, "#224ACF", "#0101BA");
 const addTank = new ArtTank(CANVAS_WIDTH / 2, 260, 3, 180, 180, "#ED4245", "#9E2C2E");
 
@@ -121,10 +124,9 @@ function introRender() {
 	switch (slide) {
 		case 1:
 			//title screen
-			blueArtTank.render(opacity);
-			redArtTank.render(opacity);
-			greenArtTank.render(opacity);
-			yellowArtTank.render(opacity);
+			ctx.globalAlpha = opacity;
+			ctx.drawImage(background, (canvas.width / 2) - (background.width / 2) - 100, (canvas.height / 2) - (background.height / 2) - 48, background.width * 1.15, background.height * 1.15);
+			ctx.globalAlpha = 1;
 
 			ctx.shadowBlur = buttonBlur;
 			ctx.shadowColor = "#ED4245";
@@ -148,7 +150,7 @@ function introRender() {
 
 			ctx.textAlign = "center";
 			ctx.fillText("PLAY", canvas.width / 2, (canvas.height / 2) + 160);
-			ctx.strokeText("PLAY", canvas.width / 2, (canvas.height / 2) + 160);
+			ctx.strokeText("PLAY", canvas.width / 2, (canvas.height / 2) + 160);		
 
 			ctx.shadowBlur = 10;
 			ctx.shadowColor = hexToRgbA("#ED4245", opacity);
@@ -162,6 +164,11 @@ function introRender() {
 			ctx.textAlign = "center";
 			ctx.fillText("WANKLE", canvas.width / 2, (canvas.height / 2) - 60);
 			ctx.strokeText("WANKLE", canvas.width / 2, (canvas.height / 2) - 60);
+
+			//render version ID
+			ctx.font = "30px UniSansHeavy";
+			ctx.fillText(`V${VERSION}`, canvas.width - 50, 30);
+			ctx.strokeText(`V${VERSION}`, canvas.width - 50, 30);	
 
 			ctx.font = "80px UniSansHeavy";
 			ctx.fillText("BY DKEREE", canvas.width / 2, (canvas.height / 2) + 20);

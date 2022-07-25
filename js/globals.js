@@ -1,3 +1,6 @@
+//VERSION ID
+const VERSION = "3.0.0";
+
 //essential delta time info//
 const deltaTime = 1 / 60;
 var accTime = 0;
