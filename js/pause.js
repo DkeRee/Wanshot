@@ -207,121 +207,123 @@ class PauseMenu {
 			}
 		}
 
-		//loop through the three buttons
-		for (var i = 0; i < 3; i++) {
-			var detectedMouse = false;
+		//loop through the three buttons ONLY if it isn't in transition
+		if (!this.swipeUp && !this.dropDown) {
+			for (var i = 0; i < 3; i++) {
+				var detectedMouse = false;
 
-			switch (i) {
-				case 0:
-					//resume
+				switch (i) {
+					case 0:
+						//resume
 
-					//check for resume button ONLY if variation is default
-					if (this.variation == DEFAULT) {
-						if ((this.resumeX <= MOUSE_POS.x && MOUSE_POS.x <= this.resumeX + this.buttonWidth) && (this.resumeY <= MOUSE_POS.y && MOUSE_POS.y <= this.resumeY + this.buttonHeight) && gamePaused) {
-							//glow
-							if (this.resumeBlur < 10) {
-								this.resumeBlur += 50 * deltaTime;
+						//check for resume button ONLY if variation is default
+						if (this.variation == DEFAULT) {
+							if ((this.resumeX <= MOUSE_POS.x && MOUSE_POS.x <= this.resumeX + this.buttonWidth) && (this.resumeY <= MOUSE_POS.y && MOUSE_POS.y <= this.resumeY + this.buttonHeight) && gamePaused) {
+								//glow
+								if (this.resumeBlur < 10) {
+									this.resumeBlur += 50 * deltaTime;
+								} else {
+									this.resumeBlur = 10
+								}
+								canvas.style.cursor = "pointer";
+								detectedMouse = true;
+
+								if (!this.resumeHover) {
+									playSound(hoverButton);
+									this.resumeHover = true;
+								}
+							
+								if (holding) {
+									holding = false;
+									pauseMenu.swipeUp = true;
+
+									this.exitFunction = RESUME;
+								}
 							} else {
-								this.resumeBlur = 10
+								//glow down
+								if (this.resumeBlur > 3) {
+									this.resumeBlur -= 50 * deltaTime;
+								} else {
+									this.resumeBlur = 3;
+								}
+								canvas.style.cursor = "auto";
+								this.resumeHover = false;
+							}
+						}
+						break;
+					case 1:
+						//restart
+						if ((this.restartX <= MOUSE_POS.x && MOUSE_POS.x <= this.restartX + this.buttonWidth) && (this.restartY <= MOUSE_POS.y && MOUSE_POS.y <= this.restartY + this.buttonHeight) && gamePaused) {
+							//glow
+							if (this.restartBlur < 10) {
+								this.restartBlur += 50 * deltaTime;
+							} else {
+								this.restartBlur = 10
 							}
 							canvas.style.cursor = "pointer";
 							detectedMouse = true;
 
-							if (!this.resumeHover) {
+							if (!this.restartHover) {
 								playSound(hoverButton);
-								this.resumeHover = true;
+								this.restartHover = true;
 							}
-						
+
 							if (holding) {
 								holding = false;
 								pauseMenu.swipeUp = true;
 
-								this.exitFunction = RESUME;
+								this.exitFunction = RESTART;
 							}
 						} else {
 							//glow down
-							if (this.resumeBlur > 3) {
-								this.resumeBlur -= 50 * deltaTime;
+							if (this.restartBlur > 3) {
+								this.restartBlur -= 50 * deltaTime;
 							} else {
-								this.resumeBlur = 3;
+								this.restartBlur = 3;
 							}
 							canvas.style.cursor = "auto";
-							this.resumeHover = false;
+							this.restartHover = false;
 						}
-					}
+						break;
+					case 2:
+						//quit
+						if ((this.quitX <= MOUSE_POS.x && MOUSE_POS.x <= this.quitX + this.buttonWidth) && (this.quitY <= MOUSE_POS.y && MOUSE_POS.y <= this.quitY + this.buttonHeight) && gamePaused) {
+							//glow
+							if (this.quitBlur < 10) {
+								this.quitBlur += 50 * deltaTime;
+							} else {
+								this.quitBlur = 10
+							}
+							canvas.style.cursor = "pointer";
+							detectedMouse = true;
+
+							if (!this.quitHover) {
+								playSound(hoverButton);
+								this.quitHover = true;
+							}
+
+							if (holding) {
+								holding = false;
+								pauseMenu.swipeUp = true;
+
+								this.exitFunction = QUIT;
+							}
+						} else {
+							//glow down
+							if (this.quitBlur > 3) {
+								this.quitBlur -= 50 * deltaTime;
+							} else {
+								this.quitBlur = 3;
+							}
+							canvas.style.cursor = "auto";
+							this.quitHover = false;
+						}
+						break;
+				}
+
+				if (detectedMouse) {
 					break;
-				case 1:
-					//restart
-					if ((this.restartX <= MOUSE_POS.x && MOUSE_POS.x <= this.restartX + this.buttonWidth) && (this.restartY <= MOUSE_POS.y && MOUSE_POS.y <= this.restartY + this.buttonHeight) && gamePaused) {
-						//glow
-						if (this.restartBlur < 10) {
-							this.restartBlur += 50 * deltaTime;
-						} else {
-							this.restartBlur = 10
-						}
-						canvas.style.cursor = "pointer";
-						detectedMouse = true;
-
-						if (!this.restartHover) {
-							playSound(hoverButton);
-							this.restartHover = true;
-						}
-
-						if (holding) {
-							holding = false;
-							pauseMenu.swipeUp = true;
-
-							this.exitFunction = RESTART;
-						}
-					} else {
-						//glow down
-						if (this.restartBlur > 3) {
-							this.restartBlur -= 50 * deltaTime;
-						} else {
-							this.restartBlur = 3;
-						}
-						canvas.style.cursor = "auto";
-						this.restartHover = false;
-					}
-					break;
-				case 2:
-					//quit
-					if ((this.quitX <= MOUSE_POS.x && MOUSE_POS.x <= this.quitX + this.buttonWidth) && (this.quitY <= MOUSE_POS.y && MOUSE_POS.y <= this.quitY + this.buttonHeight) && gamePaused) {
-						//glow
-						if (this.quitBlur < 10) {
-							this.quitBlur += 50 * deltaTime;
-						} else {
-							this.quitBlur = 10
-						}
-						canvas.style.cursor = "pointer";
-						detectedMouse = true;
-
-						if (!this.quitHover) {
-							playSound(hoverButton);
-							this.quitHover = true;
-						}
-
-						if (holding) {
-							holding = false;
-							pauseMenu.swipeUp = true;
-
-							this.exitFunction = QUIT;
-						}
-					} else {
-						//glow down
-						if (this.quitBlur > 3) {
-							this.quitBlur -= 50 * deltaTime;
-						} else {
-							this.quitBlur = 3;
-						}
-						canvas.style.cursor = "auto";
-						this.quitHover = false;
-					}
-					break;
-			}
-
-			if (detectedMouse) {
-				break;
+				}
 			}
 		}
 	}

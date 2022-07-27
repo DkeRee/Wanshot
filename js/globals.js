@@ -1,5 +1,5 @@
 //VERSION ID
-const VERSION = "3.0.0";
+const VERSION = "3.0.1";
 
 //essential delta time info//
 const deltaTime = 1 / 60;
