@@ -1,5 +1,5 @@
 const NORMAL_SHELL = 250;
-const MISSLE = 700;
+const MISSLE = 680;
 const ULTRA_MISSLE = 550;
 const TELE_SHELL = 450;
 

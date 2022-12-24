@@ -5,9 +5,6 @@ help me
 */
 
 function getVertex(cx, cy, vx, vy, rotatedAngle) {
-	//change rotatedAngle to radians
-	rotatedAngle = rotatedAngle * Math.PI / 180;
-
 	//get distance from center to specified vertex
 	const distanceX = vx - cx;
 	const distanceY = vy - cy;
