@@ -10,7 +10,10 @@
 	const BACKGROUND_COLOR_STRONG = "#C2995D";
 	const BACKGROUND_COLOR_WEAK = "#FFDFA8";
 	CURR_LEVEL = 0;
-	STAGE_CACHE = levelCloner(CURR_LEVEL);
+
+	if (!intro) {
+		STAGE_CACHE = levelCloner(CURR_LEVEL);
+	}
 
 	//pause button
 	const pauseButton = new PauseButton();
@@ -81,8 +84,8 @@
 								CURR_CAMPAIGN = CHALLENGE_CAMPAIGN;
 
 								//move player outside of the stage
-								STAGE_CACHE.player.tank.x = 5000;
-								STAGE_CACHE.player.tank.y = 5000;							
+								STAGE_CACHE.player.x = 5000;
+								STAGE_CACHE.player.y = 5000;							
 							}
 						}
 
@@ -95,8 +98,8 @@
 								CURR_CAMPAIGN = CUSTOM_CAMPAIGN;
 
 								//move player outside of the stage
-								STAGE_CACHE.player.tank.x = 5000;
-								STAGE_CACHE.player.tank.y = 5000;
+								STAGE_CACHE.player.x = 5000;
+								STAGE_CACHE.player.y = 5000;
 							}
 						}
 
@@ -105,8 +108,8 @@
 							CURR_CAMPAIGN = NORMAL_CAMPAIGN;
 
 							//move player outside of the stage
-							STAGE_CACHE.player.tank.x = 5000;
-							STAGE_CACHE.player.tank.y = 5000;
+							STAGE_CACHE.player.x = 5000;
+							STAGE_CACHE.player.y = 5000;
 						}
 					}
 
@@ -429,7 +432,7 @@
 		holding = true;
 		
 		//if mouse is not on pause button and game is not paused
-		if (!gamePaused) {
+		if (!gamePaused && STAGE_CACHE) {
 			//fine adjustments
 			if (CURR_LEVEL == 0) {
 				STAGE_CACHE.player.shoot();	
@@ -450,24 +453,30 @@
 	});
 
 	window.addEventListener("keydown", e => {
-		STAGE_CACHE.player.keys[e.keyCode || e.which] = true;
+		if (STAGE_CACHE) {
+			STAGE_CACHE.player.keys[e.keyCode || e.which] = true;
 
-		//aklsdjglkjdg
-		if (e.keyCode == 80 || e.which == 80) {
-			STAGE_CACHE.player.pee = true;
+			//aklsdjglkjdg
+			if (e.keyCode == 80 || e.which == 80) {
+				STAGE_CACHE.player.pee = true;
+			}
 		}
 	});
 
 	window.addEventListener("keyup", e => {
-		delete STAGE_CACHE.player.keys[e.keyCode || e.which];
-	
-		//industrial society and its future
-		if (e.keyCode == 80 || e.which == 80) {
-			STAGE_CACHE.player.pee = false;
+		if (STAGE_CACHE) {
+			delete STAGE_CACHE.player.keys[e.keyCode || e.which];
+		
+			//industrial society and its future
+			if (e.keyCode == 80 || e.which == 80) {
+				STAGE_CACHE.player.pee = false;
+			}
 		}
 	});
 
-	window.onblur = function(){
-		STAGE_CACHE.player.keys = {};
+	window.onblur = function() {
+		if (STAGE_CACHE) {
+			STAGE_CACHE.player.keys = {};
+		}
 	};
 })();

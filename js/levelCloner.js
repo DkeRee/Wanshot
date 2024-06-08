@@ -44,7 +44,7 @@ function levelCloner(CURR_LEVEL) {
 		switch (asset) {
 			case "player":
 				const player = LOCATED_LEVEL[asset];
-				LEVEL_CACHE.player = new Player(player.tank.x, player.tank.y, player.tank.angle, player.tank.turretAngle);
+				LEVEL_CACHE.player = new Player(player.x, player.y, player.angle, player.turretAngle);
 				break;
 			case "tiles":
 				const tiles = LOCATED_LEVEL[asset];
@@ -63,47 +63,47 @@ function levelCloner(CURR_LEVEL) {
 				for (var i = 0; i < enemies.length; i++) {
 					switch (enemies[i].constructor.name) {
 						case "BrownTank":
-							LEVEL_CACHE.enemies.push(new BrownTank(enemies[i].tank.x, enemies[i].tank.y, enemies[i].tank.angle, enemies[i].tank.turretAngle));
+							LEVEL_CACHE.enemies.push(new BrownTank(enemies[i].x, enemies[i].y, enemies[i].angle));
 							break;
 						case "GreyTank":
-							LEVEL_CACHE.enemies.push(new GreyTank(enemies[i].tank.x, enemies[i].tank.y, enemies[i].tank.angle, enemies[i].tank.turretAngle));
+							LEVEL_CACHE.enemies.push(new GreyTank(enemies[i].x, enemies[i].y, enemies[i].angle));
 							break;
 						case "YellowTank":
-							LEVEL_CACHE.enemies.push(new YellowTank(enemies[i].tank.x, enemies[i].tank.y, enemies[i].tank.angle, enemies[i].tank.turretAngle));
+							LEVEL_CACHE.enemies.push(new YellowTank(enemies[i].x, enemies[i].y, enemies[i].angle));
 							break;
 						case "PinkTank":
-							LEVEL_CACHE.enemies.push(new PinkTank(enemies[i].tank.x, enemies[i].tank.y, enemies[i].tank.angle, enemies[i].tank.turretAngle));
+							LEVEL_CACHE.enemies.push(new PinkTank(enemies[i].x, enemies[i].y, enemies[i].angle));
 							break;
 						case "TealTank":
-							LEVEL_CACHE.enemies.push(new TealTank(enemies[i].tank.x, enemies[i].tank.y, enemies[i].tank.angle, enemies[i].tank.turretAngle));
+							LEVEL_CACHE.enemies.push(new TealTank(enemies[i].x, enemies[i].y, enemies[i].angle));
 							break;
 						case "PurpleTank":
-							LEVEL_CACHE.enemies.push(new PurpleTank(enemies[i].tank.x, enemies[i].tank.y, enemies[i].tank.angle, enemies[i].tank.turretAngle));
+							LEVEL_CACHE.enemies.push(new PurpleTank(enemies[i].x, enemies[i].y, enemies[i].angle));
 							break;
 						case "WhiteTank":
-							LEVEL_CACHE.enemies.push(new WhiteTank(enemies[i].tank.x, enemies[i].tank.y, enemies[i].tank.angle, enemies[i].tank.turretAngle));	
+							LEVEL_CACHE.enemies.push(new WhiteTank(enemies[i].x, enemies[i].y, enemies[i].angle));	
 							break;
 						case "GreenTank":
-							LEVEL_CACHE.enemies.push(new GreenTank(enemies[i].tank.x, enemies[i].tank.y, enemies[i].tank.angle, enemies[i].tank.turretAngle));
+							LEVEL_CACHE.enemies.push(new GreenTank(enemies[i].x, enemies[i].y, enemies[i].angle));
 							break;
 						case "BlackTank":
-							LEVEL_CACHE.enemies.push(new BlackTank(enemies[i].tank.x, enemies[i].tank.y, enemies[i].tank.angle, enemies[i].tank.turretAngle));
+							LEVEL_CACHE.enemies.push(new BlackTank(enemies[i].x, enemies[i].y, enemies[i].angle));
 							break;
 						case "OrangeTank":
-							LEVEL_CACHE.enemies.push(new OrangeTank(enemies[i].tank.x, enemies[i].tank.y, enemies[i].tank.angle, enemies[i].tank.turretAngle));
+							LEVEL_CACHE.enemies.push(new OrangeTank(enemies[i].x, enemies[i].y, enemies[i].angle));
 							break;
 						case "BlurpleTank":
-							LEVEL_CACHE.enemies.push(new BlurpleTank(enemies[i].tank.x, enemies[i].tank.y, enemies[i].tank.angle, enemies[i].tank.turretAngle));
+							LEVEL_CACHE.enemies.push(new BlurpleTank(enemies[i].x, enemies[i].y, enemies[i].angle));
 							break;
 						case "VioletTank":
-							const violetTank = new VioletTank(enemies[i].tank.x, enemies[i].tank.y, enemies[i].tank.angle, enemies[i].tank.turretAngle);
+							const violetTank = new VioletTank(enemies[i].x, enemies[i].y, enemies[i].angle);
 							LEVEL_CACHE.enemies.push(violetTank);
 
 							//initiate protection zone for violet tank!
-							LEVEL_CACHE.violetProtection.push(new ProtectionBubble(violetTank.tank.centerX, violetTank.tank.centerY, violetTank.tankID));
+							LEVEL_CACHE.violetProtection.push(new ProtectionBubble(violetTank.centerX, violetTank.centerY, violetTank.tankID));
 							break;
 						case "TanTank":
-							LEVEL_CACHE.enemies.push(new TanTank(enemies[i].tank.x, enemies[i].tank.y, enemies[i].tank.angle, enemies[i].tank.turretAngle));
+							LEVEL_CACHE.enemies.push(new TanTank(enemies[i].x, enemies[i].y, enemies[i].angle));
 							break;				
 					}
 				}

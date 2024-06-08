@@ -83,22 +83,6 @@ function mean(polygon) {
 	return new xy(xSum / polygon.vertices.length, ySum / polygon.vertices.length);
 }
 
-function dotProduct(pointA, pointB) {
-	return pointA.x * pointB.x + pointA.y * pointB.y; 
-}
-
-function getMagnitude(vector) {
-	return Math.sqrt(Math.pow(vector.x, 2) + Math.pow(vector.y, 2));
-}
-
-function normalizeVector(vector) {
-	const invLen = 1 / getMagnitude(vector);
-	vector.x *= invLen;
-	vector.y *= invLen;
-
-	return vector;
-}
-
 function CIRCLE_WITH_CIRCLE(circleA, circleB) {
 	const radiusDistance = circleA.radius + circleB.radius;
 	const distanceX = circleA.x - circleB.x;
@@ -250,7 +234,7 @@ function SAT_POLYGON(polygonA, polygonB) {
 		}
 	}
 	
-	depth /= getMagnitude(normal);
+	depth /= getMagnitude(normal.x, normal.y);
 	normal = normalizeVector(normal);
 
 	//calculate centers of polygons to ensure our normal is pointing same direction

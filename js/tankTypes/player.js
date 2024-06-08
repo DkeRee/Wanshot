@@ -43,23 +43,12 @@ class Piss {
 }
 
 //color code: bodyColor, turretColor, sideColor
-class Player {
+class Player extends Tank {
 	constructor(x, y, angle, turretAngle) {
-		//ID
-		this.tankID = PLAYER_ID;
+		super(x, y, angle, turretAngle, -5, 5, -5, "#224ACF", "#1E42B8", "#0101BA", 100, 3, PLAYER_ID, PLAYER_ID);
 
-		this.tank = new Tank(x, y, angle, turretAngle, "#224ACF", "#1E42B8", "#0101BA", 100, 3, this.tankID, PLAYER_ID);
+		//FOR SOUND PLAYING
 		this.moving = false;
-		this.dead = false;
-
-		//makes tank "shock" aka pause for a split second due to recoil from shot or mine
-		this.tankShock = 0;
-
-		//delays shell spamming
-		this.shellDelay = 0.1;
-
-		//caps number of shells to be shot/keeps track of how many shells are shot by this tank
-		this.shellShot = 0;
 
 		//caps number of mines layed
 		this.mineLayed = 0;
@@ -76,41 +65,30 @@ class Player {
 
 	update() {
 		//update tankBody
-		this.tank.updateBody();
+		super.update();
 
 		//update turret angle
-		this.tank.turretAngle = Math.atan2(MOUSE_POS.y - this.tank.centerY, MOUSE_POS.x - this.tank.centerX);
-
-		//update tankShock
-		this.tankShock += deltaTime;
-
-		//update shellDelay
-		this.shellDelay += deltaTime;
+		this.turretAngle = Math.atan2(MOUSE_POS.y - this.centerY, MOUSE_POS.x - this.centerX);
 
 		//update mineDelay
 		this.mineDelay += deltaTime;
 
-		//update movement
-		const xInc = this.tank.speed * Math.cos(this.tank.angle) * deltaTime;
-		const yInc = this.tank.speed * Math.sin(this.tank.angle) * deltaTime;
-
-		//moving trackers
 		var isUp = false;
 		var isDown = false;
 
 		//if tank is NOT SHELLSHOCKED and isn't dead
-		if (this.tankShock > 0 && !this.dead) {
+		if (!this.dead) {
 			//up
 			if (this.keys[87] || this.keys[38]) {
-				this.tank.x += xInc;
-				this.tank.y += yInc;
+				this.x += this.xInc;
+				this.y += this.yInc;
 				isUp = true;
 			}
 
 			//down
 			if (this.keys[83] || this.keys[40]) {
-				this.tank.x -= xInc;
-				this.tank.y -= yInc;
+				this.x -= this.xInc;
+				this.y -= this.yInc;
 				isDown = true;
 			}
 
@@ -123,18 +101,18 @@ class Player {
 
 			//right rotation
 			if (this.keys[65] || this.keys[37]) {
-				this.tank.angle -= this.tank.rotationSpeed * deltaTime;
+				this.angle -= this.rotationSpeed * deltaTime;
 			}
 
 			//left rotation
 			if (this.keys[68] || this.keys[39]) {
-				this.tank.angle += this.tank.rotationSpeed * deltaTime;
+				this.angle += this.rotationSpeed * deltaTime;
 			}
 
 			//check for keybind for laying mines
 			if (this.keys[32]) {
 				//lay mine
-				this.layMine();
+				super.layMine();
 				delete this.keys[32];
 			}
 		}
@@ -161,7 +139,7 @@ class Player {
 
 		//update pee hee hee (i am mickhel jeckson;!!(real))
 		if (this.pee && !this.dead) {
-			this.pissStream.push(new Piss(this.tank.centerX, this.tank.centerY, this.tank.angle));
+			this.pissStream.push(new Piss(this.centerX, this.centerY, this.angle));
 		}
 
 		for (var i = 0; i < this.pissStream.length; i++) {
@@ -175,52 +153,30 @@ class Player {
 
 			pee.update();
 		}
-
-		//update particles
-		this.tank.updateParticles();
 	}
 	
 	explode() {
 		//die
-		this.dead = true;
-		this.tank.explodeTank();
+		super.explode();
 
 		//start intermission
 		intermissionStatus = INTERMISSION_RETRY;
 		INTERMISSION = true;
-
-		//add grave
-		if (SETTING_RGB) {
-			STAGE_CACHE.graves.push(new Grave(this.tank.centerX - GRAVE_WIDTH / 2, this.tank.centerY - GRAVE_HEIGHT / 2, `rgb(${rgb.r}, ${rgb.g}, ${rgb.b})`));
-		} else {
-			STAGE_CACHE.graves.push(new Grave(this.tank.centerX - GRAVE_WIDTH / 2, this.tank.centerY - GRAVE_HEIGHT / 2, this.tank.color));
-		}
 	}
 
 	shoot() {
-		//delay shell fire rate && cap shell amount && isn't dead
-		if (this.shellDelay > 0.1 && this.shellShot < 5 && !this.dead && !INTERMISSION) {
-			this.tankShock = -0.1;
-			this.shellShot++;
-			this.shellDelay = 0;
-
-			this.tank.shoot(MOUSE_POS, NORMAL_SHELL, this.tankID);		
+		if (!INTERMISSION && !this.dead) {
+			super.shoot(NORMAL_SHELL);		
 		}
 	}
 
 	layMine() {
-		if (this.mineLayed < 2 && this.mineDelay > 2 && !INTERMISSION) {
+		if (this.mineLayed < 2 && this.mineDelay > 2 && !INTERMISSION && !this.dead) {
 			this.tankShock = -0.2;
 			this.mineLayed++;
 			this.mineDelay = 0;
 
-			this.tank.layMine(this.tankID);
-		}
-	}
-
-	trackUpdate() {
-		if (!this.dead) {
-			this.tank.trackUpdate();			
+			this.layMine(this.tankID);
 		}
 	}
 
@@ -237,12 +193,12 @@ class Player {
 			ctx.shadowColor = "#FEE75C";
 			ctx.fillStyle = hexToRgbA("#FEE75C", 0.13);
 
-			const heart = new xy(this.tank.centerX, this.tank.centerY);
+			const heart = new xy(this.centerX, this.centerY);
 			const offset = 30 * Math.PI / 180;
 
 			ctx.beginPath();
 			ctx.moveTo(heart.x, heart.y);
-			ctx.arc(heart.x, heart.y, 70, this.tank.angle - offset, this.tank.angle + offset);
+			ctx.arc(heart.x, heart.y, 70, this.angle - offset, this.angle + offset);
 			ctx.lineTo(heart.x, heart.y);
 			ctx.closePath();
 			ctx.fill();
@@ -251,13 +207,9 @@ class Player {
 		}
 
 		if (SETTING_RGB) {
-			this.tank.renderRGB(this.dead);
+			super.renderRGB();
 		} else {
-			this.tank.render(this.dead);			
+			super.render();			
 		}
-	}
-
-	renderShadow() {
-		this.tank.renderShadow(this.dead);
 	}
 }

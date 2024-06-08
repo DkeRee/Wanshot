@@ -1,5 +1,5 @@
 //VERSION ID
-const VERSION = "3.0.2";
+const VERSION = "4.0.0";
 
 //essential delta time info//
 const deltaTime = 1 / 60;
@@ -167,7 +167,7 @@ const PORTAL_RADIUS = 100;
 const PORTAL_PARTICLE_SIDE = 30;
 
 const STATIONARY_RAY_OFFSET = 4;
-const MOBILE_RAY_OFFSET = 3;
+const MOBILE_RAY_OFFSET = 1.5;
 
 const TELEPORTATION_PARTICLE_RADIUS = 15;
 
@@ -240,6 +240,49 @@ var MOUSE_POS = {
 };
 
 const PLAYER_ID = Math.floor(Math.random() * 100000);
+
+function checkGameOver() {
+	for (var i = 0; i < STAGE_CACHE.enemies.length; i++) {
+		//game is not over if an enemy tank is still alive
+		if (!STAGE_CACHE.enemies[i].dead) {
+			return false;
+		}
+	}
+
+	//if this is the final mission and it is completed
+	if (getCampaign(CURR_CAMPAIGN, CURR_LEVEL + 1) == undefined) {
+		//set game to complete and pause menu to win
+		pauseMenu = new PauseMenu(WIN_VARIATION);
+		STAGE_CACHE.activateConfetti = true;
+		STAGE_CACHE.gameComplete = true;
+
+		//ongg you won the game (rgb time)
+		const rgbToggle = document.getElementById("rgb-toggle");
+		rgbToggle.onclick = "";
+		rgbToggle.classList.add("toggle");
+		document.getElementsByClassName("slider")[1].classList.remove("locked-toggle");
+
+		if (CURR_CAMPAIGN == NORMAL_CAMPAIGN) {
+			localStorage.setItem("beaten-game", "true");			
+		}
+
+		playSound(confettiPop);
+		playSound(confettiTrumpet);
+		return false;
+	} else {
+		return true;
+	}
+}
+
+function getEnemy(tankID) {
+	for (var i = 0; i < STAGE_CACHE.enemies.length; i++) {
+		const enemy = STAGE_CACHE.enemies[i];
+
+		if (enemy.tankID == tankID) {
+			return enemy;
+		}
+	}
+}
 
 function updateMousePos(clientX, clientY) {
 	const rect = canvas.getBoundingClientRect();

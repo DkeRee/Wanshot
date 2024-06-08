@@ -34,43 +34,43 @@ fileReader.onload = function() {
 				for (var i = 0; i < enemies.length; i++) {
 					switch (enemies[i].content) {
 						case BROWN_TANK:
-							LEVEL_CACHE.enemies.push(new BrownTank(enemies[i].tank.x, enemies[i].tank.y, enemies[i].tank.angle, enemies[i].tank.angle));
+							LEVEL_CACHE.enemies.push(new BrownTank(enemies[i].tank.x, enemies[i].tank.y, enemies[i].tank.angle));
 							break;
 						case GREY_TANK:
-							LEVEL_CACHE.enemies.push(new GreyTank(enemies[i].tank.x, enemies[i].tank.y, enemies[i].tank.angle, enemies[i].tank.angle));
+							LEVEL_CACHE.enemies.push(new GreyTank(enemies[i].tank.x, enemies[i].tank.y, enemies[i].tank.angle));
 							break;
 						case YELLOW_TANK:
-							LEVEL_CACHE.enemies.push(new YellowTank(enemies[i].tank.x, enemies[i].tank.y, enemies[i].tank.angle, enemies[i].tank.angle));
+							LEVEL_CACHE.enemies.push(new YellowTank(enemies[i].tank.x, enemies[i].tank.y, enemies[i].tank.angle));
 							break;
 						case PINK_TANK:
-							LEVEL_CACHE.enemies.push(new PinkTank(enemies[i].tank.x, enemies[i].tank.y, enemies[i].tank.angle, enemies[i].tank.angle));
+							LEVEL_CACHE.enemies.push(new PinkTank(enemies[i].tank.x, enemies[i].tank.y, enemies[i].tank.angle));
 							break;
 						case TEAL_TANK:
-							LEVEL_CACHE.enemies.push(new TealTank(enemies[i].tank.x, enemies[i].tank.y, enemies[i].tank.angle, enemies[i].tank.angle));
+							LEVEL_CACHE.enemies.push(new TealTank(enemies[i].tank.x, enemies[i].tank.y, enemies[i].tank.angle));
 							break;
 						case PURPLE_TANK:
-							LEVEL_CACHE.enemies.push(new PurpleTank(enemies[i].tank.x, enemies[i].tank.y, enemies[i].tank.angle, enemies[i].tank.angle));
+							LEVEL_CACHE.enemies.push(new PurpleTank(enemies[i].tank.x, enemies[i].tank.y, enemies[i].tank.angle));
 							break;
 						case WHITE_TANK:
-							LEVEL_CACHE.enemies.push(new WhiteTank(enemies[i].tank.x, enemies[i].tank.y, enemies[i].tank.angle, enemies[i].tank.angle));
+							LEVEL_CACHE.enemies.push(new WhiteTank(enemies[i].tank.x, enemies[i].tank.y, enemies[i].tank.angle));
 							break;
 						case GREEN_TANK:
-							LEVEL_CACHE.enemies.push(new GreenTank(enemies[i].tank.x, enemies[i].tank.y, enemies[i].tank.angle, enemies[i].tank.angle));
+							LEVEL_CACHE.enemies.push(new GreenTank(enemies[i].tank.x, enemies[i].tank.y, enemies[i].tank.angle));
 							break;
 						case BLACK_TANK:
-							LEVEL_CACHE.enemies.push(new BlackTank(enemies[i].tank.x, enemies[i].tank.y, enemies[i].tank.angle, enemies[i].tank.angle));
+							LEVEL_CACHE.enemies.push(new BlackTank(enemies[i].tank.x, enemies[i].tank.y, enemies[i].tank.angle));
 							break;
 						case ORANGE_TANK:
-							LEVEL_CACHE.enemies.push(new OrangeTank(enemies[i].tank.x, enemies[i].tank.y, enemies[i].tank.angle, enemies[i].tank.angle));
+							LEVEL_CACHE.enemies.push(new OrangeTank(enemies[i].tank.x, enemies[i].tank.y, enemies[i].tank.angle));
 							break;
 						case BLURPLE_TANK:
-							LEVEL_CACHE.enemies.push(new BlurpleTank(enemies[i].tank.x, enemies[i].tank.y, enemies[i].tank.angle, enemies[i].tank.angle));
+							LEVEL_CACHE.enemies.push(new BlurpleTank(enemies[i].tank.x, enemies[i].tank.y, enemies[i].tank.angle));
 							break;
 						case VIOLET_TANK:
-							LEVEL_CACHE.enemies.push(new VioletTank(enemies[i].tank.x, enemies[i].tank.y, enemies[i].tank.angle, enemies[i].tank.angle));
+							LEVEL_CACHE.enemies.push(new VioletTank(enemies[i].tank.x, enemies[i].tank.y, enemies[i].tank.angle));
 							break;
 						case TAN_TANK:
-							LEVEL_CACHE.enemies.push(new TanTank(enemies[i].tank.x, enemies[i].tank.y, enemies[i].tank.angle, enemies[i].tank.angle));
+							LEVEL_CACHE.enemies.push(new TanTank(enemies[i].tank.x, enemies[i].tank.y, enemies[i].tank.angle));
 							break;																
 					}
 				}

@@ -1,5 +1,5 @@
 const NORMAL_SHELL = 250;
-const MISSLE = 680;
+const MISSLE = 600;
 const ULTRA_MISSLE = 550;
 const TELE_SHELL = 450;
 
@@ -367,7 +367,7 @@ class Shell {
 
 		//if player isn't dead but it is intermission, player has won. don't let player die. also don't die if level is lobby. also don't die if the player completed the game
 		if (!player.dead && !INTERMISSION && CURR_LEVEL !== 0 && !STAGE_CACHE.gameComplete) {
-			const SATCollision = SAT_POLYGON(this, player.tank);
+			const SATCollision = SAT_POLYGON(this, player);
 
 			//wait for bullet to leave contact of tank then remove peace mode
 			if (this.peace) {
@@ -387,18 +387,18 @@ class Shell {
 					//find the tank responsible for this shell
 					const enemy = getEnemy(this.tankID);
 
-					const playerX = player.tank.x;
-					const playerY = player.tank.y;
+					const playerX = player.x;
+					const playerY = player.y;
 
 					//swap positions!
-					player.tank.x = enemy.tank.x;
-					player.tank.y = enemy.tank.y;
+					player.x = enemy.x;
+					player.y = enemy.y;
 
-					enemy.tank.x = playerX;
-					enemy.tank.y = playerY;
+					enemy.x = playerX;
+					enemy.y = playerY;
 
-					player.tank.teleportExplosion();
-					enemy.tank.teleportExplosion();
+					player.teleportExplosion();
+					enemy.teleportExplosion();
 
 					playSound(hitByTele);
 				} else {
@@ -413,7 +413,7 @@ class Shell {
 	shellWithEnemy() {
 		for (var i = 0; i < STAGE_CACHE.enemies.length; i++) {
 			const enemy = STAGE_CACHE.enemies[i];
-			const SATCollision = SAT_POLYGON(this, enemy.tank);
+			const SATCollision = SAT_POLYGON(this, enemy);
 
 			//if this shell is in peace mode and it is no longer colliding with ITSELF, it is no longer peaceful
 			if (this.peace) {
@@ -429,24 +429,24 @@ class Shell {
 				this.diminish = true;
 
 				//only allow death if the victim enemy tank is NOT in a violet protection bubble!
-				if (!enemy.tank.inVioletShield) {
+				if (!enemy.inVioletShield) {
 					//explode explode enemy tank ONLY IF it is not a tele shell
 					if (this.speed == TELE_SHELL) {
 						const thisEnemy = getEnemy(this.tankID);
 						const otherEnemy = getEnemy(enemy.tankID);
 
-						const thisEnemyX = thisEnemy.tank.x;
-						const thisEnemyY = thisEnemy.tank.y;
+						const thisEnemyX = thisEnemy.x;
+						const thisEnemyY = thisEnemy.y;
 
 						//swap positions!
-						thisEnemy.tank.x = otherEnemy.tank.x;
-						thisEnemy.tank.y = otherEnemy.tank.y;
+						thisEnemy.x = otherEnemy.x;
+						thisEnemy.y = otherEnemy.y;
 
-						otherEnemy.tank.x = thisEnemyX;
-						otherEnemy.tank.y = thisEnemyY;
+						otherEnemy.x = thisEnemyX;
+						otherEnemy.y = thisEnemyY;
 
-						thisEnemy.tank.teleportExplosion();
-						otherEnemy.tank.teleportExplosion();
+						thisEnemy.teleportExplosion();
+						otherEnemy.teleportExplosion();
 
 						playSound(hitByTele);
 					} else {

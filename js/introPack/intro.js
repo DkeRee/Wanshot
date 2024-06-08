@@ -106,6 +106,7 @@ function introUpdate() {
 						intermissionStatus = INTERMISSION_INTRO;
 						maskFadeIn = true;
 						INTERMISSION = true;
+						STAGE_CACHE = levelCloner(CURR_LEVEL);
 						break;
 				}
 			}

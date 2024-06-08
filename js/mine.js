@@ -117,7 +117,7 @@ class Mine {
 
 		//if player isn't dead but it is intermission, player has won. don't let player die. also don't let player die if level is lobby. also don't die if the player completed the game
 		if (!player.dead && !INTERMISSION && CURR_LEVEL !== 0 && !STAGE_CACHE.gameComplete) {
-			if (SAT_POLYGON_CIRCLE(player.tank, {
+			if (SAT_POLYGON_CIRCLE(player, {
 				x: this.x,
 				y: this.y,
 				radius: this.explosionRadius
@@ -135,8 +135,8 @@ class Mine {
 			const enemy = STAGE_CACHE.enemies[i];
 
 			//only let enemy tank die if it's not in a protection bubble!
-			if (!enemy.tank.inVioletShield) {
-				if (SAT_POLYGON_CIRCLE(enemy.tank, {
+			if (!enemy.inVioletShield) {
+				if (SAT_POLYGON_CIRCLE(enemy, {
 					x: this.x,
 					y: this.y,
 					radius: this.explosionRadius

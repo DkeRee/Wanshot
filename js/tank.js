@@ -26,13 +26,11 @@ class TankParticle {
 
 	update() {
 		//GOAL: move particle in random angle while it slowly fades and slows
-
-		//update position
-		this.x += this.speed * Math.cos(this.angle) * deltaTime;
-		this.y += this.speed * Math.sin(this.angle) * deltaTime;
-
 		this.centerX = this.x + this.side / 2;
 		this.centerY = this.y + this.side / 2;
+
+		this.x += this.speed * Math.cos(this.angle) * deltaTime;
+		this.y += this.speed * Math.sin(this.angle) * deltaTime;
 
 		//update opacity and speed
 		this.opacity -= 3 * deltaTime;
@@ -198,7 +196,7 @@ class Grave {
 
 //TANK CONSTRUCTOR
 class Tank {
-	constructor(x, y, angle, turretAngle, color, turretColor, sideColor, speed, rotationSpeed, tankID, tankType) {
+	constructor(x, y, angle, turretAngle, stun, shellCap, shellCooldown, color, turretColor, sideColor, speed, rotationSpeed, tankID, tankType) {
 		//ID
 		this.tankID = tankID;
 
@@ -229,10 +227,18 @@ class Tank {
 		this.rotationSpeed = rotationSpeed;
 		this.angle = angle;
 		this.turretAngle = turretAngle;
+		this.stun = stun;
+		this.stunCount = 0;
 		this.color = color;
 		this.turretColor = turretColor;
 		this.sideColor = sideColor;
 		this.inVioletShield = false;
+		this.dead = false;
+
+		this.shellCap = shellCap;
+		this.shellCooldown = shellCooldown;
+		this.shellCooldownCount = 0;
+		this.shellShot = 0;
 	}
 
 	isInVioletShield() {
@@ -265,69 +271,91 @@ class Tank {
 	}
 
 	//tank death
-	explodeTank() {
+	explode() {
 		playSound(tankDeath);
 
 		if (this.tankID == PLAYER_ID) {
 			//player death sound
 			playSound(playerDeath);
+
+			if (SETTING_RGB) {
+				STAGE_CACHE.graves.push(new Grave(this.centerX - GRAVE_WIDTH / 2, this.centerY - GRAVE_HEIGHT / 2, `rgb(${rgb.r}, ${rgb.g}, ${rgb.b})`));
+			} else {
+				STAGE_CACHE.graves.push(new Grave(this.centerX - GRAVE_WIDTH / 2, this.centerY - GRAVE_HEIGHT / 2, this.color));
+			}
 		} else {
 			//enemy death sound
 			playSound(enemyDeath);
+
+			STAGE_CACHE.graves.push(new Grave(this.centerX - GRAVE_WIDTH / 2, this.centerY - GRAVE_HEIGHT / 2, this.color));
 		}
 
 		this.tankExplosion = true;
+		this.dead = true;
+	}
+
+	//check if can shoot
+	isAbleToShoot() {
+		return this.shellShot < this.shellCap && this.shellCooldownCount == 0;
 	}
 
 	//shooting
-	shoot(targetCoords, shellType, tankID) {
-		const angle = Math.atan2(targetCoords.y - this.centerY, targetCoords.x - this.centerX);
-		const initialBoost = 20;
-		
-		//play shell sound
-		switch(shellType) {
-			case NORMAL_SHELL:
-				playSound(normalShoot);
-				break;
-			case MISSLE:
-				playSound(missleShoot);
-				break;
-			case ULTRA_MISSLE:
-				playSound(ultraMissleShoot);
-				break;
-			case TELE_SHELL:
-				playSound(teleShot);
-				break;
-		}
+	shoot(shellType) {
+		if (this.isAbleToShoot()) {
+			const initialBoost = 20;
+			
+			//play shell sound
+			switch(shellType) {
+				case NORMAL_SHELL:
+					playSound(normalShoot);
+					break;
+				case MISSLE:
+					playSound(missleShoot);
+					break;
+				case ULTRA_MISSLE:
+					playSound(ultraMissleShoot);
+					break;
+				case TELE_SHELL:
+					playSound(teleShot);
+					break;
+			}
 
-		//shoot
-		STAGE_CACHE.shells.push(new Shell(this.centerX - SHELL_WIDTH / 2 + (initialBoost * Math.cos(angle)), this.centerY - SHELL_HEIGHT / 2 + (initialBoost * Math.sin(angle)), shellType, angle, tankID));
+			this.stunCount = this.stun;
+			this.shellCooldownCount = this.shellCooldown;
+			this.shellShot++;
+
+			//shoot
+			STAGE_CACHE.shells.push(new Shell(this.centerX - SHELL_WIDTH / 2 + (initialBoost * Math.cos(this.turretAngle)), this.centerY - SHELL_HEIGHT / 2 + (initialBoost * Math.sin(this.turretAngle)), shellType, this.turretAngle, this.tankID));
+		}
 	}
 
 	//lay mine
 	layMine(tankID) {
 		playSound(minePlace);
+
+		this.stunCount = this.stun;
 		STAGE_CACHE.mines.push(new Mine(this.centerX, this.centerY, tankID));
 	}
 
 	//update track marks
 	trackUpdate() {
 		//only moving tanks get updated
+		if (!this.dead) {
+			if (this.tankID == PLAYER_ID) {
+				//player tank
 
-		if (this.tankID == PLAYER_ID) {
-			//player tank
+				if (STAGE_CACHE.player.moving && !INTERMISSION) {
+					playSound(tankMovement);
+				}
+			} else {
+				//moving enemy tanks (don't play if player is dead)
+				if (!STAGE_CACHE.player.dead) {
+					playSound(tankMovement);
+				}
+			}
 
-			if (STAGE_CACHE.player.moving && !INTERMISSION) {
-				playSound(tankMovement);
-			}
-		} else {
-			//moving enemy tanks (don't play if player is dead)
-			if (!STAGE_CACHE.player.dead) {
-				playSound(tankMovement);
-			}
+			STAGE_CACHE.tracks.push(new Track(this.centerX - TRACK_WIDTH / 2, this.centerY - TRACK_HEIGHT / 2, this.angle));
 		}
-
-		STAGE_CACHE.tracks.push(new Track(this.centerX - TRACK_WIDTH / 2, this.centerY - TRACK_HEIGHT / 2, this.angle));
 	}
 
 	//COLLISIONS
@@ -337,15 +365,15 @@ class Tank {
 
 			//if this enemy im looping through is NOT me
 			if (enemy.tankID !== this.tankID && !enemy.dead) {
-				const SATCollision = SAT_POLYGON(this, enemy.tank);
+				const SATCollision = SAT_POLYGON(this, enemy);
 				if (SATCollision.collision) {
 					//push myself
 					this.x += SATCollision.normal.x * SATCollision.depth / 2;
 					this.y += SATCollision.normal.y * SATCollision.depth / 2;
 
 					//push enemy
-					enemy.tank.x -= SATCollision.normal.x * SATCollision.depth / 2;
-					enemy.tank.y -= SATCollision.normal.y * SATCollision.depth / 2;
+					enemy.x -= SATCollision.normal.x * SATCollision.depth / 2;
+					enemy.y -= SATCollision.normal.y * SATCollision.depth / 2;
 				}
 			}
 		}
@@ -353,15 +381,15 @@ class Tank {
 		//if i am not a player, check collisions for player
 		if (this.tankID !== PLAYER_ID) {
 			const player = STAGE_CACHE.player;
-			const SATCollision = SAT_POLYGON(this, player.tank);
+			const SATCollision = SAT_POLYGON(this, player);
 
 			if (SATCollision.collision) {
 				this.x += SATCollision.normal.x * SATCollision.depth / 2;
 				this.y += SATCollision.normal.y * SATCollision.depth / 2;
 
 				//push player
-				player.tank.x -= SATCollision.normal.x * SATCollision.depth / 2;
-				player.tank.y -= SATCollision.normal.y * SATCollision.depth / 2;
+				player.x -= SATCollision.normal.x * SATCollision.depth / 2;
+				player.y -= SATCollision.normal.y * SATCollision.depth / 2;
 			}
 		}
 	}
@@ -402,11 +430,36 @@ class Tank {
 		}
 	}
 
-	updateBody(targetCoords) {
+	update() {
 		//update center
 		if (!this.dead) {
 			this.centerX = this.x + this.width / 2;
 			this.centerY = this.y + this.height / 2;
+
+			if (this.shellCooldownCount < 0) {
+				this.shellCooldownCount++;
+			}
+
+			if (this.stunCount < 0) {
+				this.xInc = 0;
+				this.yInc = 0;
+				this.stunCount++;
+			} else {
+				this.xInc = this.speed * Math.cos(this.angle) * deltaTime;
+				this.yInc = this.speed * Math.sin(this.angle) * deltaTime;
+			}
+
+			//Modulo rotations		
+			this.angle %= 2 * Math.PI;
+			this.turretAngle %= 2 * Math.PI;
+				
+			if (this.angle < 0) {
+				this.angle = 2 * Math.PI - Math.abs(this.angle);
+			}
+				
+			if (this.turretAngle < 0) {
+				this.turretAngle = 2 * Math.PI - Math.abs(this.turretAngle);
+			}
 
 			//update collisions
 			this.tankWithBorder();
@@ -419,6 +472,8 @@ class Tank {
 				this.isInVioletShield();
 			}
 		}
+
+		this.updateParticles();
 	}
 
 	updateParticles() {
@@ -441,7 +496,6 @@ class Tank {
 				}
 				this.explosionRingCount++;
 				this.explosionParticleDelay = 0;
-
 			}
 
 			if (this.explosionRingCount == 8) {
@@ -477,9 +531,9 @@ class Tank {
 		}
 	}
 
-	renderRGB(isDead) {
+	renderRGB() {
 		//RENDER RGB WOOOO
-		if (!isDead) {
+		if (!this.dead) {
 			const rgbColor = `rgb(${rgb.r}, ${rgb.g}, ${rgb.b})`;
 
 			ctx.shadowBlur = 3;
@@ -538,9 +592,9 @@ class Tank {
 		}
 	}
 
-	render(isDead) {
+	render() {
 		//RENDER THIS IF TANK IS STILL ALIVE//
-		if (!isDead) {
+		if (!this.dead) {
 			ctx.shadowBlur = 3;
 			ctx.shadowColor = this.color;
 
@@ -617,8 +671,8 @@ class Tank {
 		}
 	}
 
-	renderShadow(isDead) {
-		if (!isDead) {
+	renderShadow() {
+		if (!this.dead) {
 			ctx.save();
 
 			ctx.translate(this.centerX - 5, this.centerY + 5);
