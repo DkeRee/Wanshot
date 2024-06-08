@@ -41,13 +41,13 @@ class Bot extends Tank {
 				tankID, 
 				tankType);
 
-			this.targetTurretRot = 0;
+			this.targetTurretRot = angle;
 			this.move = true;
 			this.dodging = false;
 			this.updateTargetCount = 0;
 			this.closest = null;
 			this.closestAngle = 0;
-			this.targetAngle = 0;
+			this.targetAngle = angle;
 
 			//all the other little information
 			this.stopAndTurn = stopAndTurn;
