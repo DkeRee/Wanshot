@@ -11,8 +11,8 @@ class TealTank extends Bot {
 		const updateTargetCount = -2;
 		const shellSensitivity = 800;
 		const abortNonmove = false;
-		const turretRotationSpeed = degreesToRadians(6);
-		const turretArcSize = degreesToRadians(40);
+		const turretRotationSpeed = degreesToRadians(1);
+		const turretArcSize = degreesToRadians(1);
 		const shellType = MISSLE;
 		const shellBounceAmount = 0;
 		const color = "#154734";
