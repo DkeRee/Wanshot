@@ -1,13 +1,17 @@
 //manage settings + import settings from localStorage
 
 const volumeSlider = document.getElementById("volume-bar");
-const headlightToggle = document.getElementById("headlight-toggle");
+const wasdToggle = document.getElementById("wasd-toggle");
+const exhaustToggle = document.getElementById("exhaust-toggle");
 const rgbToggle = document.getElementById("rgb-toggle");
 
 //init settings
 volumeSlider.value = localStorage.getItem("volume");
-if (SETTING_HEADLIGHTS) {
-	headlightToggle.checked = true;
+if (SETTING_WASD) {
+	wasdToggle.checked = true;
+}
+if (SETTING_EXHAUST) {
+	exhaustToggle.checked = true;
 }
 
 if (localStorage.getItem("beaten-game")) {
@@ -18,7 +22,7 @@ if (localStorage.getItem("beaten-game")) {
 	//hasn't beaten game yet
 	rgbToggle.onclick = "return false";
 	rgbToggle.classList.remove("toggle");
-	document.getElementsByClassName("slider")[1].classList.add("locked-toggle");
+	document.getElementsByClassName("slider")[2].classList.add("locked-toggle");
 }
 
 volumeSlider.addEventListener("change", () => {
@@ -27,16 +31,28 @@ volumeSlider.addEventListener("change", () => {
 	toggleVolume(SETTING_VOLUME);
 });
 
-headlightToggle.addEventListener("change", () => {
-	if (headlightToggle.checked) {
-		//toggle headlights on
-		localStorage.setItem("headlights", "true");
+wasdToggle.addEventListener("change", () => {
+	if (wasdToggle.checked) {
+		//toggle classic wasd on
+		localStorage.setItem("wasd", "true");
 	} else {
-		//toggle headlights off
-		localStorage.setItem("headlights", "false");
+		//toggle classic wasd off
+		localStorage.setItem("wasd", "false");
 	}
 	//convert to boolean
-	SETTING_HEADLIGHTS = (localStorage.getItem("headlights") === "true");
+	SETTING_WASD = (localStorage.getItem("wasd") === "true");
+});
+
+exhaustToggle.addEventListener("change", () => {
+	if (exhaustToggle.checked) {
+		//toggle exhaust on
+		localStorage.setItem("exhaust", "true");
+	} else {
+		//toggle exhaust off
+		localStorage.setItem("exhaust", "false");
+	}
+	//convert to boolean
+	SETTING_EXHAUST = (localStorage.getItem("exhaust") === "true");
 });
 
 rgbToggle.addEventListener("change", () => {

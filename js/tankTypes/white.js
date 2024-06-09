@@ -60,17 +60,17 @@ class SuperpowerParticles {
 
 class WhiteTank extends Bot {
 	constructor(x, y, angle) {
-		const speed = 100;
+		const speed = 140;
 		const rotationSpeed = degreesToRadians(10);
 		const stun = -5;
-		const shellCap = 4;
-		const shellCooldown = -20;
+		const shellCap = 6;
+		const shellCooldown = -15;
 		const frm = -3;
 		const stopAndTurn = degreesToRadians(30);
 		const uTurn = degreesToRadians(170);
 		const updateTargetCount = -3
-		const shellSensitivity = 400;
-		const abortNonmove = false;
+		const shellSensitivity = 600;
+		const abortNonmove = true;
 		const turretRotationSpeed = degreesToRadians(3);
 		const turretArcSize = degreesToRadians(95);
 		const shellType = NORMAL_SHELL;

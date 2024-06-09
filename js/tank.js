@@ -330,11 +330,11 @@ class Tank {
 	}
 
 	//lay mine
-	layMine(tankID) {
+	layMine() {
 		playSound(minePlace);
 
 		this.stunCount = this.stun;
-		STAGE_CACHE.mines.push(new Mine(this.centerX, this.centerY, tankID));
+		STAGE_CACHE.mines.push(new Mine(this.centerX, this.centerY, null));
 	}
 
 	//update track marks

@@ -1,6 +1,6 @@
 class BlackTank extends Bot {
 	constructor(x, y, angle) {
-		const speed = 210;
+		const speed = 160;
 		const rotationSpeed = degreesToRadians(10);
 		const stun = -3;
 		const shellCap = 5;
@@ -9,10 +9,10 @@ class BlackTank extends Bot {
 		const stopAndTurn = degreesToRadians(35);
 		const uTurn = degreesToRadians(170);
 		const updateTargetCount = -3
-		const shellSensitivity = 1000;
-		const abortNonmove = true;
-		const turretRotationSpeed = degreesToRadians(10);
-		const turretArcSize = degreesToRadians(45);
+		const shellSensitivity = 600;
+		const abortNonmove = false;
+		const turretRotationSpeed = degreesToRadians(3);
+		const turretArcSize = degreesToRadians(60);
 		const shellType = MISSLE;
 		const shellBounceAmount = 0;
 		const color = "#000000";

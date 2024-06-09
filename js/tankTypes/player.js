@@ -1,3 +1,51 @@
+class Exhaust {
+	constructor(side, x, y, angle) {
+		this.possibleColors = ["#ED4245", "#FFA500", "#FFBF00"];
+
+		this.color = this.possibleColors[Math.floor(Math.random() * this.possibleColors.length)];
+		this.side = side;
+		this.x = x;
+		this.y = y;
+		this.centerX = this.x + this.side / 2;
+		this.centerY = this.y + this.side / 2;
+		this.angle = angle;
+		this.side;
+		this.opacity = 1;
+		this.delete = false;
+	}
+
+	update() {
+		this.x -= 200 * Math.cos(this.angle) * deltaTime;
+		this.y -= 200 * Math.sin(this.angle) * deltaTime;
+		this.opacity -= 2 * deltaTime;
+
+		this.centerX = this.x + this.side / 2;
+		this.centerY = this.y + this.side / 2;
+
+		if (this.opacity <= 0) {
+			this.delete = true;
+			return;
+		}
+	}
+
+	render() {
+		//RENDER PARTICLE
+		ctx.shadowBlur = 5;
+		ctx.shadowColor = this.color;
+		ctx.save();
+
+		ctx.translate(this.centerX, this.centerY);
+		ctx.rotate(this.angle);
+
+		//color in rgba to support opacity
+		ctx.fillStyle = hexToRgbA(this.color, this.opacity);
+		ctx.fillRect(this.side / -2, this.side / -2, this.side, this.side);
+
+		ctx.restore();
+		ctx.shadowBlur = 0;
+	}
+}
+
 class Piss {
 	constructor(x, y, angle) {
 		this.radius = PISS_RADIUS;
@@ -56,16 +104,155 @@ class Player extends Tank {
 		//delays mine spamming
 		this.mineDelay = 50;
 
+		//key pressed
 		this.keys = {};
+
+		//for classic wasd
+		this.instaRotSpeed = degreesToRadians(5);
+
+		//exhaust
+		this.exhaustDelay = -1;
+		this.exhaustDelayCount = 0;
+		this.exhaustList = [];
 
 		//bruh
 		this.pee = false;
 		this.pissStream = [];
 	}
 
+	angleControl() {
+		var isUp = false;
+		var isDown = false;
+
+		//up
+		if (this.keys[87] || this.keys[38]) {
+			this.x += this.xInc;
+			this.y += this.yInc;
+			isUp = true;
+		}
+
+		//down
+		if (this.keys[83] || this.keys[40]) {
+			this.x -= this.xInc;
+			this.y -= this.yInc;
+			isDown = true;
+		}
+
+		//update moving trackers
+		if ((isUp == false && isDown == false) || (isUp == true && isDown == true)) {
+			this.moving = false;
+		} else {
+			this.moving = true;
+		}
+
+		//right rotation
+		if (this.keys[65] || this.keys[37]) {
+			this.angle -= this.rotationSpeed * deltaTime;
+		}
+
+		//left rotation
+		if (this.keys[68] || this.keys[39]) {
+			this.angle += this.rotationSpeed * deltaTime;
+		}
+	}
+
+	wasdControl() {
+		const w = this.keys[87] || this.keys[38];
+		const a = this.keys[68] || this.keys[39];
+		const s = this.keys[83] || this.keys[40];
+		const d = this.keys[65] || this.keys[37];
+
+		//move if any key is being pressed
+		if (w || a || s || d) {
+			this.moving = true;
+			this.x += this.xInc;
+			this.y += this.yInc;
+
+			//set angle to move to if a key or key combo is being pressed
+			const wA = w ? degreesToRadians(90) : 0;
+			const wN = w ? 1 : 0;
+			const aA = a ? degreesToRadians(180) : 0;
+			const aN = a ? 1 : 0;
+			const sA = s ? degreesToRadians(270) : 0;
+			const sN = s ? 1 : 0;
+
+			const onlyOne = !(w && d) && (w || d);
+			const dAngle = onlyOne ? (w ? 0 : 2 * Math.PI) : 0;
+			const dA = d ? dAngle : 0;
+			const dN = d ? 1 : 0;
+			const goalRot = (((wA + aA + sA + dA) / (wN + aN + sN + dN)) + Math.PI) % (2 * Math.PI);
+
+			//move to that angle
+			var diff = goalRot - this.angle;
+			var diffOther = 2 * Math.PI - diff;
+
+			if (diff >= 0) {
+				if (diff < diffOther) {
+					//+
+					this.angle += this.instaRotSpeed;
+				} else {
+					//-
+					this.angle -= this.instaRotSpeed;
+				}
+			} else {
+				diff = Math.abs(diff);
+				diffOther = 2 * Math.PI - diff;
+
+				if (diff < diffOther) {
+					//-
+					this.angle -= this.instaRotSpeed;
+				} else {
+					//+
+					this.angle += this.instaRotSpeed;
+				}
+			}
+
+			diff = diff < diffOther ? diff : diffOther;
+			if (diff <= degreesToRadians(10)) {
+				this.instaRotSpeed = degreesToRadians(1);
+			} else {
+				this.instaRotSpeed = degreesToRadians(12);
+			}
+		} else {
+			this.moving = false;
+		}
+	}
+
+	updateExhaust() {
+		//create new exhaust if tank is not dead
+		if (!this.dead && SETTING_EXHAUST) {
+			if (this.exhaustDelayCount < 0) {
+				this.exhaustDelayCount++;
+			} else {
+				this.exhaustDelayCount = this.exhaustDelay;
+
+				const offset = Math.floor(Math.random() * TANK_HEIGHT / 3);
+				const heightOffset = Math.random() > 0.5 ? offset : -offset;
+				const randSide = Math.floor(Math.random() * 17);
+
+				this.exhaustList.push(new Exhaust(randSide, (this.centerX - randSide / 2) + heightOffset, (this.centerY - randSide / 2) + heightOffset, this.angle));
+			}
+		}
+
+		//update exhaust
+		for (var i = 0; i < this.exhaustList.length; i++) {
+			const exhaust = this.exhaustList[i];
+
+			if (exhaust.delete) {
+				this.exhaustList.splice(i, 1);
+				continue;
+			}
+
+			exhaust.update();
+		}
+	}
+
 	update() {
 		//update tankBody
 		super.update();
+
+		//update exhaust
+		this.updateExhaust();
 
 		//update turret angle
 		this.turretAngle = Math.atan2(MOUSE_POS.y - this.centerY, MOUSE_POS.x - this.centerX);
@@ -73,40 +260,14 @@ class Player extends Tank {
 		//update mineDelay
 		this.mineDelay += deltaTime;
 
-		var isUp = false;
-		var isDown = false;
-
 		//if tank is NOT SHELLSHOCKED and isn't dead
 		if (!this.dead) {
-			//up
-			if (this.keys[87] || this.keys[38]) {
-				this.x += this.xInc;
-				this.y += this.yInc;
-				isUp = true;
-			}
 
-			//down
-			if (this.keys[83] || this.keys[40]) {
-				this.x -= this.xInc;
-				this.y -= this.yInc;
-				isDown = true;
-			}
-
-			//update moving trackers
-			if ((isUp == false && isDown == false) || (isUp == true && isDown == true)) {
-				this.moving = false;
+			//check for movement setting
+			if (!SETTING_WASD) {
+				this.angleControl();
 			} else {
-				this.moving = true;
-			}
-
-			//right rotation
-			if (this.keys[65] || this.keys[37]) {
-				this.angle -= this.rotationSpeed * deltaTime;
-			}
-
-			//left rotation
-			if (this.keys[68] || this.keys[39]) {
-				this.angle += this.rotationSpeed * deltaTime;
+				this.wasdControl();
 			}
 
 			//check for keybind for laying mines
@@ -176,7 +337,7 @@ class Player extends Tank {
 			this.mineLayed++;
 			this.mineDelay = 0;
 
-			this.layMine(this.tankID);
+			super.layMine();
 		}
 	}
 
@@ -186,24 +347,9 @@ class Player extends Tank {
 			this.pissStream[i].render();
 		}
 
-		//render headlights if player isn't dead && player wants headlights
-		if (!this.dead && SETTING_HEADLIGHTS) {
-			ctx.shadowBlur = 100;
-
-			ctx.shadowColor = "#FEE75C";
-			ctx.fillStyle = hexToRgbA("#FEE75C", 0.13);
-
-			const heart = new xy(this.centerX, this.centerY);
-			const offset = 30 * Math.PI / 180;
-
-			ctx.beginPath();
-			ctx.moveTo(heart.x, heart.y);
-			ctx.arc(heart.x, heart.y, 70, this.angle - offset, this.angle + offset);
-			ctx.lineTo(heart.x, heart.y);
-			ctx.closePath();
-			ctx.fill();
-
-			ctx.shadowBlur = 0;
+		//render exhaust
+		for (var i = 0; i < this.exhaustList.length; i++) {
+			this.exhaustList[i].render();
 		}
 
 		if (SETTING_RGB) {

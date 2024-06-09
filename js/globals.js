@@ -1,5 +1,5 @@
 //VERSION ID
-const VERSION = "4.0.0";
+const VERSION = "4.1.0";
 
 //essential delta time info//
 const deltaTime = 1 / 60;
@@ -104,7 +104,8 @@ function toggleVolume(newVolume) {
 }
 
 //custom settings
-var SETTING_HEADLIGHTS = localStorage.getItem("headlights");
+var SETTING_WASD = localStorage.getItem("wasd");
+var SETTING_EXHAUST = localStorage.getItem("exhaust");
 var SETTING_VOLUME = localStorage.getItem("volume");
 var SETTING_RGB = localStorage.getItem("rgb");
 
@@ -117,13 +118,22 @@ const rgb = {
 
 //init custom settings
 
-//init headlights
-if (SETTING_HEADLIGHTS == null) {
-	localStorage.setItem("headlights", "false");
-	SETTING_HEADLIGHTS = false;
+//init wasd
+if (SETTING_WASD == null) {
+	localStorage.setItem("wasd", "true");
+	SETTING_WASD = true;
 } else {
 	//convert string to boolean
-	SETTING_HEADLIGHTS = (SETTING_HEADLIGHTS === "true");
+	SETTING_WASD = (SETTING_WASD === "true");
+}
+
+//init exhaust
+if (SETTING_EXHAUST == null) {
+	localStorage.setItem("exhaust", "true");
+	SETTING_EXHAUST = true;
+} else {
+	//convert string to boolean
+	SETTING_EXHAUST = (SETTING_EXHAUST === "true");
 }
 
 //init volume

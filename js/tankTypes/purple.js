@@ -1,18 +1,18 @@
 class PurpleTank extends Bot {
 	constructor(x, y, angle) {
-		const speed = 240;
-		const rotationSpeed = degreesToRadians(15);
-		const stun = -5;
-		const shellCap = 6;
-		const shellCooldown = -6;
+		const speed = 160;
+		const rotationSpeed = degreesToRadians(13);
+		const stun = -3;
+		const shellCap = 10;
+		const shellCooldown = -3;
 		const frm = -3;
 		const stopAndTurn = degreesToRadians(35);
 		const uTurn = degreesToRadians(160);
-		const updateTargetCount = -1;
-		const shellSensitivity = 700;
+		const updateTargetCount = -3;
+		const shellSensitivity = 620;
 		const abortNonmove = false;
-		const turretRotationSpeed = degreesToRadians(6);
-		const turretArcSize = degreesToRadians(90);
+		const turretRotationSpeed = degreesToRadians(3);
+		const turretArcSize = degreesToRadians(60);
 		const shellType = NORMAL_SHELL;
 		const shellBounceAmount = 1;
 		const color = "#934A9E";
