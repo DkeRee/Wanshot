@@ -1,6 +1,6 @@
 class TealTank extends Bot {
 	constructor(x, y, angle) {
-		const speed = 50;
+		const speed = 60;
 		const rotationSpeed = degreesToRadians(20);
 		const stun = -8;
 		const shellCap = 1;
