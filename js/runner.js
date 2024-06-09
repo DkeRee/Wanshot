@@ -135,7 +135,7 @@
 						if (track.explode) {
 							//DELETE TRACK
 							STAGE_CACHE.tracks.splice(i, 1);
-							continue
+							continue;
 						}
 
 						track.update();

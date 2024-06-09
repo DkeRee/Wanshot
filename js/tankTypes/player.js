@@ -273,7 +273,7 @@ class Player extends Tank {
 			//check for keybind for laying mines
 			if (this.keys[32]) {
 				//lay mine
-				super.layMine();
+				this.layMine();
 				delete this.keys[32];
 			}
 		}
@@ -332,8 +332,7 @@ class Player extends Tank {
 	}
 
 	layMine() {
-		if (this.mineLayed < 2 && this.mineDelay > 2 && !INTERMISSION && !this.dead) {
-			this.tankShock = -0.2;
+		if (this.mineLayed < 3 && this.mineDelay > 2 && !INTERMISSION && !this.dead) {
 			this.mineLayed++;
 			this.mineDelay = 0;
 

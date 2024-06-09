@@ -333,8 +333,8 @@ class Tank {
 	layMine() {
 		playSound(minePlace);
 
-		this.stunCount = this.stun;
-		STAGE_CACHE.mines.push(new Mine(this.centerX, this.centerY, null));
+		this.stunCount = this.stun - 10;
+		STAGE_CACHE.mines.push(new Mine(this.centerX, this.centerY, this.tankID));
 	}
 
 	//update track marks
