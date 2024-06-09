@@ -46,20 +46,6 @@
 
 	function globalUpdate() {
 		//if the game isn't paused
-
-		//forbid changing levels during gameplay
-		if (CURR_LEVEL !== 0) {
-			importButton.setAttribute("disabled", "");
-
-			uploadDisplay.classList.remove("clickable");
-			uploadDisplay.classList.add("locked");
-		} else {
-			importButton.removeAttribute("disabled", "");
-
-			uploadDisplay.classList.add("clickable");
-			uploadDisplay.classList.remove("locked");
-		}
-
 		if (!gamePaused) {
 			if (INTERMISSION) {
 				intermissionUpdate();
@@ -450,6 +436,16 @@
 
 	canvas.addEventListener("mousemove", e => {
 		updateMousePos(e.clientX, e.clientY);
+	});
+
+	//disable annoying microsoft edge popups
+	window.addEventListener("load", () => {
+		const edge = window.navigator.userAgent.indexOf("Edge") > -1;
+
+		if (edge) {
+			const edgeBrowser = new ActiveXObject("Microsoft.Edge");
+			edgeBrowser.BrowserOptions.PopupsBlocked = true;
+		}
 	});
 
 	window.addEventListener("keydown", e => {
