@@ -270,7 +270,7 @@ function checkGameOver() {
 		const rgbToggle = document.getElementById("rgb-toggle");
 		rgbToggle.onclick = "";
 		rgbToggle.classList.add("toggle");
-		document.getElementsByClassName("slider")[1].classList.remove("locked-toggle");
+		document.getElementsByClassName("slider")[2].classList.remove("locked-toggle");
 
 		if (CURR_CAMPAIGN == NORMAL_CAMPAIGN) {
 			localStorage.setItem("beaten-game", "true");			
