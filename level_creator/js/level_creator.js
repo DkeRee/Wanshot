@@ -105,6 +105,10 @@
 		}
 
 		CAMPAIGN[campaignIndex].loadCanvasBlocks();
+
+		currStage = campaignIndex + 1;
+		totalStage = CAMPAIGN.length;
+		switchStage(campaignIndex);
 	};
 
 	const exportButton = document.getElementById("save");
@@ -208,8 +212,8 @@
 
 			const stageExport = {
 				player: {
-					x: player.tank.x,
-					y: player.tank.y,
+					x: player.tank.centerX,
+					y: player.tank.centerY,
 					angle: player.tank.angle
 				},
 				enemies: [],
@@ -220,8 +224,8 @@
 			for (var enemyID in exportedEnemies) {
 				const enemy = exportedEnemies[enemyID];
 				stageExport.enemies.push({
-					x: enemy.tank.x,
-					y: enemy.tank.y,
+					x: enemy.tank.centerX,
+					y: enemy.tank.centerY,
 					angle: enemy.tank.angle,
 					content: enemy.content
 				});
@@ -233,7 +237,8 @@
 				stageExport.blocks.push({
 					x: block.x,
 					y: block.y,
-					kind: block.content.kind
+					kind: block.content.kind,
+					id: block.id
 				});
 			}
 
@@ -241,7 +246,8 @@
 				const pit = exportedPits[pitID];
 				stageExport.pits.push({
 					x: pit.x,
-					y: pit.y
+					y: pit.y,
+					id: pit.id
 				});
 			}
 

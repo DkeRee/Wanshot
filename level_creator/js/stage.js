@@ -8,10 +8,10 @@ class Stage {
 		this.exportedBlocks = [];
 		this.exportedPits = [];
 
-		this.player.tank.centerX = CANVAS_WIDTH / 2;
-		this.player.tank.centerY = CANVAS_HEIGHT / 2;
-		this.player.tank.x = this.player.tank.centerX - TANK_WIDTH / 2;
-		this.player.tank.y = this.player.tank.centerY - TANK_HEIGHT / 2;
+		this.player.tank.x = (CANVAS_WIDTH / 2) - TANK_WIDTH / 2;
+		this.player.tank.y = (CANVAS_HEIGHT / 2) - TANK_HEIGHT / 2;
+		this.player.tank.centerX = this.player.tank.x + TANK_WIDTH / 2;
+		this.player.tank.centerY = this.player.tank.y + TANK_HEIGHT / 2;
 	}
 
 	clearSelf() {
@@ -33,8 +33,8 @@ class Stage {
 		//enemies
 		for (var i = 0; i < data.enemies.length; i++) {
 			mouse = {
-				x: data.enemies[i].centerX,
-				y: data.enemies[i].centerY
+				x: data.enemies[i].x,
+				y: data.enemies[i].y
 			};
 
 			switch (data.enemies[i].content) {
@@ -86,7 +86,7 @@ class Stage {
 		for (var i = 0; i < data.blocks.length; i++) {
 			//update export
 
-			if (data.blocks[i].content.kind == REGULAR_BLOCK) {
+			if (data.blocks[i].kind == REGULAR_BLOCK) {
 				const regularBlock = new Block(data.blocks[i].x, data.blocks[i].y, 1, REGULAR_BLOCK);
 				
 				//update display
