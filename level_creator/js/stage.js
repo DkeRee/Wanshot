@@ -10,6 +10,8 @@ class Stage {
 
 		this.player.tank.centerX = CANVAS_WIDTH / 2;
 		this.player.tank.centerY = CANVAS_HEIGHT / 2;
+		this.player.tank.x = this.player.tank.centerX - TANK_WIDTH / 2;
+		this.player.tank.y = this.player.tank.centerY - TANK_HEIGHT / 2;
 	}
 
 	clearSelf() {
@@ -23,57 +25,57 @@ class Stage {
 
 		//player
 		mouse = {
-			x: data.player.tank.centerX,
-			y: data.player.tank.centerY
+			x: data.player.x,
+			y: data.player.y
 		};
-		this.player = new Player(1, data.player.tank.angle);
+		this.player = new Player(1, data.player.angle);
 		
 		//enemies
 		for (var i = 0; i < data.enemies.length; i++) {
 			mouse = {
-				x: data.enemies[i].tank.centerX,
-				y: data.enemies[i].tank.centerY
+				x: data.enemies[i].centerX,
+				y: data.enemies[i].centerY
 			};
 
 			switch (data.enemies[i].content) {
 				case BROWN_TANK:
-					this.exportedEnemies.push(new BrownTank(1, data.enemies[i].tank.angle));
+					this.exportedEnemies.push(new BrownTank(1, data.enemies[i].angle));
 					break;
 				case GREY_TANK:
-					this.exportedEnemies.push(new GreyTank(1, data.enemies[i].tank.angle))
+					this.exportedEnemies.push(new GreyTank(1, data.enemies[i].angle))
 					break;
 				case YELLOW_TANK:
-					this.exportedEnemies.push(new YellowTank(1, data.enemies[i].tank.angle))
+					this.exportedEnemies.push(new YellowTank(1, data.enemies[i].angle))
 					break;
 				case PINK_TANK:
-					this.exportedEnemies.push(new PinkTank(1, data.enemies[i].tank.angle))
+					this.exportedEnemies.push(new PinkTank(1, data.enemies[i].angle))
 					break;
 				case TEAL_TANK:
-					this.exportedEnemies.push(new TealTank(1, data.enemies[i].tank.angle))
+					this.exportedEnemies.push(new TealTank(1, data.enemies[i].angle))
 					break;
 				case PURPLE_TANK:
-					this.exportedEnemies.push(new PurpleTank(1, data.enemies[i].tank.angle))
+					this.exportedEnemies.push(new PurpleTank(1, data.enemies[i].angle))
 					break;
 				case WHITE_TANK:
-					this.exportedEnemies.push(new WhiteTank(1, data.enemies[i].tank.angle))
+					this.exportedEnemies.push(new WhiteTank(1, data.enemies[i].angle))
 					break;
 				case GREEN_TANK:
-					this.exportedEnemies.push(new GreenTank(1, data.enemies[i].tank.angle))
+					this.exportedEnemies.push(new GreenTank(1, data.enemies[i].angle))
 					break;
 				case BLACK_TANK:
-					this.exportedEnemies.push(new BlackTank(1, data.enemies[i].tank.angle))
+					this.exportedEnemies.push(new BlackTank(1, data.enemies[i].angle))
 					break;
 				case ORANGE_TANK:
-					this.exportedEnemies.push(new OrangeTank(1, data.enemies[i].tank.angle))
+					this.exportedEnemies.push(new OrangeTank(1, data.enemies[i].angle))
 					break;
 				case BLURPLE_TANK:
-					this.exportedEnemies.push(new BlurpleTank(1, data.enemies[i].tank.angle))
+					this.exportedEnemies.push(new BlurpleTank(1, data.enemies[i].angle))
 					break;
 				case VIOLET_TANK:
-					this.exportedEnemies.push(new VioletTank(1, data.enemies[i].tank.angle))
+					this.exportedEnemies.push(new VioletTank(1, data.enemies[i].angle))
 					break;
 				case TAN_TANK:
-					this.exportedEnemies.push(new TanTank(1, data.enemies[i].tank.angle))
+					this.exportedEnemies.push(new TanTank(1, data.enemies[i].angle))
 					break;						
 			}
 		}

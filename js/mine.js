@@ -33,7 +33,7 @@ class MineParticle {
 		this.centerY = this.y + this.side / 2;
 	
 		this.speed /= 72 * deltaTime;
-		this.opacity -= 2.4 * deltaTime;
+		this.opacity -= 1.7 * deltaTime;
 
 		//update color
 		this.fillStyle = hexToRgbA(this.color, this.opacity);
