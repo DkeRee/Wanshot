@@ -36,6 +36,13 @@ html, body {
 	box-shadow: 0px 0px 100px #967748;
 }
 
+#stage-notif {
+	font-family: "UniSansHeavy";
+	user-select: none;
+	font-size: 50px;
+	color: white;
+}
+
 .section {
 	background-color: #C2995D;
 	text-align: center;
@@ -82,7 +89,6 @@ html, body {
 }
 
 .img {
-	border-radius: 50%;
 	user-select: none;
 	width: 70px;
 	height: 70px;

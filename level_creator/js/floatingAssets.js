@@ -62,6 +62,9 @@ function isCollidingWithSurroundingBlocks(rect) {
 
 function checkTankDeletion() {
 	//check player
+	var player = CAMPAIGN[campaignIndex].player;
+	const exportedEnemies = CAMPAIGN[campaignIndex].exportedEnemies;
+
 	if (player) {
 		const transPlayer = transRect(player.tank);
 
@@ -103,6 +106,8 @@ function checkTankDeletion() {
 
 function tankCollision(rect) {
 	const newRect = transRect(rect);
+	var player = CAMPAIGN[campaignIndex].player;
+	const exportedEnemies = CAMPAIGN[campaignIndex].exportedEnemies;
 
 	//player collision
 	if (player) {
@@ -353,6 +358,9 @@ class TanTank {
 
 var placed = false;
 function updateFloatingAssets() {
+	var player = CAMPAIGN[campaignIndex].player;
+	const exportedEnemies = CAMPAIGN[campaignIndex].exportedEnemies;
+
 	//only update floating assets if you are not editing blocks
 	if (!holding) {
 		placed = false;
@@ -373,7 +381,7 @@ function updateFloatingAssets() {
 					floating_cache.pause = true;
 
 					if (holding) {
-						player = null;
+						CAMPAIGN[campaignIndex].player = null;
 						unpause = true;
 						placed = true;
 					}
@@ -411,7 +419,7 @@ function updateFloatingAssets() {
 					if (holding) {
 						placed = true;
 						if (floating_cache.content.content == PLAYER) {
-							player = new Player(1, floating_cache.content.tank.angle);
+							CAMPAIGN[campaignIndex].player = new Player(1, floating_cache.content.tank.angle);
 						} else {
 							switch(floating_cache.content.content) {
 								case BROWN_TANK:
@@ -466,10 +474,13 @@ function updateFloatingAssets() {
 				unpause = false;
 			}
 		}
-	}	
+	}
 }
 
 function renderFloatingAssets() {
+	var player = CAMPAIGN[campaignIndex].player;
+	const exportedEnemies = CAMPAIGN[campaignIndex].exportedEnemies;
+
 	if (player) {
 		player.tank.renderShadow(ctx);
 		player.tank.render(ctx);

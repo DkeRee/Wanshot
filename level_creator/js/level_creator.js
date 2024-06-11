@@ -1,13 +1,10 @@
 (function() {
-	const fileReader = new FileReader();
+	const stageNotif = document.getElementById("stage-notif");
+	var currStage = 1;
+	var totalStage = 1;
 
-	fileReader.onload = function() {
-		const data = JSON.parse(fileReader.result);
-
-		//reset
-		switchEditing(true);
-
-		//init grid once again
+	//init
+	function clearGrid(makeBorders) {
 		var x = 0;
 		var y = 0;
 
@@ -16,6 +13,17 @@
 		for (var i = 0; i < AREA; i++) {
 			grid.push(new Box(x, y, boxSize, i));
 
+			if (makeBorders) {
+				//if this box is on the side, automatically make it into a solid block
+				if (x == 0 || x == CANVAS_WIDTH - boxSize || y == 0 || y == CANVAS_HEIGHT - boxSize) {
+					const box = grid[i];
+					box.marked = true;
+					box.blockType = REGULAR_BLOCK;
+					box.content = new Block(box.x, box.y, 1, REGULAR_BLOCK);
+					CAMPAIGN[campaignIndex].exportedBlocks[box.id] = box;
+				}
+			}
+
 			if (x + boxSize == CANVAS_WIDTH) {
 				x = 0;
 				y += boxSize;
@@ -23,109 +31,80 @@
 				x += boxSize;
 			}
 		}
+	}
 
-		player = null;
-		exportedEnemies = [];
-		exportedBlocks = [];
-		exportPits = [];
+	function switchStage(newIndex) {
+		if (newIndex < 0 || newIndex > 99) return;
+
+		var makeFreshBorders = false;
+		currStage = newIndex + 1;
+
+		if (newIndex == CAMPAIGN.length) {
+			//create new level
+			CAMPAIGN.push(new Stage());
+			totalStage++;
+			makeFreshBorders = true;
+		}
+
+		campaignIndex = newIndex;
+		clearGrid(makeFreshBorders);
+
+		//note: canvas automatically renders campaignIndex tanks, but not blocks
+		CAMPAIGN[campaignIndex].loadCanvasBlocks();
+
+		//DOM stuff
+		stageNotif.textContent = currStage + "/" + totalStage;
+
+		if (newIndex - 1 < 0) {
+			leftArrow.classList.remove("clickable-bottom-widget");
+			leftArrow.classList.add("locked-bottom-widget");
+		} else {
+			leftArrow.classList.remove("locked-bottom-widget");
+			leftArrow.classList.add("clickable-bottom-widget");
+		}
+
+		if (newIndex + 1 > 99) {
+			rightArrow.classList.remove("clickable-bottom-widget");
+			rightArrow.classList.add("locked-bottom-widget");
+		} else {
+			rightArrow.classList.remove("locked-bottom-widget");
+			rightArrow.classList.add("clickable-bottom-widget");
+		}
+	}
+
+	const fileReader = new FileReader();
+
+	fileReader.onload = function() {
+		const campaign = JSON.parse(fileReader.result);
+
+		//reset
+		switchEditing(true);
+
+		clearGrid(false);
+
+		CAMPAIGN = [];
 		holding = false;
 
-		//player
-		mouse = {
-			x: data.player.tank.centerX,
-			y: data.player.tank.centerY
-		};
-		player = new Player(1, data.player.tank.angle);
-		
-		//enemies
-		for (var i = 0; i < data.enemies.length; i++) {
-			mouse = {
-				x: data.enemies[i].tank.centerX,
-				y: data.enemies[i].tank.centerY
-			};
+		//test for old files
+		if (campaign.player) {
+			campaignIndex = 0;
 
-			switch (data.enemies[i].content) {
-				case BROWN_TANK:
-					exportedEnemies.push(new BrownTank(1, data.enemies[i].tank.angle));
-					break;
-				case GREY_TANK:
-					exportedEnemies.push(new GreyTank(1, data.enemies[i].tank.angle))
-					break;
-				case YELLOW_TANK:
-					exportedEnemies.push(new YellowTank(1, data.enemies[i].tank.angle))
-					break;
-				case PINK_TANK:
-					exportedEnemies.push(new PinkTank(1, data.enemies[i].tank.angle))
-					break;
-				case TEAL_TANK:
-					exportedEnemies.push(new TealTank(1, data.enemies[i].tank.angle))
-					break;
-				case PURPLE_TANK:
-					exportedEnemies.push(new PurpleTank(1, data.enemies[i].tank.angle))
-					break;
-				case WHITE_TANK:
-					exportedEnemies.push(new WhiteTank(1, data.enemies[i].tank.angle))
-					break;
-				case GREEN_TANK:
-					exportedEnemies.push(new GreenTank(1, data.enemies[i].tank.angle))
-					break;
-				case BLACK_TANK:
-					exportedEnemies.push(new BlackTank(1, data.enemies[i].tank.angle))
-					break;
-				case ORANGE_TANK:
-					exportedEnemies.push(new OrangeTank(1, data.enemies[i].tank.angle))
-					break;
-				case BLURPLE_TANK:
-					exportedEnemies.push(new BlurpleTank(1, data.enemies[i].tank.angle))
-					break;
-				case VIOLET_TANK:
-					exportedEnemies.push(new VioletTank(1, data.enemies[i].tank.angle))
-					break;
-				case TAN_TANK:
-					exportedEnemies.push(new TanTank(1, data.enemies[i].tank.angle))
-					break;						
-			}
-		}
-		
-		//no need to worry about null in the static assets!
+			const stage = new Stage();
+			stage.loadSelfChunk(campaign);
 
-		//blocks
-		for (var i = 0; i < data.blocks.length; i++) {
-			//update export
-
-			if (data.blocks[i].content.kind == REGULAR_BLOCK) {
-				const regularBlock = new Block(data.blocks[i].x, data.blocks[i].y, 1, REGULAR_BLOCK);
-				
-				//update display
-				grid[data.blocks[i].id].marked = true;
-				grid[data.blocks[i].id].blockType = REGULAR_BLOCK;
-				grid[data.blocks[i].id].content = regularBlock;
-
-				exportedBlocks[data.blocks[i].id] = grid[data.blocks[i].id];
-			} else {
-				const looseBlock = new Block(data.blocks[i].x, data.blocks[i].y, 1, LOOSE_BLOCK);
-				
-				//update display
-				grid[data.blocks[i].id].marked = true;
-				grid[data.blocks[i].id].blockType = LOOSE_BLOCK;
-				grid[data.blocks[i].id].content = looseBlock;
-
-				exportedBlocks[data.blocks[i].id] = grid[data.blocks[i].id];
-			}
+			CAMPAIGN.push(stage);
+			CAMPAIGN[campaignIndex].loadCanvasBlocks();
+			return;
 		}
 
-		//pits
-		for (var i = 0; i < data.pits.length; i++) {
-			//update export
-			const pit = new Pit(data.pits[i].x, data.pits[i].y, 1);
-
-			//update display
-			grid[data.pits[i].id].marked = true;
-			grid[data.pits[i].id].blockType = PIT;
-			grid[data.pits[i].id].content = pit;
-
-			exportedPits[data.pits[i].id] = grid[data.pits[i].id];
+		campaignIndex = campaign.length - 1;
+		for (var i = 0; i < campaign.length; i++) {
+			const stage = new Stage();
+			stage.loadSelfChunk(campaign[i]);
+			CAMPAIGN.push(stage);
 		}
+
+		CAMPAIGN[campaignIndex].loadCanvasBlocks();
 	};
 
 	const exportButton = document.getElementById("save");
@@ -138,35 +117,9 @@
 	canvas.width = CANVAS_WIDTH;
 	canvas.height = CANVAS_HEIGHT;
 
-	const gridWidth = CANVAS_WIDTH / boxSize;
-	const gridHeight = CANVAS_HEIGHT / boxSize;
-	const AREA = gridWidth * gridHeight;
-
-	//init grid
-	var x = 0;
-	var y = 0;
-
-	for (var i = 0; i < AREA; i++) {
-		grid.push(new Box(x, y, boxSize, i));
-
-		//if this box is on the side, automatically make it into a solid block
-		if (x == 0 || x == CANVAS_WIDTH - boxSize || y == 0 || y == CANVAS_HEIGHT - boxSize) {
-			const box = grid[i];
-			box.marked = true;
-			box.blockType = REGULAR_BLOCK;
-			box.content = new Block(box.x, box.y, 1, REGULAR_BLOCK);
-			exportedBlocks[box.id] = box;
-		}
-
-		if (x + boxSize == CANVAS_WIDTH) {
-			x = 0;
-			y += boxSize;
-		} else {
-			x += boxSize;
-		}
-	}
-
-	player = new Player(1, 0);
+	//Add in default first stage
+	CAMPAIGN.push(new Stage());
+	clearGrid(true);
 
 	function globalStep() {
 		globalUpdate();
@@ -182,12 +135,17 @@
 		}
 
 		//level not complete, grey out export button
-		if (!player || exportedEnemies.length == 0) {
-			exportButton.classList.remove("clickable-bottom-widget");
-			exportButton.classList.add("locked-bottom-widget");
-		} else {
-			exportButton.classList.add("clickable-bottom-widget");
-			exportButton.classList.remove("locked-bottom-widget");		
+		for (var i = 0; i < CAMPAIGN.length; i++) {
+			if (!CAMPAIGN[i].player || CAMPAIGN[i].exportedEnemies.length == 0) {
+				exportButton.classList.remove("clickable-bottom-widget");
+				exportButton.classList.add("locked-bottom-widget");
+				break;
+			} 
+
+			if (CAMPAIGN.length - 1 == i) {
+				exportButton.classList.add("clickable-bottom-widget");
+				exportButton.classList.remove("locked-bottom-widget");
+			}
 		}
 
 		updateFloatingAssets();
@@ -230,33 +188,67 @@
 	}
 
 	function exportAssets() {
-		if (!player) {
-			//console.log("You MUST have a player in the game");
-			return;
+		const campaignExport = [];
+
+		for (var i = 0; i < CAMPAIGN.length; i++) {
+			const player = CAMPAIGN[i].player;
+			const exportedEnemies = CAMPAIGN[i].exportedEnemies;
+			const exportedBlocks = CAMPAIGN[i].exportedBlocks;
+			const exportedPits = CAMPAIGN[i].exportedPits;
+
+			if (!player) {
+				//console.log("You MUST have a player in the game");
+				return;
+			}
+
+			if (exportedEnemies.length == 0) {
+				//console.log("You MUST have at least one enemy tank in the game");
+				return;
+			}
+
+			const stageExport = {
+				player: {
+					x: player.tank.x,
+					y: player.tank.y,
+					angle: player.tank.angle
+				},
+				enemies: [],
+				blocks: [],
+				pits: []
+			};
+
+			for (var enemyID in exportedEnemies) {
+				const enemy = exportedEnemies[enemyID];
+				stageExport.enemies.push({
+					x: enemy.tank.x,
+					y: enemy.tank.y,
+					angle: enemy.tank.angle,
+					content: enemy.content
+				});
+			}
+
+			//eliminate null values to diminish json file size
+			for (var blockID in exportedBlocks) {
+				const block = exportedBlocks[blockID];
+				stageExport.blocks.push({
+					x: block.x,
+					y: block.y,
+					kind: block.content.kind
+				});
+			}
+
+			for (var pitID in exportedPits) {
+				const pit = exportedPits[pitID];
+				stageExport.pits.push({
+					x: pit.x,
+					y: pit.y
+				});
+			}
+
+			campaignExport.push(stageExport);
 		}
 
-		if (exportedEnemies.length == 0) {
-			//console.log("You MUST have at least one enemy tank in the game");
-			return;
-		}
-
-		const levelExport = {
-			player: player,
-			enemies: exportedEnemies,
-			blocks: [],
-			pits: []
-		};
-
-		//eliminate null values to diminish json file size
-		for (var blockID in exportedBlocks) {
-			levelExport.blocks.push(exportedBlocks[blockID]);
-		}
-
-		for (var pitID in exportedPits) {
-			levelExport.pits.push(exportedPits[pitID]);
-		}
-
-		var blob = new Blob([JSON.stringify(levelExport)],
+		var blob = new Blob([JSON.stringify(campaignExport)],
 			{type: "application/json"});
 		saveAs(blob, "level.json");
 	}
@@ -287,6 +279,18 @@
 				}
 			}		
 		}
+
+		if (e.keyCode == 39) {
+			switchStage(campaignIndex + 1);
+		}
+
+		if (e.keyCode == 37) {
+			switchStage(campaignIndex - 1);
+		}
+	});
+
+	leftArrow.addEventListener("mousedown", () => {
+		switchStage(campaignIndex - 1);
 	});
 
 	uploadButton.addEventListener("change", () => {
@@ -295,5 +299,9 @@
 
 	exportButton.addEventListener("click", () => {
 		exportAssets();
+	});
+
+	rightArrow.addEventListener("mousedown", () => {
+		switchStage(campaignIndex + 1);
 	});
 })();

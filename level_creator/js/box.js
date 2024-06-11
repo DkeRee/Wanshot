@@ -61,25 +61,25 @@ class Box {
 
 								switch (this.blockType) {
 									case REGULAR_BLOCK:
-										exportedBlocks[this.id] = this;
+										CAMPAIGN[campaignIndex].exportedBlocks[this.id] = this;
 										break;
 									case LOOSE_BLOCK:
-										exportedBlocks[this.id] = this;
+										CAMPAIGN[campaignIndex].exportedBlocks[this.id] = this;
 										break;
 									case PIT:
-										exportedPits[this.id] = this;
+										CAMPAIGN[campaignIndex].exportedPits[this.id] = this;
 										break;
 								}
 							} else {
 								switch (this.blockType) {
 									case REGULAR_BLOCK:
-										delete exportedBlocks[this.id];
+										delete CAMPAIGN[campaignIndex].exportedBlocks[this.id];
 										break;
 									case LOOSE_BLOCK:
-										delete exportedBlocks[this.id];
+										delete CAMPAIGN[campaignIndex].exportedBlocks[this.id];
 										break;
 									case PIT:
-										delete exportedPits[this.id];
+										delete CAMPAIGN[campaignIndex].exportedPits[this.id];
 										break;
 								}
 

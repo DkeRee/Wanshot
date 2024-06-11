@@ -4,7 +4,7 @@
 		<title>Wankle Level Creator</title>
 		<link rel = "icon" href = "../icons/favicon.png">
 		<meta property = "og:title" content = "Wankle Level Creator">
-    	<meta property = "og:image" content = "https://wankle.dkeree.repl.co/icons/favicon.png">
+    	<meta property = "og:image" content = "https://dkeree.github.io/Wankkle/icons/favicon.png">
     	<meta property = "og:description" content = "Create the most devious stages to punish yourself and your friends! Let none be spared from the wrath of Wankle...">
 		<link href = "style.css" rel = "stylesheet" type = "text/css">
 		<link rel="preconnect" href="https://fonts.gstatic.com">
@@ -99,12 +99,19 @@
 			</div>
 			<div class = "outer-wrapper">
 				<div id = "inner-bottom-wrapper">
+					<div class = "locked-bottom-widget bottom-widget">
+						<img class = "img" src = "icons/leftArrow.png">
+					</div>
 					<label for = "upload" class = "clickable-bottom-widget bottom-widget">
 						<img class = "img" src = "icons/upload.png">
 					</label>
+					<h1 id = "stage-notif" class = "bottom-widget">1/1</h1>
 					<input type = "file" name = "upload" id = "upload">
 					<div id = "save" class = "locked-bottom-widget bottom-widget">
 						<img class = "img" src = "icons/save.png">
+					</div>
+					<div class = "clickable-bottom-widget bottom-widget">
+						<img class = "img" src = "icons/rightArrow.png">
 					</div>
 				</div>
 			</div>
@@ -119,6 +126,7 @@
 		<script src = "js/box.js"></script>
 		<script src = "js/floatingAssets.js"></script>
 		<script src = "js/canvasUI.js"></script>
+		<script src = "js/stage.js"></script>
 		<script src = "js/level_creator.js"></script>
 	</body>
 </html>

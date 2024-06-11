@@ -18,12 +18,19 @@ var floating_cache = {
 	pause: false
 };
 
+//CAMPAIGN
+var campaignIndex = 0;
+var CAMPAIGN = [];
+
 const boxSize = 35;
-var player = null;
-var exportedEnemies = [];
-var exportedBlocks = [];
-var exportedPits = [];
 var holding = false;
+
+const leftArrow = document.getElementsByClassName("bottom-widget")[0];
+const rightArrow = document.getElementsByClassName("bottom-widget")[4];
+
+const gridWidth = CANVAS_WIDTH / boxSize;
+const gridHeight = CANVAS_HEIGHT / boxSize;
+const AREA = gridWidth * gridHeight;
 
 //ASSETS//
 const REGULAR_BLOCK = 1;
