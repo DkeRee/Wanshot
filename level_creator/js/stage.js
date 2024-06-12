@@ -25,16 +25,16 @@ class Stage {
 
 		//player
 		mouse = {
-			x: data.player.x,
-			y: data.player.y
+			x: data.player.x + TANK_WIDTH / 2,
+			y: data.player.y + TANK_HEIGHT / 2
 		};
 		this.player = new Player(1, data.player.angle);
 		
 		//enemies
 		for (var i = 0; i < data.enemies.length; i++) {
 			mouse = {
-				x: data.enemies[i].x,
-				y: data.enemies[i].y
+				x: data.enemies[i].x + TANK_WIDTH / 2,
+				y: data.enemies[i].y + TANK_HEIGHT / 2
 			};
 
 			switch (data.enemies[i].content) {
@@ -103,6 +103,8 @@ class Stage {
 				grid[data.blocks[i].id].blockType = LOOSE_BLOCK;
 				grid[data.blocks[i].id].content = looseBlock;
 
+				console.log(grid[data.blocks[i].id])
+
 				this.exportedBlocks[data.blocks[i].id] = grid[data.blocks[i].id];
 			}
 		}
@@ -148,7 +150,7 @@ class Stage {
 		for (var pitID in this.exportedPits) {
 			const pit = this.exportedPits[pitID];
 
-			grid[pit.id].marked - true;
+			grid[pit.id].marked = true;
 			grid[pit.id].blockType = PIT;
 			grid[pit.id].content = pit;
 		}

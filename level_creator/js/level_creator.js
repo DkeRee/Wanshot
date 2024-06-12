@@ -80,8 +80,6 @@
 		//reset
 		switchEditing(true);
 
-		clearGrid(false);
-
 		CAMPAIGN = [];
 		holding = false;
 
@@ -93,18 +91,17 @@
 			stage.loadSelfChunk(campaign);
 
 			CAMPAIGN.push(stage);
-			CAMPAIGN[campaignIndex].loadCanvasBlocks();
 			return;
 		}
 
 		campaignIndex = campaign.length - 1;
 		for (var i = 0; i < campaign.length; i++) {
+			clearGrid(false);
+
 			const stage = new Stage();
 			stage.loadSelfChunk(campaign[i]);
 			CAMPAIGN.push(stage);
 		}
-
-		CAMPAIGN[campaignIndex].loadCanvasBlocks();
 
 		currStage = campaignIndex + 1;
 		totalStage = CAMPAIGN.length;
@@ -212,8 +209,8 @@
 
 			const stageExport = {
 				player: {
-					x: player.tank.centerX,
-					y: player.tank.centerY,
+					x: player.tank.x,
+					y: player.tank.y,
 					angle: player.tank.angle
 				},
 				enemies: [],
@@ -224,8 +221,8 @@
 			for (var enemyID in exportedEnemies) {
 				const enemy = exportedEnemies[enemyID];
 				stageExport.enemies.push({
-					x: enemy.tank.centerX,
-					y: enemy.tank.centerY,
+					x: enemy.tank.x,
+					y: enemy.tank.y,
 					angle: enemy.tank.angle,
 					content: enemy.content
 				});
