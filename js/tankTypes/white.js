@@ -70,7 +70,7 @@ class WhiteTank extends Bot {
 		const uTurn = degreesToRadians(170);
 		const updateTargetCount = -3
 		const shellSensitivity = 600;
-		const abortNonmove = true;
+		const abortNonmove = false;
 		const turretRotationSpeed = degreesToRadians(3);
 		const turretArcSize = degreesToRadians(60);
 		const shellType = NORMAL_SHELL;
