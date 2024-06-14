@@ -103,8 +103,6 @@ class Stage {
 				grid[data.blocks[i].id].blockType = LOOSE_BLOCK;
 				grid[data.blocks[i].id].content = looseBlock;
 
-				console.log(grid[data.blocks[i].id])
-
 				this.exportedBlocks[data.blocks[i].id] = grid[data.blocks[i].id];
 			}
 		}
