@@ -68,7 +68,7 @@ for (var i = 0; i < canvasUIS.length; i++) {
 			});
 			break;
 		case "TealTank":
-			const tealTank = new Tank(38 - TANK_WIDTH / 2, 40 - TANK_HEIGHT / 2, 0, "#154734", "#0E4732", "#B0896B", 1);
+			const tealTank = new Tank(38 - TANK_WIDTH / 2, 40 - TANK_HEIGHT / 2, 0, "#427D72", "#427d6d", "#B0896B", 1);
 			tealTank.renderShadow(cvs_ctx);
 			tealTank.render(cvs_ctx);
 

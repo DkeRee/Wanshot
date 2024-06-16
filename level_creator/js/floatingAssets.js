@@ -286,7 +286,7 @@ class PinkTank {
 
 class TealTank {
 	constructor(opacity, angle) {
-		this.tank = new Tank(mouse.x - TANK_WIDTH / 2, mouse.y - TANK_HEIGHT / 2, angle, "#154734", "#0E4732", "#B0896B", opacity);
+		this.tank = new Tank(mouse.x - TANK_WIDTH / 2, mouse.y - TANK_HEIGHT / 2, angle, "#427D72", "#427d6d", "#B0896B", opacity);
 		this.hovering = false;
 		this.content = TEAL_TANK;
 	}
