@@ -47,7 +47,7 @@ class VioletTank extends Bot {
 		const turretColor = "#B512B0";
 		const sideColor = "#B0896B";
 		const tankID = Math.floor(Math.random() * 100000);
-		const tankType = GREY_TANK;
+		const tankType = VIOLET_TANK;
 
 		super(
 			x,
@@ -79,13 +79,18 @@ class VioletTank extends Bot {
 	update() {
 		super.update();
 
-		if (!this.dead && !INTERMISSION) {
+		if (!INTERMISSION) {
 			//update protection zone
 			for (var i = 0; i < STAGE_CACHE.violetProtection.length; i++) {
 				const bubble = STAGE_CACHE.violetProtection[i];
 
 				//found this violet tank's protection bubble :)
 				if (bubble.tankID == this.tankID) {
+					if (this.dead) {
+						STAGE_CACHE.violetProtection.splice(i, 1);
+						continue;
+					}
+
 					bubble.update(this.centerX, this.centerY);
 				}
 			}

@@ -429,7 +429,7 @@ class Shell {
 				this.diminish = true;
 
 				//only allow death if the victim enemy tank is NOT in a violet protection bubble!
-				if (!enemy.inVioletShield) {
+				if (!enemy.inVioletShield || enemy.tankType == VIOLET_TANK) {
 					//explode explode enemy tank ONLY IF it is not a tele shell
 					if (this.speed == TELE_SHELL) {
 						const thisEnemy = getEnemy(this.tankID);
