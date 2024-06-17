@@ -163,8 +163,8 @@ function introRender() {
 			ctx.strokeStyle = hexToRgbA("#ED4245", startLogoOpacity);
 
 			ctx.textAlign = "center";
-			ctx.fillText("WANKLE", canvas.width / 2, (canvas.height / 2) - 60);
-			ctx.strokeText("WANKLE", canvas.width / 2, (canvas.height / 2) - 60);
+			ctx.fillText("WANSHOT", canvas.width / 2, (canvas.height / 2) - 60);
+			ctx.strokeText("WANSHOT", canvas.width / 2, (canvas.height / 2) - 60);
 
 			//render version ID
 			ctx.font = "30px UniSansHeavy";
@@ -172,8 +172,8 @@ function introRender() {
 			ctx.strokeText(`V${VERSION}`, canvas.width - 50, 30);	
 
 			ctx.font = "80px UniSansHeavy";
-			ctx.fillText("BY DKEREE", canvas.width / 2, (canvas.height / 2) + 20);
-			ctx.strokeText("BY DKEREE", canvas.width / 2, (canvas.height / 2) + 20);
+			ctx.fillText("BY DANIEL K.", canvas.width / 2, (canvas.height / 2) + 20);
+			ctx.strokeText("BY DANIEL K.", canvas.width / 2, (canvas.height / 2) + 20);
 
 			ctx.shadowBlur = 0;
 			break;

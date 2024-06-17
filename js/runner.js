@@ -457,6 +457,11 @@
 				STAGE_CACHE.player.pee = true;
 			}
 		}
+
+		//avoid space bar from scrolling down
+		if (e.keyCode == 32) {
+			e.preventDefault();
+		}
 	});
 
 	window.addEventListener("keyup", e => {
@@ -467,6 +472,11 @@
 			if (e.keyCode == 80 || e.which == 80) {
 				STAGE_CACHE.player.pee = false;
 			}
+		}
+
+		//avoid space bar from scrolling down
+		if (e.keyCode == 32) {
+			e.preventDefault();
 		}
 	});
 
