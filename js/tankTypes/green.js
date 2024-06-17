@@ -3,8 +3,8 @@ class GreenTank extends Bot {
 		const speed = 0;
 		const rotationSpeed = 0;
 		const stun = 0;
-		const shellCap = 3;
-		const shellCooldown = -10;
+		const shellCap = 2;
+		const shellCooldown = -15;
 		const frm = 0;
 		const stopAndTurn = 0;
 		const uTurn = 0;
