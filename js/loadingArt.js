@@ -79,8 +79,8 @@ function loadingArt(opacity) {
 	ctx.strokeStyle = hexToRgbA("#ED4245", startLogoOpacity);
 
 	ctx.textAlign = "center";
-	ctx.fillText("WANKLE", canvas.width / 2, (canvas.height / 2) + 40);
-	ctx.strokeText("WANKLE", canvas.width / 2, (canvas.height / 2) + 40);
+	ctx.fillText("WANSHOT", canvas.width / 2, (canvas.height / 2) + 40);
+	ctx.strokeText("WANSHOT", canvas.width / 2, (canvas.height / 2) + 40);
 
 	ctx.shadowBlur = 0;
 }
