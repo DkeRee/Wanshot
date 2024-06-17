@@ -231,8 +231,8 @@ function introRender() {
 			ctx.strokeStyle = hexToRgbA("#ED4245", opacity);
 
 			ctx.textAlign = "center";
-			ctx.fillText("OTHER INFO", canvas.width / 2, 130);
-			ctx.strokeText("OTHER INFO", canvas.width / 2, 130);
+			ctx.fillText("IMPORTANT INFO", canvas.width / 2, 130);
+			ctx.strokeText("IMPORTANT INFO", canvas.width / 2, 130);
 
 			//tank
 			addTank.render(opacity);

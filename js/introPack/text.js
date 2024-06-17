@@ -13,8 +13,8 @@ const mineTextTwo = "You can lay up to 2 mines.";
 const mineTextThree = "You can shoot a mine to detonate.";
 
 const addTextOne = "For additional information and credits click on the button";
-const addTextTwo = "at the top left corner of the page. Recommended browsers";
-const addTextThree = "for playing Wanshot are Chrome and Microsoft Edge. Other browsers";
+const addTextTwo = "at the top left corner of the page. RECOMMENDED browsers";
+const addTextThree = "for playing Wanshot are CHROME and MICROSOFT EDGE. Other browsers";
 const addTextFour = "may increase lag and disrupt gameplay. This game is open source and";
 const addTextFive = "is available on Github.";
 
