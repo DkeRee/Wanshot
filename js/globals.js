@@ -25,7 +25,7 @@ const CUSTOM_CAMPAIGN = 3;
 var CURR_CAMPAIGN = NORMAL_CAMPAIGN;
 
 //intro toggle
-var intro = false;
+var intro = true;
 
 //SOUND FX//
 const normalShoot = new Audio("audio/normalShoot.wav");
