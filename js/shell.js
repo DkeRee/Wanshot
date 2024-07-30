@@ -319,13 +319,13 @@ class Shell {
 					}
 				}
 
-				if (this.ricochet >= 0) {
-					playSound(shellOut);
-				} else {
-					playSound(shellDink);
-				}
-
 				this.ricochet--;
+
+				if (this.ricochet >= 0) {
+					playSound(shellDink);
+				} else {
+					playSound(shellOut);
+				}
 
 				this.peace = false;
 
