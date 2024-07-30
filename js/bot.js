@@ -70,7 +70,7 @@ class Bot extends Tank {
 			var shell = STAGE_CACHE.shells[i];
 			var dist = getMagnitude(this.centerX - shell.centerX, this.centerY - shell.centerY);
 
-			if (dist < closestDist && !shell.peace) {
+			if (dist < closestDist) {
 				//make tanks not tweak, a bit of a bandaid fix
 				if (shell.tankID == this.tankID) {
 					if (shell.speed == MISSLE) {
