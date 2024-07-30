@@ -193,7 +193,21 @@ class Shell {
 		this.speed = shellType;
 		this.tankID = tankID;
 		this.id = Math.floor(Math.random() * 100000);
-		this.ricochet = 0;
+
+		switch (shellType) {
+			case MISSLE:
+				this.ricochet = 0;
+				break;
+			case NORMAL_SHELL:
+				this.ricochet = 1;
+				break;
+			case TELE_SHELL:
+				this.ricochet = 1;
+				break;
+			case ULTRA_MISSLE:
+				this.ricochet = 2;
+				break;
+		}
 
 		if (this.speed == MISSLE) {
 			this.color = "#DE522F";
@@ -305,33 +319,12 @@ class Shell {
 					}
 				}
 
-				this.ricochet++;
+				this.ricochet--;
 
-				switch (this.speed) {
-					case NORMAL_SHELL:
-						if (this.ricochet >= 2) {
-							playSound(shellOut);
-						} else {
-							playSound(shellDink);
-						}
-						break;
-					case MISSLE:
-						playSound(shellOut);
-						break;
-					case TELE_SHELL:
-						if (this.ricochet >= 2) {
-							playSound(shellOut);
-						} else {
-							playSound(shellDink);
-						}
-						break;
-					case ULTRA_MISSLE:
-						if (this.ricochet >= 3) {
-							playSound(shellOut);
-						} else {
-							playSound(shellDink);
-						}
-						break;
+				if (this.ricochet >= 0) {
+					playSound(shellDink);
+				} else {
+					playSound(shellOut);
 				}
 
 				this.peace = false;
@@ -514,6 +507,12 @@ class Shell {
 				this.centerX = this.x + this.width / 2;
 				this.centerY = this.y + this.height / 2;
 
+				//MARK SHELL TO DELETE
+				if (this.ricochet < 0) {
+					this.makeHitParticles();
+					this.diminish = true;
+				}
+
 				//COLLISIONS
 				this.shellWithShell();
 				this.shellWithMine();
@@ -525,35 +524,14 @@ class Shell {
 				if (this.x - this.width / 2 <= 0 || this.x + this.width / 2 >= CANVAS_WIDTH) {
 					this.bounceX();
 					this.peace = false;
-					this.ricochet++;
+					this.ricochet--;
 				}
 
 				//TOP AND BOTTOM WALL
 				if (this.y - this.height / 2 <= 0 || this.y + this.height / 2 >= CANVAS_HEIGHT) {
 					this.bounceY();
 					this.peace = false;
-					this.ricochet++;
-				}
-
-				//MARK SHELL TO DELETE
-				if (this.speed == NORMAL_SHELL && this.ricochet >= 2) {
-					this.makeHitParticles();
-					this.diminish = true;
-				}
-
-				if (this.speed == TELE_SHELL && this.ricochet >= 2) {
-					this.makeHitParticles();
-					this.diminish = true;
-				}
-
-				if (this.speed == MISSLE && this.ricochet >= 1) {
-					this.makeHitParticles();
-					this.diminish = true;
-				}
-
-				if (this.speed == ULTRA_MISSLE && this.ricochet >= 3) {
-					this.makeHitParticles();
-					this.diminish = true;			
+					this.ricochet--;
 				}
 			}
 

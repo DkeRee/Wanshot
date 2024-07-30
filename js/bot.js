@@ -71,6 +71,17 @@ class Bot extends Tank {
 			var dist = getMagnitude(this.centerX - shell.centerX, this.centerY - shell.centerY);
 
 			if (dist < closestDist) {
+				//make tanks not tweak, a bit of a bandaid fix
+				if (shell.tankID == this.tankID) {
+					if (shell.speed == MISSLE) {
+						continue;
+					} else {
+						if (shell.ricochet > 0) {
+							continue;
+						}
+					}
+				}
+
 				closeShell = shell;
 				closestDist = dist;
 			}

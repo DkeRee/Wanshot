@@ -3,7 +3,7 @@ class PinkTank extends Bot {
 		const speed = 140;
 		const rotationSpeed = degreesToRadians(10);
 		const stun = -5;
-		const shellCap = 5;
+		const shellCap = 4;
 		const shellCooldown = -20;
 		const frm = -3;
 		const stopAndTurn = degreesToRadians(30);
