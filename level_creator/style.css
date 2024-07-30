@@ -1,0 +1,146 @@
+html, body {
+	margin: 0;
+	width: 100%;
+	height: 100%;
+	background-color: #D8B077;
+}
+
+@font-face {
+	font-family: "UniSansHeavy";
+	src: url("../fonts/uni-sans.heavy-caps.otf") format("opentype");
+}
+
+#container {
+	position: absolute;
+	width: 100%;
+	top: 50%;
+	left: 50%;
+	-ms-transform: translate(-50%, -50%);
+	transform: translate(-50%, -50%);
+}
+
+.outer-wrapper {
+	display: flex;
+	justify-content: center;
+}
+
+#inner-bottom-wrapper {
+	width: 900px;
+	margin-top: 15px;
+	display: flex;
+	justify-content: center;
+}
+
+#canvas {
+	border: 3px solid #967748;
+	box-shadow: 0px 0px 100px #967748;
+}
+
+#stage-notif {
+	font-family: "UniSansHeavy";
+	user-select: none;
+	font-size: 50px;
+	color: white;
+}
+
+.section {
+	background-color: #C2995D;
+	text-align: center;
+	border-radius: 8px;
+	margin-left: 20px;
+	margin-right: 20px;
+	width: 300px;
+	height: 720px;
+}
+
+.section-header {
+	font-family: "UniSansHeavy";
+	user-select: none;
+	font-size: 50px;
+	color: white;
+}
+
+.section-wrapper {
+	border-top: 2px solid #D8B077;
+	height: 588px;
+	overflow: auto;
+}
+
+.section-widget {
+	border: 2px solid #D8B077;
+	margin: auto;
+	margin-top: 15px;
+	border-radius: 8px;
+	cursor: pointer;
+	width: 100px;
+	height: 100px;
+	padding: 10px;
+	display: flex;
+	justify-content: center;
+	-webkit-transition: background-color 0.25s ease-out;
+	-moz-transition: background-color 0.25s ease-out;
+	-o-transition: background-color 0.25s ease-out;
+	transition: background-color 0.25s ease-out;
+	-webkit-tap-highlight-color: rgba(255, 255, 255, 0);
+}
+
+.section-widget:hover {
+	background-color: rgba(216, 176, 119, 0.5);
+}
+
+.img {
+	user-select: none;
+	width: 70px;
+	height: 70px;
+}
+
+#upload {
+	display: none;
+}
+
+.bottom-widget {
+	margin: auto;
+	color: white;
+	padding: 10px;
+	user-select: none;
+	font-family: "UniSansHeavy";
+	font-size: 30px;
+	border-radius: 8px;
+	display: flex;
+	justify-content: center;
+	background-color: #C2995D;
+	border: 2px solid #C2995D;
+	box-shadow: 0px 0px 10px #C2995D;
+    -webkit-transition: all 0.5s ease-in-out;
+    -moz-transition: all 0.5s ease-in-out;
+    -ms-transition: all 0.5s ease-in-out;
+    -o-transition: all 0.5s ease-in-out;
+    transition: all 0.5s ease-in-out;
+}
+
+.locked-bottom-widget {
+	opacity: 0.5;
+}
+
+.clickable-bottom-widget:hover {
+	cursor: pointer;
+	background-color: #BA9359;
+	-webkit-tap-highlight-color: #BA9359;
+}
+
+.widget-canvas {
+	border: 2px solid transparent;
+}
+
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: #C2995D;
+}
+
+::-webkit-scrollbar-thumb {
+  border-radius: 8px;
+  background: #B08B54;
+}
